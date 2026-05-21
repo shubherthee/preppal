@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrepPal — Content Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body data-page-id="content" data-page-title="Content Hub" data-page-subtitle="Browse your notes, summaries, and study resources.">
+    <div id="view-app">
+      <div class="app-shell">
+        <Sidebar
+          :nav-items="navItems"
+          :active-nav="activeNav"
+          @update:activeNav="activeNav = $event"
+          :user-name="userName"
+          :initials="initials"
+          @logout="logout"
+        />
+
+        <main class="main">
+          <div class="greeting">
+            <h1>{{ pageTitle }}</h1>
+            <p>{{ pageSubtitle }}</p>
+          </div>
+
+          <div class="card">
+            <p>This is the Content Hub view. Use the sidebar to navigate between pages.</p>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="../../view-layout.js"></script>
+  </body>
+</html>

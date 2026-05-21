@@ -1,0 +1,36 @@
+<template id="sidebar-template">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">📚</div>
+      <div>
+        <div class="sidebar-brand-name">PrepPal</div>
+        <div class="sidebar-brand-sub">AI Study Assistant</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a v-for="item in navItems" :key="item.id"
+         :href="item.route"
+         class="nav-item"
+         :class="{ active: activeNav === item.id }"
+         @click="$emit('update:activeNav', item.id)">
+        <span class="nav-icon">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    </nav>
+
+    <div class="tip-box">
+      <div class="tip-title">💡 Study Tip</div>
+      <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="avatar">{{ initials }}</div>
+      <div>
+        <div class="user-name">{{ userName }}</div>
+        <div class="user-role">Student</div>
+      </div>
+      <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+    </div>
+  </aside>
+</template>
