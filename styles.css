@@ -231,9 +231,9 @@ body {
 
 /* ── APP SHELL ─────────────────────────────────── */
 .app-shell {
-  display: grid;
-  grid-template-columns: 220px 1fr;
+  display: flex;
   min-height: 100vh;
+  width: 100%;
 }
 
 /* SIDEBAR */
@@ -243,7 +243,10 @@ body {
   display: flex; flex-direction: column;
   padding: 24px 0;
   width: 220px;
+  min-width: 220px;
+  flex-shrink: 0;
   position: sticky; top: 0; height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar-brand {
@@ -279,6 +282,7 @@ body {
   margin-bottom: 2px;
   transition: background .15s, color .15s;
   user-select: none;
+  text-decoration: none;
 }
 .nav-item:hover { background: var(--bg); color: var(--text); }
 .nav-item.active {
@@ -323,7 +327,7 @@ body {
 .logout-btn:hover { color: var(--rose); }
 
 /* MAIN */
-.main { background: var(--bg); padding: 32px 36px; overflow-y: auto; }
+.main { background: var(--bg); padding: 32px 36px; overflow-y: auto; flex: 1; min-width: 0; }
 
 /* TOP BAR */
 .topbar {
@@ -498,7 +502,7 @@ body {
 @media (max-width: 900px) {
   .login-page { grid-template-columns: 1fr; }
   .login-left  { display: none; }
-  .app-shell   { grid-template-columns: 1fr; }
+  .app-shell   { flex-direction: column; }
   .sidebar     { display: none; }
   .stats-row   { grid-template-columns: 1fr 1fr; }
   .quick-actions { grid-template-columns: 1fr 1fr; }
