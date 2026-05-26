@@ -8,29 +8,7 @@
     <link rel="stylesheet" href="../../styles.css" />
   </head>
   <body data-page-id="analytics" data-page-title="Analytics" data-page-subtitle="Review your study progress and performance.">
-    <div id="view-app">
-      <div class="app-shell">
-        <Sidebar
-          :nav-items="navItems"
-          :active-nav="activeNav"
-          @update:activeNav="activeNav = $event"
-          :user-name="userName"
-          :initials="initials"
-          @logout="logout"
-        />
-
-        <main class="main">
-          <div class="greeting">
-            <h1>{{ pageTitle }}</h1>
-            <p>{{ pageSubtitle }}</p>
-          </div>
-
-          <div class="card">
-            <p>This is the Analytics view. Use the sidebar to switch pages.</p>
-          </div>
-        </main>
-      </div>
-    </div>
+    <div id="view-app"></div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="../../view-layout.js"></script>
