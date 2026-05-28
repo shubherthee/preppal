@@ -7,6 +7,7 @@ const rootRel = atViews ? '../../' : '';
 
 const navItems = [
   { id: 'dashboard', icon: '🏠', label: 'Dashboard', route: rootRel + 'dashboard.html' },
+  { id: 'admins', icon: '🔒', label: 'Admins', route: rootRel + 'views/admins/admins_index.html' },
   { id: 'ai', icon: '🤖', label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html' },
   { id: 'content', icon: '📚', label: 'Content Hub', route: rootRel + 'views/content/content_index.html' },
   { id: 'flashcards', icon: '🧠', label: 'Flashcards', route: rootRel + 'views/flashcards/flashcards_index.html' },
@@ -101,7 +102,20 @@ const appData = {
   bookingDate: '',
   bookingTime: '',
   bookingDuration: 1,
-  bookedSessions: []
+  bookedSessions: [],
+  // Admin Page State
+  adminActiveTab: 'tutors',
+  adminSearchQuery: '',
+  showAddTutorModal: false,
+  showEditTutorModal: false,
+  adminTutorForm: {
+    name: '',
+    rate: 30,
+    subjects: '',
+    status: 'available',
+    bio: ''
+  },
+  editingTutorId: null
 };
 
 // ── Sidebar component (fully self-contained template string) ──────────────
@@ -426,6 +440,272 @@ const pageTemplates = {
       </div>
     </div>
   `,
+  admins: `
+    <div class="greeting">
+      <h1>{{ pageTitle }}</h1>
+      <p>{{ pageSubtitle }}</p>
+    </div>
+
+    <!-- Admin Stats Cards -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">🧑‍🎓</div>
+          <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">+12%</span>
+        </div>
+        <div class="stat-val">1,280</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;">🧑‍🏫</div>
+          <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">+{{ tutors.length - 4 }} New</span>
+        </div>
+        <div class="stat-val">{{ tutors.length }}</div>
+        <div class="stat-label">Active Tutors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;">📅</div>
+          <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Active</span>
+        </div>
+        <div class="stat-val">{{ bookedSessions.length }}</div>
+        <div class="stat-label">Total Bookings</div>
+      </div>
+    </div>
+
+    <!-- Admin Content Tabs & Controls -->
+    <div class="admin-controls-card card">
+      <div class="admin-controls-header">
+        <div class="admin-tabs">
+          <button 
+            class="admin-tab-btn" 
+            :class="{ active: adminActiveTab === 'tutors' }" 
+            @click="adminActiveTab = 'tutors'"
+          >
+            🧑‍🏫 Tutor Directory
+          </button>
+          <button 
+            class="admin-tab-btn" 
+            :class="{ active: adminActiveTab === 'bookings' }" 
+            @click="adminActiveTab = 'bookings'"
+          >
+            🗓️ Session Bookings
+          </button>
+        </div>
+        
+        <!-- Search Input inside controls card -->
+        <div class="admin-search-wrap">
+          <span class="admin-search-icon">🔍</span>
+          <input 
+            type="text" 
+            v-model="adminSearchQuery" 
+            :placeholder="adminActiveTab === 'tutors' ? 'Search tutors by name or subject...' : 'Search bookings by student or tutor...'" 
+          />
+        </div>
+
+        <button 
+          v-if="adminActiveTab === 'tutors'" 
+          class="btn-primary admin-add-btn" 
+          @click="openAddTutorModal"
+        >
+          ➕ Add New Tutor
+        </button>
+      </div>
+
+      <!-- Tab Content: Tutors Directory -->
+      <div v-if="adminActiveTab === 'tutors'" class="admin-tab-content">
+        <div v-if="adminFilteredTutors.length === 0" class="admin-empty-state">
+          <div class="empty-state-icon">🔍</div>
+          <h3>No tutors match your search</h3>
+          <p>Try entering a different name or subject.</p>
+        </div>
+        <table v-else class="admin-table">
+          <thead>
+            <tr>
+              <th>Tutor Info</th>
+              <th>Subjects</th>
+              <th>Rate / Hour</th>
+              <th>Status</th>
+              <th>Rating</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="t in adminFilteredTutors" :key="t.id">
+              <td>
+                <div class="admin-tutor-cell">
+                  <img :src="rootRel + t.avatar" class="admin-tutor-avatar-img" />
+                  <div>
+                    <div class="admin-tutor-name-txt">{{ t.name }}</div>
+                    <div class="admin-tutor-bio-txt">{{ t.bio }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="admin-subject-badges">
+                  <span v-for="s in t.subjects" :key="s" class="subject-tag-xs">{{ s }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="admin-rate-txt">RM{{ t.rate }}/hr</span>
+              </td>
+              <td>
+                <span :class="['status-badge', t.status]" style="cursor: pointer;" @click="toggleTutorStatus(t)" title="Click to toggle availability">
+                  <span class="status-dot"></span>
+                  {{ t.status === 'available' ? 'Available' : 'Busy' }}
+                </span>
+              </td>
+              <td>
+                <span class="admin-rating-txt">⭐ {{ t.rating }}</span>
+              </td>
+              <td style="text-align: right;">
+                <div class="admin-action-btns">
+                  <button class="btn-edit" @click="openEditTutorModal(t)" title="Edit Tutor">✏️ Edit</button>
+                  <button class="btn-delete" @click="deleteTutor(t.id)" title="Delete Tutor">🗑️ Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content: Session Bookings -->
+      <div v-if="adminActiveTab === 'bookings'" class="admin-tab-content">
+        <div v-if="adminFilteredBookings.length === 0" class="admin-empty-state">
+          <div class="empty-state-icon">📅</div>
+          <h3>No bookings logs found</h3>
+          <p>Booked sessions will show up here.</p>
+        </div>
+        <table v-else class="admin-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Tutor</th>
+              <th>Date & Time</th>
+              <th>Duration</th>
+              <th>Total Cost</th>
+              <th>Status</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="b in adminFilteredBookings" :key="b.id">
+              <td>
+                <div class="admin-student-cell">
+                  <div class="admin-student-avatar">AC</div>
+                  <div>
+                    <div class="admin-student-name">Alex Chen</div>
+                    <div class="admin-student-role">Student</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="admin-tutor-mini-cell">
+                  <img :src="rootRel + b.tutor.avatar" class="admin-tutor-mini-img" />
+                  <span class="admin-tutor-mini-name">{{ b.tutor.name }}</span>
+                </div>
+              </td>
+              <td>
+                <div class="admin-datetime-cell">
+                  <div class="admin-date-txt">📅 {{ b.date }}</div>
+                  <div class="admin-time-txt">⏰ {{ b.time }}</div>
+                </div>
+              </td>
+              <td>{{ b.duration }} hr(s)</td>
+              <td>
+                <span class="admin-cost-txt">RM{{ b.totalCost }}</span>
+              </td>
+              <td>
+                <span class="session-status-badge">Confirmed</span>
+              </td>
+              <td style="text-align: right;">
+                <button class="btn-cancel" @click="deleteBooking(b.id)" title="Cancel Booking">❌ Cancel</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal: Add New Tutor -->
+    <div v-if="showAddTutorModal" class="booking-modal-overlay" @click.self="showAddTutorModal = false">
+      <div class="booking-modal card">
+        <div class="modal-header">
+          <h3>Add New Tutor</h3>
+          <button class="modal-close-btn" @click="showAddTutorModal = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label>Full Name</label>
+            <input type="text" v-model="adminTutorForm.name" placeholder="e.g. Dr. Sarah Jenkins" required />
+          </div>
+          <div class="field">
+            <label>Hourly Rate (RM/hr)</label>
+            <input type="number" v-model.number="adminTutorForm.rate" placeholder="e.g. 45" required />
+          </div>
+          <div class="field">
+            <label>Subjects (Comma-separated)</label>
+            <input type="text" v-model="adminTutorForm.subjects" placeholder="e.g. Mathematics, Physics" required />
+          </div>
+          <div class="field">
+            <label>Availability Status</label>
+            <select v-model="adminTutorForm.status" class="modal-select">
+              <option value="available">Available</option>
+              <option value="busy">Busy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Short Biography</label>
+            <textarea v-model="adminTutorForm.bio" placeholder="Provide background information..." class="modal-textarea" rows="3" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:10px; font-family:inherit; font-size:.95rem; outline:none; background:var(--bg); transition:border-color .2s; resize:vertical;"></textarea>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" style="width: auto; padding: 12px 24px;" @click="showAddTutorModal = false">Cancel</button>
+          <button class="btn-primary" style="width: auto; padding: 12px 24px;" @click="saveNewTutor">Add Tutor</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Edit Tutor -->
+    <div v-if="showEditTutorModal" class="booking-modal-overlay" @click.self="showEditTutorModal = false">
+      <div class="booking-modal card">
+        <div class="modal-header">
+          <h3>Edit Tutor Details</h3>
+          <button class="modal-close-btn" @click="showEditTutorModal = false">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="field">
+            <label>Full Name</label>
+            <input type="text" v-model="adminTutorForm.name" placeholder="e.g. Dr. Sarah Jenkins" required />
+          </div>
+          <div class="field">
+            <label>Hourly Rate (RM/hr)</label>
+            <input type="number" v-model.number="adminTutorForm.rate" placeholder="e.g. 45" required />
+          </div>
+          <div class="field">
+            <label>Subjects (Comma-separated)</label>
+            <input type="text" v-model="adminTutorForm.subjects" placeholder="e.g. Mathematics, Physics" required />
+          </div>
+          <div class="field">
+            <label>Availability Status</label>
+            <select v-model="adminTutorForm.status" class="modal-select">
+              <option value="available">Available</option>
+              <option value="busy">Busy</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Short Biography</label>
+            <textarea v-model="adminTutorForm.bio" placeholder="Provide background information..." class="modal-textarea" rows="3" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:10px; font-family:inherit; font-size:.95rem; outline:none; background:var(--bg); transition:border-color .2s; resize:vertical;"></textarea>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" style="width: auto; padding: 12px 24px;" @click="showEditTutorModal = false">Cancel</button>
+          <button class="btn-primary" style="width: auto; padding: 12px 24px;" @click="updateTutor">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  `
 };
 
 function mountViewApp() {
@@ -447,6 +727,26 @@ function mountViewApp() {
           const matchesSubject = this.tutorSelectedSubject === 'All' || t.subjects.includes(this.tutorSelectedSubject);
           const matchesStatus = this.tutorSelectedStatus === 'All' || t.status === this.tutorSelectedStatus;
           return matchesSearch && matchesSubject && matchesStatus;
+        });
+      },
+      adminFilteredTutors() {
+        if (!this.tutors) return [];
+        return this.tutors.filter(t => {
+          const query = (this.adminSearchQuery || '').trim().toLowerCase();
+          return !query ||
+            t.name.toLowerCase().includes(query) ||
+            t.subjects.some(s => s.toLowerCase().includes(query)) ||
+            t.bio.toLowerCase().includes(query);
+        });
+      },
+      adminFilteredBookings() {
+        if (!this.bookedSessions) return [];
+        return this.bookedSessions.filter(b => {
+          const query = (this.adminSearchQuery || '').trim().toLowerCase();
+          return !query ||
+            b.tutor.name.toLowerCase().includes(query) ||
+            b.tutor.subjects.some(s => s.toLowerCase().includes(query)) ||
+            b.date.includes(query);
         });
       }
     },
@@ -483,6 +783,87 @@ function mountViewApp() {
         }
 
         this.bookingTutor = null;
+      },
+      openAddTutorModal() {
+        this.adminTutorForm = { name: '', rate: 30, subjects: '', status: 'available', bio: '' };
+        this.showAddTutorModal = true;
+      },
+      saveNewTutor() {
+        const form = this.adminTutorForm;
+        if (!form.name || !form.subjects) {
+          alert('Please fill out Name and Subjects.');
+          return;
+        }
+        const subArray = form.subjects.split(',').map(s => s.trim()).filter(Boolean);
+        const avatars = [
+          'assets/tutor-sarah.png',
+          'assets/tutor-james.png',
+          'assets/tutor-emily.png',
+          'assets/tutor-david.png'
+        ];
+        const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+        const newTutor = {
+          id: 'tutor-' + Date.now(),
+          name: form.name,
+          avatar: randomAvatar,
+          status: form.status,
+          subjects: subArray.length ? subArray : ['General'],
+          rating: 5.0,
+          reviewsCount: 0,
+          rate: Number(form.rate) || 30,
+          bio: form.bio || 'Experienced academic tutor.'
+        };
+        this.tutors.push(newTutor);
+        this.showAddTutorModal = false;
+      },
+      openEditTutorModal(tutor) {
+        this.editingTutorId = tutor.id;
+        this.adminTutorForm = {
+          name: tutor.name,
+          rate: tutor.rate,
+          subjects: tutor.subjects.join(', '),
+          status: tutor.status,
+          bio: tutor.bio
+        };
+        this.showEditTutorModal = true;
+      },
+      updateTutor() {
+        const form = this.adminTutorForm;
+        const index = this.tutors.findIndex(t => t.id === this.editingTutorId);
+        if (index !== -1) {
+          if (!form.name || !form.subjects) {
+            alert('Please fill out Name and Subjects.');
+            return;
+          }
+          const subArray = form.subjects.split(',').map(s => s.trim()).filter(Boolean);
+          this.tutors[index].name = form.name;
+          this.tutors[index].rate = Number(form.rate) || 30;
+          this.tutors[index].subjects = subArray.length ? subArray : ['General'];
+          this.tutors[index].status = form.status;
+          this.tutors[index].bio = form.bio || 'Experienced academic tutor.';
+          this.showEditTutorModal = false;
+          this.editingTutorId = null;
+        }
+      },
+      deleteTutor(id) {
+        if (confirm('Are you sure you want to delete this tutor?')) {
+          this.tutors = this.tutors.filter(t => t.id !== id);
+        }
+      },
+      toggleTutorStatus(tutor) {
+        tutor.status = tutor.status === 'available' ? 'busy' : 'available';
+      },
+      deleteBooking(id) {
+        if (confirm('Are you sure you want to cancel this booking?')) {
+          const session = this.bookedSessions.find(b => b.id === id);
+          if (session) {
+            const tutorIndex = this.tutors.findIndex(t => t.id === session.tutor.id);
+            if (tutorIndex !== -1) {
+              this.tutors[tutorIndex].status = 'available';
+            }
+          }
+          this.bookedSessions = this.bookedSessions.filter(b => b.id !== id);
+        }
       }
     },
     template: `
