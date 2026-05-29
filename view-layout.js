@@ -440,6 +440,203 @@ const pageTemplates = {
       </div>
     </div>
   `,
+  planner: `
+<div class="topbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Search notes, quizzes, flashcards…" />
+  </div>
+  <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+  <div class="topbar-avatar">{{ initials }}</div>
+</div>
+
+<div class="greeting">
+  <h1>{{ pageTitle }}</h1>
+  <p>{{ pageSubtitle }}</p>
+</div>
+
+<div class="bottom-grid">
+
+  <div class="card">
+    <div class="section-title">📅 Study Planner</div>
+
+    <div class="activity-list">
+
+      <div class="activity-item">
+        <div class="act-icon">📘</div>
+        <div>
+          <div class="act-title">Mathematics Revision</div>
+          <div class="act-sub">Deadline: May 10</div>
+        </div>
+        <div class="act-time">Pending</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon">🧬</div>
+        <div>
+          <div class="act-title">Biology Assignment</div>
+          <div class="act-sub">Deadline: May 12</div>
+        </div>
+        <div class="act-time">In Progress</div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon">📝</div>
+        <div>
+          <div class="act-title">Chemistry Quiz Prep</div>
+          <div class="act-sub">Deadline: May 15</div>
+        </div>
+        <div class="act-time">Pending</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">🤖 AI Study Schedule</div>
+
+    <div class="upcoming-list">
+
+      <div class="upcoming-item">
+        <div>
+          <div class="upcoming-name">Mon–Tue</div>
+          <div class="upcoming-date">Math & Physics</div>
+        </div>
+        <span class="upcoming-badge">4h/day</span>
+      </div>
+
+      <div class="upcoming-item">
+        <div>
+          <div class="upcoming-name">Wed–Thu</div>
+          <div class="upcoming-date">Biology & Chemistry</div>
+        </div>
+        <span class="upcoming-badge">3.5h/day</span>
+      </div>
+
+      <div class="upcoming-item">
+        <div>
+          <div class="upcoming-name">Friday</div>
+          <div class="upcoming-date">Review & Practice</div>
+        </div>
+        <span class="upcoming-badge">5h</span>
+      </div>
+
+      <div class="upcoming-item">
+        <div>
+          <div class="upcoming-name">Weekend</div>
+          <div class="upcoming-date">Mock Tests</div>
+        </div>
+        <span class="upcoming-badge">3h</span>
+      </div>
+
+    </div>
+
+    <button class="btn-primary" style="margin-top:20px;">
+      Generate New Plan
+    </button>
+  </div>
+
+</div>
+`,
+analytics: `
+<div class="topbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" placeholder="Search notes, quizzes, flashcards…" />
+  </div>
+  <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+  <div class="topbar-avatar">{{ initials }}</div>
+</div>
+
+<div class="greeting">
+  <h1>{{ pageTitle }}</h1>
+  <p>{{ pageSubtitle }}</p>
+</div>
+
+<div class="stats-row">
+
+  <div class="stat-card">
+    <div class="stat-val">26.5 hrs</div>
+    <div class="stat-label">Total Study Time</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-val">92%</div>
+    <div class="stat-label">Average Quiz Score</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-val">85%</div>
+    <div class="stat-label">Weekly Goal Completion</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-val">12</div>
+    <div class="stat-label">Study Streak (Days)</div>
+  </div>
+
+</div>
+
+<div class="bottom-grid">
+
+  <div class="card">
+    <div class="section-title">💪 Strengths</div>
+
+    <div class="activity-list">
+
+      <div class="activity-item">
+        <div class="act-icon">🧪</div>
+        <div>
+          <div class="act-title">Chemistry</div>
+          <div class="act-sub">95% average quiz score</div>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon">➗</div>
+        <div>
+          <div class="act-title">Mathematics</div>
+          <div class="act-sub">Strong problem-solving skills</div>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon">🧬</div>
+        <div>
+          <div class="act-title">Biology</div>
+          <div class="act-sub">Excellent retention rate</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">🎯 Areas to Improve</div>
+
+    <div class="activity-list">
+
+      <div class="activity-item">
+        <div class="act-icon">📖</div>
+        <div>
+          <div class="act-title">History</div>
+          <div class="act-sub">Needs more active recall practice</div>
+        </div>
+      </div>
+
+      <div class="activity-item">
+        <div class="act-icon">⚛️</div>
+        <div>
+          <div class="act-title">Physics</div>
+          <div class="act-sub">Focus on application questions</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+`,
   admins: `
     <div class="greeting">
       <h1>{{ pageTitle }}</h1>
