@@ -15,6 +15,7 @@ const navItems = [
   { id: 'planner', icon: '🗓️', label: 'Planner', route: rootRel + 'views/planner/planner_index.html' },
   { id: 'analytics', icon: '📊', label: 'Analytics', route: rootRel + 'views/analytics/analytics_index.html' },
   { id: 'tutors', icon: '🧑‍🏫', label: 'Tutors', route: rootRel + 'views/tutors/tutors_index.html' },
+  { id: 'tracker', icon: '⏰', label: 'Exam Tracker', route: rootRel + 'views/tracker/tracker_index.html' },
 ];
 
 const appData = {
@@ -49,6 +50,27 @@ const appData = {
     { name: 'Essay Draft', date: 'Tomorrow · 11:00 AM', tag: 'Soon', dotColor: '#f59e0b', badgeBg: '#fff4db' },
     { name: 'Flashcards Review', date: 'Friday · 9:00 AM', tag: 'Plan', dotColor: '#1d4ed8', badgeBg: '#e0e7ff' },
   ],
+
+  contentItems: [
+    { id: 'c1', title: 'Machine Learning XAI', desc: '4 files • Updated 2 days ago', type: 'folder', icon: '📁', shared: true },
+    { id: 'c2', title: 'Theory of Computer Science', desc: 'PDF • 2.4 MB', type: 'file', icon: '📄', shared: false },
+    { id: 'c3', title: 'LIME Paper Summary', desc: 'AI Generated • Read time: 5m', type: 'summary', icon: '🤖', shared: true }
+  ],
+  trackerTasks: [
+    { id: 't1', title: 'Biology Quiz', date: 'May 3, 2026', time: '02:00 PM', colorClass: 'border-orange', badgeText: 'Tomorrow', badgeClass: 'badge-red' },
+    { id: 't2', title: 'History Essay Due', date: 'May 5, 2026', time: '11:59 PM', colorClass: 'border-blue', badgeText: '3 days left', badgeClass: 'badge-orange' },
+    { id: 't3', title: 'Math Final', date: 'May 8, 2026', time: '09:00 AM', colorClass: 'border-yellow', badgeText: '6 days left', badgeClass: 'badge-purple' }
+  ],
+  showAddTaskModal: false,
+  trackerCurrentView: 'List View',
+  newTaskForm: {
+    title: '',
+    type: 'Exam',
+    date: '',
+    time: '',
+    priority: 'priority-med'
+  },
+
   tutors: [
     {
       id: 'tutor-1',
@@ -637,6 +659,163 @@ analytics: `
 
 </div>
 `,
+  content: `
+      <div class="topbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search notes, folders, or AI summaries…" />
+        </div>
+        <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+        <div class="topbar-avatar">{{ initials }}</div>
+      </div>
+      
+      <div class="greeting content-actions-row" style="margin-bottom: 24px;">
+        <div>
+          <h1>{{ pageTitle }}</h1>
+          <p>{{ pageSubtitle }}</p>
+        </div>
+      </div>
+
+      <div class="upload-zone">
+        <div class="upload-icon">☁️</div>
+        <div class="upload-text">Drop files here to upload or click to browse</div>
+        <div class="upload-sub">Supports: PDF, DOCX, TXT, Links</div>
+      </div>
+
+      <div class="content-actions-row">
+        <div class="section-title" style="margin:0;">Recent Materials</div>
+        <button class="btn-secondary" style="padding: 6px 14px; font-size:.85rem;">Filter Options</button>
+      </div>
+
+      <div class="content-grid">
+        <div class="content-card" v-for="item in contentItems" :key="item.id">
+          <div class="content-header">
+            <span class="content-type-icon">{{ item.icon }}</span>
+            <span v-if="item.shared" class="badge-shared">Shared</span>
+          </div>
+          <div class="content-title">{{ item.title }}</div>
+          <div class="content-meta">{{ item.desc }}</div>
+          <div class="content-actions">
+            <button class="btn-secondary" style="padding: 4px 10px; font-size:.75rem;">AI Summary</button>
+            <button class="btn-secondary" style="padding: 4px 10px; font-size:.75rem;">Extract Terms</button>
+          </div>
+        </div>
+      </div>
+    `,
+
+tracker: `
+    <div class="topbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search exams, assignments…" />
+      </div>
+      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="topbar-avatar">{{ initials }}</div>
+    </div>
+
+    <div class="greeting content-actions-row" style="margin-bottom: 24px;">
+      <div>
+        <h1>Exam & Assignment Tracker ⏰</h1>
+        <p>Never miss a deadline</p>
+      </div>
+      <button class="btn-primary" @click="openAddTaskModal" style="width: auto; padding: 10px 24px; border-radius: 24px;">+ Add Exam</button>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
+      <div class="tracker-stat-card">
+        <div class="tracker-stat-header"><span>❕</span> Upcoming</div>
+        <div class="tracker-stat-val">3</div>
+      </div>
+      <div class="tracker-stat-card">
+        <div class="tracker-stat-header"><span>📅</span> This Week</div>
+        <div class="tracker-stat-val">2</div>
+      </div>
+      <div class="tracker-stat-card">
+        <div class="tracker-stat-header"><span>✅</span> Completed</div>
+        <div class="tracker-stat-val">8</div>
+      </div>
+      <div class="tracker-stat-card">
+        <div class="tracker-stat-header"><span>🕒</span> Overdue</div>
+        <div class="tracker-stat-val">0</div>
+      </div>
+    </div>
+
+    <div class="tracker-list-card">
+      <div class="tracker-list-title" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Upcoming Deadlines</span>
+        
+        <select v-model="trackerCurrentView" style="border:1px solid var(--border); border-radius:4px; padding:6px 12px; outline:none; font-family: inherit; font-size: .85rem;">
+          <option value="List View">List View</option>
+          <option value="Calendar View">Calendar View</option>
+        </select>
+      </div>
+      
+      <div v-if="trackerCurrentView === 'List View'">
+        <div class="tracker-item" v-for="task in trackerTasks" :key="task.id">
+          <div class="tracker-item-left" :class="task.colorClass">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <input type="checkbox" class="task-checkbox" v-model="task.completed">
+              <div class="tracker-item-title" :style="task.completed ? 'text-decoration: line-through; color: var(--muted);' : ''">{{ task.title }}</div>
+            </div>
+            <div class="tracker-item-meta" style="padding-left: 30px;">
+              <span>📅 {{ task.date }}</span>
+              <span>🕒 {{ task.time }}</span>
+            </div>
+            <div class="tracker-item-actions" style="padding-left: 30px;">
+              <button class="btn-pill-primary">Study Now</button>
+              <button class="btn-pill">Edit</button>
+              <button class="btn-pill">Set Reminder</button>
+            </div>
+          </div>
+          <div class="time-badge" :class="task.badgeClass">{{ task.badgeText }}</div>
+        </div>
+      </div>
+
+      <div v-if="trackerCurrentView === 'Calendar View'" style="padding: 40px; text-align: center; color: var(--muted);">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🗓️</div>
+        <h3>Calendar View Active</h3>
+        <p>This is where the monthly calendar grid will be rendered.</p>
+      </div>
+    </div>
+
+    <div v-if="showAddTaskModal" class="booking-modal-overlay" @click.self="closeAddTaskModal">
+      <div class="booking-modal card">
+        <div class="modal-header">
+          <h3>Add New Deadline</h3>
+          <button class="modal-close-btn" @click="closeAddTaskModal">×</button>
+        </div>
+        <div class="modal-body">
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: .85rem; font-weight: 600; color: var(--text);">Task Title</label>
+            <input type="text" v-model="newTaskForm.title" placeholder="e.g. Physics Lab Report" style="width: 100%; padding: 10px; margin-top: 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none;" />
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <label style="font-size: .85rem; font-weight: 600; color: var(--text);">Date</label>
+              <input type="date" v-model="newTaskForm.date" style="width: 100%; padding: 10px; margin-top: 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none;" />
+            </div>
+            <div>
+              <label style="font-size: .85rem; font-weight: 600; color: var(--text);">Time</label>
+              <input type="time" v-model="newTaskForm.time" style="width: 100%; padding: 10px; margin-top: 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none;" />
+            </div>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: .85rem; font-weight: 600; color: var(--text);">Priority</label>
+            <select v-model="newTaskForm.priority" style="width: 100%; padding: 10px; margin-top: 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none;">
+              <option value="priority-high">High (Urgent)</option>
+              <option value="priority-med">Medium (Standard)</option>
+              <option value="priority-low">Low (Flexible)</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+          <button class="btn-pill" @click="closeAddTaskModal">Cancel</button>
+          <button class="btn-pill-primary" @click="saveNewTask">Save Task</button>
+        </div>
+      </div>
+    </div>
+  `,
+
   admins: `
     <div class="greeting">
       <h1>{{ pageTitle }}</h1>
@@ -1061,6 +1240,46 @@ function mountViewApp() {
           }
           this.bookedSessions = this.bookedSessions.filter(b => b.id !== id);
         }
+      },
+      openAddTaskModal() {
+        this.showAddTaskModal = true;
+      },
+      closeAddTaskModal() {
+        this.showAddTaskModal = false;
+        // Reset the form when closed
+        this.newTaskForm = { title: '', type: 'Exam', date: '', time: '', priority: 'priority-med' };
+      },
+      saveNewTask() {
+        if (!this.newTaskForm.title || !this.newTaskForm.date) {
+          alert('Please enter a title and a date.');
+          return;
+        }
+
+        // Assign colors based on priority
+        let colorClass = 'border-blue';
+        let badgeClass = 'badge-purple';
+        
+        if (this.newTaskForm.priority === 'priority-high') {
+          colorClass = 'border-orange';
+          badgeClass = 'badge-red';
+        } else if (this.newTaskForm.priority === 'priority-med') {
+          colorClass = 'border-yellow';
+          badgeClass = 'badge-orange';
+        }
+
+        // Add the new task to the list
+        this.trackerTasks.push({
+          id: 't-' + Date.now(),
+          title: this.newTaskForm.title,
+          date: this.newTaskForm.date,
+          time: this.newTaskForm.time || '11:59 PM',
+          colorClass: colorClass,
+          badgeText: 'Just Added',
+          badgeClass: badgeClass,
+          completed: false
+        });
+
+        this.closeAddTaskModal();
       }
     },
     template: `
