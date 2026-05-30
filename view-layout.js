@@ -137,7 +137,53 @@ const appData = {
     status: 'available',
     bio: ''
   },
-  editingTutorId: null
+  editingTutorId: null,
+
+  currentUser: 'Alex Chen',
+
+  quizList: [
+    { id:1, title:'Biology — Cell Structure', subject:'Biology', topic:'Cells', difficulty:'Medium', visibility:'public', owner:'Alex Chen',
+      questions:[
+        { text:'What is the powerhouse of the cell?', choices:['Nucleus','Mitochondria','Ribosome','Golgi body'], correct:1 },
+        { text:'Which organelle contains DNA?', choices:['Mitochondria','Lysosome','Nucleus','Vacuole'], correct:2 },
+        { text:'What surrounds plant cells but not animal cells?', choices:['Cell membrane','Cell wall','Nucleus','Cytoplasm'], correct:1 },
+      ]
+    },
+    { id:2, title:'Algebra Basics', subject:'Mathematics', topic:'Algebra', difficulty:'Easy', visibility:'public', owner:'Sam Lee',
+      questions:[
+        { text:'Solve: 2x = 10', choices:['x=2','x=5','x=8','x=20'], correct:1 },
+        { text:'Slope of y = 3x + 2?', choices:['2','3','1','0'], correct:1 },
+      ]
+    },
+    { id:3, title:'My Private History Quiz', subject:'History', topic:'WW2', difficulty:'Hard', visibility:'private', owner:'Alex Chen',
+      questions:[{ text:'When did WW2 end?', choices:['1943','1944','1945','1946'], correct:2 }]
+    },
+  ],
+  quizTab: 'browse', quizSearch: '', quizFilterSubject: '', quizFilterTopic: '',
+  showQuizModal: false, editingQuiz: null,
+  quizForm: { title:'', subject:'', topic:'', difficulty:'Medium', visibility:'public', questions:[] },
+  takingQuiz: null, currentQ: 0, quizAnswers: {}, quizResults: false,
+
+  deckList: [
+    { id:1, title:'Biology Vocabulary', subject:'Biology', topic:'Cells', visibility:'public', owner:'Alex Chen',
+      cards:[
+        { q:'What is mitosis?', a:'Cell division producing two identical daughter cells' },
+        { q:'Define osmosis', a:'Movement of water through a semipermeable membrane' },
+        { q:'What is ATP?', a:'Adenosine triphosphate — the energy currency of cells' },
+        { q:'Define photosynthesis', a:'Process converting sunlight to glucose in plants' },
+      ]
+    },
+    { id:2, title:'Spanish Vocabulary', subject:'Languages', topic:'Spanish', visibility:'public', owner:'Sam Lee',
+      cards:[{ q:'Hello', a:'Hola' },{ q:'Goodbye', a:'Adiós' },{ q:'Thank you', a:'Gracias' }]
+    },
+    { id:3, title:'My Private Math Cards', subject:'Mathematics', topic:'Calculus', visibility:'private', owner:'Alex Chen',
+      cards:[{ q:'Derivative of x²?', a:'2x' },{ q:'Integral of 2x?', a:'x² + C' }]
+    },
+  ],
+  deckTab: 'browse', deckSearch: '', deckFilterSubject: '', deckFilterTopic: '',
+  showDeckModal: false, editingDeck: null,
+  deckForm: { title:'', subject:'', topic:'', visibility:'public', cards:[] },
+  playingDeck: null, currentCard: 0, cardFlipped: false, cardResults: {}, deckResults: false,
 };
 
 // ── Sidebar component (fully self-contained template string) ──────────────
@@ -250,28 +296,284 @@ const pageTemplates = {
     </div>
   `,
   quizzes: `
-    <div class="greeting">
-      <h1>{{ pageTitle }}</h1>
-      <p>{{ pageSubtitle }}</p>
+    <div class="page-header">
+      <div class="greeting" style="margin-bottom:0"><h1>{{pageTitle}}</h1><p>{{pageSubtitle}}</p></div>
+      <button class="btn-primary" style="width:auto;padding:10px 22px;white-space:nowrap" @click="openCreateQuiz">+ Create Quiz</button>
     </div>
-    <div class="section-title">Available Quizzes</div>
-    <div class="quick-actions">
-      <div class="qa-card" v-for="q in quizzes" :key="q.id">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-          <div>
-            <div style="font-weight:700;margin-bottom:6px;">{{ q.title }}</div>
-            <div style="font-size:.86rem;color:var(--muted);">{{ q.desc }} • {{ q.questions }} questions • {{ q.time }}</div>
+    <div class="tabs">
+      <div class="tab" :class="{active:quizTab==='browse'}" @click="quizTab='browse';takingQuiz=null;quizResults=false">Browse</div>
+      <div class="tab" :class="{active:quizTab==='my'}" @click="quizTab='my';takingQuiz=null;quizResults=false">My Quizzes</div>
+      <div class="tab" :class="{active:quizTab==='take'}" v-if="takingQuiz">Taking Quiz</div>
+    </div>
+
+    <template v-if="quizTab!=='take'">
+      <div class="filter-bar">
+        <input v-model="quizSearch" placeholder="Search by title, subject or topic…"/>
+        <select v-model="quizFilterSubject"><option value="">All subjects</option><option v-for="s in quizSubjects" :key="s">{{s}}</option></select>
+        <select v-model="quizFilterTopic"><option value="">All topics</option><option v-for="t in quizTopics" :key="t">{{t}}</option></select>
+      </div>
+      <div class="quiz-grid">
+        <div class="quiz-card" v-for="q in (quizTab==='my' ? myFilteredQuizzes : allFilteredQuizzes)" :key="q.id">
+          <div class="quiz-card-header">
+            <div>
+              <div class="quiz-title">{{q.title}}</div>
+              <div class="quiz-meta">{{q.subject}} · {{q.topic}} · {{q.questions.length}} questions</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+              <span class="badge" :class="q.visibility==='public'?'badge-public':'badge-private'">{{q.visibility}}</span>
+              <span class="badge" :class="'badge-'+q.difficulty.toLowerCase()">{{q.difficulty}}</span>
+            </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
-            <button class="btn-primary" style="width:auto;padding:8px 18px;" @click="startQuiz(q.id)">Start</button>
-            <div style="font-size:.78rem;color:var(--muted);">{{ q.difficulty }}</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">By {{q.owner}}</div>
+          <div class="quiz-card-footer">
+            <button class="btn-sm primary" @click="startQuizGame(q)">Start Quiz</button>
+            <div class="owner-actions" v-if="q.owner===currentUser">
+              <button class="btn-sm" @click="openEditQuiz(q)">Edit</button>
+              <button class="btn-sm" style="color:var(--rose)" @click="deleteQuiz(q.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" v-if="(quizTab==='my'?myFilteredQuizzes:allFilteredQuizzes).length===0">
+        <div style="font-size:3rem;margin-bottom:12px">✏️</div>
+        <div>No quizzes found. Adjust your filters or create a new quiz.</div>
+      </div>
+    </template>
+
+    <template v-if="quizTab==='take' && takingQuiz && !quizResults">
+      <div class="quiz-take-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{takingQuiz.title}}</span>
+          <button class="btn-sm" @click="quizTab='browse';takingQuiz=null">✕ Exit</button>
+        </div>
+        <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentQ+1)/takingQuiz.questions.length*100)+'%'}"></div></div>
+        <div class="question-num">Question {{currentQ+1}} of {{takingQuiz.questions.length}}</div>
+        <div class="question-text">{{takingQuiz.questions[currentQ].text}}</div>
+        <div class="choices-list">
+          <div class="choice-opt" v-for="(c,ci) in takingQuiz.questions[currentQ].choices" :key="ci"
+            :class="{selected:quizAnswers[currentQ]===ci}"
+            @click="quizAnswers[currentQ]=ci">{{c}}</div>
+        </div>
+        <div class="quiz-nav">
+          <button class="btn-sm" @click="currentQ--" :disabled="currentQ===0">← Previous</button>
+          <button class="btn-sm primary" v-if="currentQ<takingQuiz.questions.length-1" @click="currentQ++" :disabled="quizAnswers[currentQ]===undefined">Next →</button>
+          <button class="btn-sm primary" v-else @click="submitQuiz" :disabled="quizAnswers[currentQ]===undefined">Submit Quiz</button>
+        </div>
+      </div>
+    </template>
+
+    <template v-if="quizResults && takingQuiz">
+      <div class="quiz-take-wrap">
+        <div class="score-circle">
+          <div class="score-num">{{quizScore}}/{{takingQuiz.questions.length}}</div>
+          <div class="score-label">Score</div>
+        </div>
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:6px">
+            {{Math.round(quizScore/takingQuiz.questions.length*100)}}% — {{quizScore===takingQuiz.questions.length?'Perfect!':quizScore>=takingQuiz.questions.length*.7?'Great job!':'Keep practicing!'}}
+          </div>
+          <div style="color:var(--muted);font-size:.9rem">{{quizScore}} correct out of {{takingQuiz.questions.length}} questions</div>
+        </div>
+        <template v-if="quizWrongQuestions.length>0">
+          <div class="section-title">Review Wrong Answers</div>
+          <div class="review-item" v-for="q in quizWrongQuestions" :key="q.index">
+            <div class="review-q">{{q.text}}</div>
+            <div class="review-ans" style="color:var(--rose)">Your answer: {{q.choices[quizAnswers[q.index]]||'No answer'}}</div>
+            <div class="review-ans" style="color:#1D9E75;margin-top:2px">Correct: {{q.choices[q.correct]}}</div>
+          </div>
+        </template>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 All answers correct!</div>
+        <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
+          <button class="btn-sm" @click="startQuizGame(takingQuiz)">Retake</button>
+          <button class="btn-sm primary" @click="quizTab='browse';takingQuiz=null;quizResults=false">Back to Browse</button>
+        </div>
+      </div>
+    </template>
+
+    <div class="modal-overlay" v-if="showQuizModal" @click.self="showQuizModal=false">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>{{editingQuiz?'Edit Quiz':'Create New Quiz'}}</h3>
+          <button class="btn-sm" @click="showQuizModal=false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-field"><label>Title</label><input v-model="quizForm.title" placeholder="Quiz title"/></div>
+            <div class="form-field"><label>Subject</label><input v-model="quizForm.subject" placeholder="e.g. Biology"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>Topic</label><input v-model="quizForm.topic" placeholder="e.g. Cell Structure"/></div>
+            <div class="form-field"><label>Difficulty</label>
+              <select v-model="quizForm.difficulty"><option>Easy</option><option>Medium</option><option>Hard</option></select>
+            </div>
+          </div>
+          <div class="form-field"><label>Visibility</label>
+            <select v-model="quizForm.visibility">
+              <option value="public">Public — everyone can see and take it</option>
+              <option value="private">Private — only you can see it</option>
+            </select>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="section-title" style="margin-bottom:0">Questions</div>
+            <button class="btn-sm" @click="addQuizQuestion">+ Add Question</button>
+          </div>
+          <div class="question-block" v-for="(q,qi) in quizForm.questions" :key="qi">
+            <div class="question-block-header">
+              <span class="question-block-title">Question {{qi+1}}</span>
+              <button class="btn-sm" style="color:var(--rose)" @click="quizForm.questions.splice(qi,1)" v-if="quizForm.questions.length>1">Remove</button>
+            </div>
+            <div class="form-field"><input v-model="q.text" :placeholder="'Enter question '+(qi+1)"/></div>
+            <div style="font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:8px">Choices <span style="font-weight:400">(select the correct answer)</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="choice-row" v-for="(c,ci) in q.choices" :key="ci">
+                <input type="radio" class="correct-radio" :name="'q'+qi" :value="ci" v-model="q.correct"/>
+                <input type="text" v-model="q.choices[ci]" :placeholder="'Choice '+(ci+1)" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:DM Sans,sans-serif;font-size:.88rem;background:var(--surface);color:var(--text);outline:none"/>
+                <button class="btn-sm" style="padding:6px 10px" @click="q.choices.splice(ci,1)" v-if="q.choices.length>2">✕</button>
+              </div>
+            </div>
+            <button class="btn-sm" style="margin-top:8px" @click="q.choices.push('')" v-if="q.choices.length<6">+ Add choice</button>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-sm" @click="showQuizModal=false">Cancel</button>
+            <button class="btn-sm primary" @click="saveQuiz">{{editingQuiz?'Save Changes':'Create Quiz'}}</button>
           </div>
         </div>
       </div>
     </div>
-    <div style="margin-top:18px;" class="card">
-      <div class="section-title">Quiz History</div>
-      <p style="color:var(--muted);margin-top:8px;">No recent attempts yet — take a quiz to see progress here.</p>
+  `,
+  flashcards: `
+    <div class="page-header">
+      <div class="greeting" style="margin-bottom:0"><h1>{{pageTitle}}</h1><p>{{pageSubtitle}}</p></div>
+      <button class="btn-primary" style="width:auto;padding:10px 22px;white-space:nowrap" @click="openCreateDeck">+ Create Deck</button>
+    </div>
+    <div class="tabs">
+      <div class="tab" :class="{active:deckTab==='browse'}" @click="deckTab='browse';playingDeck=null;deckResults=false">Browse</div>
+      <div class="tab" :class="{active:deckTab==='my'}" @click="deckTab='my';playingDeck=null;deckResults=false">My Decks</div>
+      <div class="tab" :class="{active:deckTab==='play'}" v-if="playingDeck">Studying</div>
+    </div>
+
+    <template v-if="deckTab!=='play'">
+      <div class="filter-bar">
+        <input v-model="deckSearch" placeholder="Search by title, subject or topic…"/>
+        <select v-model="deckFilterSubject"><option value="">All subjects</option><option v-for="s in deckSubjects" :key="s">{{s}}</option></select>
+        <select v-model="deckFilterTopic"><option value="">All topics</option><option v-for="t in deckTopics" :key="t">{{t}}</option></select>
+      </div>
+      <div class="quiz-grid">
+        <div class="quiz-card" v-for="d in (deckTab==='my'?myFilteredDecks:allFilteredDecks)" :key="d.id">
+          <div class="quiz-card-header">
+            <div>
+              <div class="quiz-title">{{d.title}}</div>
+              <div class="quiz-meta">{{d.subject}} · {{d.topic}} · {{d.cards.length}} cards</div>
+            </div>
+            <span class="badge" :class="d.visibility==='public'?'badge-public':'badge-private'">{{d.visibility}}</span>
+          </div>
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">By {{d.owner}}</div>
+          <div class="quiz-card-footer">
+            <button class="btn-sm primary" @click="startDeck(d)">Study Deck</button>
+            <div class="owner-actions" v-if="d.owner===currentUser">
+              <button class="btn-sm" @click="openEditDeck(d)">Edit</button>
+              <button class="btn-sm" style="color:var(--rose)" @click="deleteDeck(d.id)">Delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" v-if="(deckTab==='my'?myFilteredDecks:allFilteredDecks).length===0">
+        <div style="font-size:3rem;margin-bottom:12px">🧠</div>
+        <div>No decks found. Create one to get started!</div>
+      </div>
+    </template>
+
+    <template v-if="deckTab==='play' && playingDeck && !deckResults">
+      <div class="quiz-take-wrap">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{playingDeck.title}}</span>
+          <button class="btn-sm" @click="deckTab='browse';playingDeck=null">✕ Exit</button>
+        </div>
+        <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentCard+1)/playingDeck.cards.length*100)+'%'}"></div></div>
+        <div class="question-num">Card {{currentCard+1}} of {{playingDeck.cards.length}}</div>
+        <div @click="cardFlipped=!cardFlipped" style="cursor:pointer;perspective:1000px;margin-bottom:20px">
+          <div :style="{transform:cardFlipped?'rotateY(180deg)':'rotateY(0deg)',transition:'transform .5s',transformStyle:'preserve-3d',position:'relative',minHeight:'200px'}">
+            <div class="card" style="position:absolute;width:100%;min-height:200px;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px">
+              <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Question</div>
+              <div style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text)">{{playingDeck.cards[currentCard].q}}</div>
+              <div style="margin-top:16px;font-size:.8rem;color:var(--muted)">Click to flip</div>
+            </div>
+            <div class="card" style="position:absolute;width:100%;min-height:200px;backface-visibility:hidden;transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px;background:var(--indigo-lt);border-color:var(--indigo)">
+              <div style="font-size:.72rem;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Answer</div>
+              <div style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text)">{{playingDeck.cards[currentCard].a}}</div>
+            </div>
+          </div>
+        </div>
+        <div v-if="cardFlipped" style="display:flex;gap:12px;justify-content:center">
+          <button class="btn-sm" style="flex:1;max-width:180px;padding:12px;color:var(--rose);border-color:var(--rose)" @click="markCard('wrong')">✗ Got it wrong</button>
+          <button class="btn-sm primary" style="flex:1;max-width:180px;padding:12px" @click="markCard('correct')">✓ Got it right</button>
+        </div>
+        <div v-else style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:8px">Flip the card then mark whether you got it right or wrong</div>
+      </div>
+    </template>
+
+    <template v-if="deckResults && playingDeck">
+      <div class="quiz-take-wrap">
+        <div class="score-circle">
+          <div class="score-num">{{deckCorrectCount}}/{{playingDeck.cards.length}}</div>
+          <div class="score-label">Correct</div>
+        </div>
+        <div style="text-align:center;margin-bottom:24px">
+          <div style="font-family:'Sora',sans-serif;font-size:1.3rem;font-weight:700;margin-bottom:6px">
+            {{Math.round(deckCorrectCount/playingDeck.cards.length*100)}}% — {{deckCorrectCount===playingDeck.cards.length?'Perfect!':deckCorrectCount>=playingDeck.cards.length*.7?'Great job!':'Keep reviewing!'}}
+          </div>
+          <div style="color:var(--muted);font-size:.9rem">{{deckCorrectCount}} correct · {{deckWrongCards.length}} to review</div>
+        </div>
+        <template v-if="deckWrongCards.length>0">
+          <div class="section-title">Cards to Review</div>
+          <div class="review-item" v-for="c in deckWrongCards" :key="c.index">
+            <div class="review-q">{{c.q}}</div>
+            <div class="review-ans" style="color:#1D9E75;margin-top:4px">{{c.a}}</div>
+          </div>
+        </template>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 You knew all the cards!</div>
+        <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
+          <button class="btn-sm" @click="startDeck(playingDeck)">Study Again</button>
+          <button class="btn-sm primary" @click="deckTab='browse';playingDeck=null;deckResults=false">Back to Browse</button>
+        </div>
+      </div>
+    </template>
+
+    <div class="modal-overlay" v-if="showDeckModal" @click.self="showDeckModal=false">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>{{editingDeck?'Edit Deck':'Create New Deck'}}</h3>
+          <button class="btn-sm" @click="showDeckModal=false">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-field"><label>Deck Title</label><input v-model="deckForm.title" placeholder="e.g. Biology Vocabulary"/></div>
+            <div class="form-field"><label>Subject</label><input v-model="deckForm.subject" placeholder="e.g. Biology"/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>Topic</label><input v-model="deckForm.topic" placeholder="e.g. Cell Biology"/></div>
+            <div class="form-field"><label>Visibility</label>
+              <select v-model="deckForm.visibility"><option value="public">Public</option><option value="private">Private</option></select>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div class="section-title" style="margin-bottom:0">Cards</div>
+            <button class="btn-sm" @click="deckForm.cards.push({q:'',a:''})">+ Add Card</button>
+          </div>
+          <div class="question-block" v-for="(c,ci) in deckForm.cards" :key="ci">
+            <div class="question-block-header">
+              <span class="question-block-title">Card {{ci+1}}</span>
+              <button class="btn-sm" style="color:var(--rose)" @click="deckForm.cards.splice(ci,1)" v-if="deckForm.cards.length>1">Remove</button>
+            </div>
+            <div class="form-field"><label>Question / Front</label><input v-model="c.q" placeholder="Enter question or term"/></div>
+            <div class="form-field"><label>Answer / Back</label><textarea v-model="c.a" placeholder="Enter answer or definition" rows="2" style="resize:vertical"></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-sm" @click="showDeckModal=false">Cancel</button>
+            <button class="btn-sm primary" @click="saveDeck">{{editingDeck?'Save Changes':'Create Deck'}}</button>
+          </div>
+        </div>
+      </div>
     </div>
   `,
   tutors: `
@@ -1124,11 +1426,115 @@ function mountViewApp() {
             b.tutor.subjects.some(s => s.toLowerCase().includes(query)) ||
             b.date.includes(query);
         });
-      }
+      },
+      allFilteredQuizzes() {
+        return (this.quizList||[]).filter(q => {
+          if (q.visibility==='private' && q.owner!==this.currentUser) return false;
+          const s=(this.quizSearch||'').toLowerCase();
+          if (s && !q.title.toLowerCase().includes(s) && !q.subject.toLowerCase().includes(s) && !q.topic.toLowerCase().includes(s)) return false;
+          if (this.quizFilterSubject && q.subject!==this.quizFilterSubject) return false;
+          if (this.quizFilterTopic && q.topic!==this.quizFilterTopic) return false;
+          return true;
+        });
+      },
+      myFilteredQuizzes() { return this.allFilteredQuizzes.filter(q=>q.owner===this.currentUser); },
+      quizSubjects() { return [...new Set((this.quizList||[]).map(q=>q.subject))]; },
+      quizTopics() { return [...new Set((this.quizList||[]).map(q=>q.topic))]; },
+      quizScore() {
+        if (!this.takingQuiz) return 0;
+        let c=0; this.takingQuiz.questions.forEach((q,i)=>{ if(this.quizAnswers[i]===q.correct) c++; }); return c;
+      },
+      quizWrongQuestions() {
+        if (!this.takingQuiz) return [];
+        return this.takingQuiz.questions.map((q,i)=>({...q,index:i})).filter(q=>this.quizAnswers[q.index]!==q.correct);
+      },
+      allFilteredDecks() {
+        return (this.deckList||[]).filter(d => {
+          if (d.visibility==='private' && d.owner!==this.currentUser) return false;
+          const s=(this.deckSearch||'').toLowerCase();
+          if (s && !d.title.toLowerCase().includes(s) && !d.subject.toLowerCase().includes(s) && !d.topic.toLowerCase().includes(s)) return false;
+          if (this.deckFilterSubject && d.subject!==this.deckFilterSubject) return false;
+          if (this.deckFilterTopic && d.topic!==this.deckFilterTopic) return false;
+          return true;
+        });
+      },
+      myFilteredDecks() { return this.allFilteredDecks.filter(d=>d.owner===this.currentUser); },
+      deckSubjects() { return [...new Set((this.deckList||[]).map(d=>d.subject))]; },
+      deckTopics() { return [...new Set((this.deckList||[]).map(d=>d.topic))]; },
+      deckCorrectCount() {
+        if (!this.playingDeck) return 0;
+        return this.playingDeck.cards.filter((_,i)=>this.cardResults[i]==='correct').length;
+      },
+      deckWrongCards() {
+        if (!this.playingDeck) return [];
+        return this.playingDeck.cards.map((c,i)=>({...c,index:i})).filter(c=>this.cardResults[c.index]==='wrong');
+      },
     },
     methods: {
       logout() { window.location.href = rootRel + 'index.html'; },
       startQuiz(id) { window.location.href = rootRel + 'views/quizzes/quiz.html#' + id; },
+
+      openCreateQuiz() {
+        this.editingQuiz = null;
+        this.quizForm = { title:'', subject:'', topic:'', difficulty:'Medium', visibility:'public', questions:[] };
+        this.addQuizQuestion();
+        this.showQuizModal = true;
+      },
+      openEditQuiz(quiz) {
+        this.editingQuiz = quiz;
+        this.quizForm = JSON.parse(JSON.stringify(quiz));
+        this.showQuizModal = true;
+      },
+      addQuizQuestion() { this.quizForm.questions.push({ text:'', choices:['','','',''], correct:0 }); },
+      saveQuiz() {
+        if (!this.quizForm.title || !this.quizForm.subject || !this.quizForm.questions.length) return;
+        if (this.editingQuiz) {
+          const idx = this.quizList.findIndex(q=>q.id===this.editingQuiz.id);
+          this.quizList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.quizForm)), id:this.editingQuiz.id, owner:this.editingQuiz.owner });
+        } else {
+          this.quizList.push({ ...JSON.parse(JSON.stringify(this.quizForm)), id:Date.now(), owner:this.currentUser });
+        }
+        this.showQuizModal = false;
+      },
+      deleteQuiz(id) { const i=this.quizList.findIndex(q=>q.id===id); if(i>=0) this.quizList.splice(i,1); },
+      startQuizGame(quiz) {
+        this.takingQuiz = quiz; this.currentQ = 0; this.quizAnswers = {}; this.quizResults = false; this.quizTab = 'take';
+      },
+      submitQuiz() { this.quizResults = true; },
+
+      openCreateDeck() {
+        this.editingDeck = null;
+        this.deckForm = { title:'', subject:'', topic:'', visibility:'public', cards:[] };
+        this.deckForm.cards.push({ q:'', a:'' });
+        this.showDeckModal = true;
+      },
+      openEditDeck(deck) {
+        this.editingDeck = deck;
+        this.deckForm = JSON.parse(JSON.stringify(deck));
+        this.showDeckModal = true;
+      },
+      saveDeck() {
+        if (!this.deckForm.title || !this.deckForm.subject || !this.deckForm.cards.length) return;
+        if (this.editingDeck) {
+          const idx = this.deckList.findIndex(d=>d.id===this.editingDeck.id);
+          this.deckList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.deckForm)), id:this.editingDeck.id, owner:this.editingDeck.owner });
+        } else {
+          this.deckList.push({ ...JSON.parse(JSON.stringify(this.deckForm)), id:Date.now(), owner:this.currentUser });
+        }
+        this.showDeckModal = false;
+      },
+      deleteDeck(id) { const i=this.deckList.findIndex(d=>d.id===id); if(i>=0) this.deckList.splice(i,1); },
+      startDeck(deck) {
+        this.playingDeck = deck; this.currentCard = 0; this.cardFlipped = false; this.cardResults = {}; this.deckResults = false; this.deckTab = 'play';
+      },
+      markCard(result) {
+        this.cardResults[this.currentCard] = result;
+        if (this.currentCard < this.playingDeck.cards.length - 1) {
+          this.currentCard++; this.cardFlipped = false;
+        } else {
+          this.deckResults = true;
+        }
+      },
       openBookingModal(tutor) {
         this.bookingTutor = tutor;
         const tomorrow = new Date();
