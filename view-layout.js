@@ -61,7 +61,8 @@ const appData = {
     { id: 't2', title: 'History Essay Due', date: 'May 5, 2026', time: '11:59 PM', colorClass: 'border-blue', badgeText: '3 days left', badgeClass: 'badge-orange' },
     { id: 't3', title: 'Math Final', date: 'May 8, 2026', time: '09:00 AM', colorClass: 'border-yellow', badgeText: '6 days left', badgeClass: 'badge-purple' }
   ],
-  showAddTaskModal: false,
+
+trackerCurrentView: 'List View',
   trackerCurrentView: 'List View',
   newTaskForm: {
     title: '',
@@ -70,6 +71,17 @@ const appData = {
     time: '',
     priority: 'priority-med'
   },
+  showAddTaskModal: false,
+  plannerTasks: [],
+  analyticsRecords: [],
+
+  plannerLoading: false,
+  analyticsLoading: false,
+
+  plannerError: '',
+  analyticsError: '',
+  plannerSearch: '',
+  analyticsSearch: '',
 
   tutors: [
     {
@@ -764,202 +776,351 @@ const pageTemplates = {
       </div>
     </div>
   `,
-  planner: `
-<div class="topbar">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search notes, quizzes, flashcards…" />
+planner: `
+  <div class="topbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        v-model="plannerSearch"
+        placeholder="Search study plans, deadlines, or status..."
+      />
+    </div>
+    <div class="notif-btn">●<span class="notif-dot"></span></div>
+    <div class="topbar-avatar">{{ initials }}</div>
   </div>
-  <div class="notif-btn">🔔<span class="notif-dot"></span></div>
-  <div class="topbar-avatar">{{ initials }}</div>
-</div>
 
-<div class="greeting">
-  <h1>{{ pageTitle }}</h1>
-  <p>{{ pageSubtitle }}</p>
-</div>
+  <div class="greeting">
+    <h1>{{ pageTitle }}</h1>
+    <p>{{ pageSubtitle }}</p>
+  </div>
 
-<div class="bottom-grid">
-
-  <div class="card">
-    <div class="section-title">📅 Study Planner</div>
-
-    <div class="activity-list">
-
-      <div class="activity-item">
-        <div class="act-icon">📘</div>
-        <div>
-          <div class="act-title">Mathematics Revision</div>
-          <div class="act-sub">Deadline: May 10</div>
-        </div>
-        <div class="act-time">Pending</div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:#eef7ff;color:#1c5db6;">01</div>
+        <span class="stat-badge" style="background:#eef7ff;color:#1c5db6;">Fetched</span>
       </div>
+      <div class="stat-val">{{ plannerTasks.length }}</div>
+      <div class="stat-label">Loaded Study Plans</div>
+    </div>
 
-      <div class="activity-item">
-        <div class="act-icon">🧬</div>
-        <div>
-          <div class="act-title">Biology Assignment</div>
-          <div class="act-sub">Deadline: May 12</div>
-        </div>
-        <div class="act-time">In Progress</div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:#fff4e6;color:#b25f11;">02</div>
+        <span class="stat-badge" style="background:#fff4e6;color:#b25f11;">Weekly</span>
       </div>
+      <div class="stat-val">12 hrs</div>
+      <div class="stat-label">Available Study Hours</div>
+    </div>
 
-      <div class="activity-item">
-        <div class="act-icon">📝</div>
-        <div>
-          <div class="act-title">Chemistry Quiz Prep</div>
-          <div class="act-sub">Deadline: May 15</div>
-        </div>
-        <div class="act-time">Pending</div>
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:#edf7f0;color:#1f7a4c;">03</div>
+        <span class="stat-badge" style="background:#edf7f0;color:#1f7a4c;">Ready</span>
       </div>
-
+      <div class="stat-val">4</div>
+      <div class="stat-label">Uploaded Materials</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-title">🤖 AI Study Schedule</div>
-
-    <div class="upcoming-list">
-
-      <div class="upcoming-item">
+  <div class="bottom-grid">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
         <div>
-          <div class="upcoming-name">Mon–Tue</div>
-          <div class="upcoming-date">Math & Physics</div>
+          <div class="section-title" style="margin-bottom:4px;">Study Plan Tasks</div>
+          <p style="color:var(--muted);font-size:.9rem;margin:0;">
+            Data is loaded asynchronously from data/planner.json using the Fetch API.
+          </p>
         </div>
-        <span class="upcoming-badge">4h/day</span>
+        <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="fetchPlannerData">
+          Refresh
+        </button>
       </div>
 
-      <div class="upcoming-item">
-        <div>
-          <div class="upcoming-name">Wed–Thu</div>
-          <div class="upcoming-date">Biology & Chemistry</div>
-        </div>
-        <span class="upcoming-badge">3.5h/day</span>
+      <div v-if="plannerLoading" class="card" style="box-shadow:none;background:#f8fafc;">
+        Loading study planner data...
       </div>
 
-      <div class="upcoming-item">
-        <div>
-          <div class="upcoming-name">Friday</div>
-          <div class="upcoming-date">Review & Practice</div>
-        </div>
-        <span class="upcoming-badge">5h</span>
+      <div v-if="plannerError" class="error-msg">
+        {{ plannerError }}
       </div>
 
-      <div class="upcoming-item">
-        <div>
-          <div class="upcoming-name">Weekend</div>
-          <div class="upcoming-date">Mock Tests</div>
+      <div class="activity-list" v-if="!plannerLoading && filteredPlannerTasks.length">
+        <div class="activity-item" v-for="task in filteredPlannerTasks" :key="task.plan_id || task.task">
+          <div class="act-icon" style="background:#eef7ff;color:#1c5db6;">
+            {{ (task.task || 'P').charAt(0) }}
+          </div>
+          <div>
+            <div class="act-title">{{ task.task }}</div>
+            <div class="act-sub">Deadline: {{ task.deadline }}</div>
+          </div>
+          <div class="act-time">{{ task.status }}</div>
         </div>
-        <span class="upcoming-badge">3h</span>
       </div>
 
+      <div v-if="!plannerLoading && !plannerError && !filteredPlannerTasks.length" class="card" style="box-shadow:none;background:#f8fafc;">
+        No matching study plans found.
+      </div>
     </div>
 
-    <button class="btn-primary" style="margin-top:20px;">
-      Generate New Plan
-    </button>
+    <div class="card">
+      <div class="section-title">Resource Materials</div>
+      <p style="color:var(--muted);margin-bottom:18px;">
+        Upload lecture notes, slides, PDFs, and references needed for the study plan.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-name">Biology_Chapter_5.pdf</div>
+        <div class="qa-desc">Used for quiz preparation and flashcard review</div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-name">Math_Formula_Notes.docx</div>
+        <div class="qa-desc">Attached to the mathematics revision goal</div>
+      </div>
+
+      <button class="btn-primary" style="margin-top:18px;">Upload Material</button>
+    </div>
   </div>
 
-</div>
+  <div class="bottom-grid" style="margin-top:24px;">
+    <div class="card">
+      <div class="section-title">AI Recommended Schedule</div>
+
+      <div class="upcoming-list">
+        <div class="upcoming-item">
+          <span class="upcoming-dot" style="background:#1d4ed8;"></span>
+          <div>
+            <div class="upcoming-name">Monday - Tuesday</div>
+            <div class="upcoming-date">Mathematics and Physics revision</div>
+          </div>
+          <span class="upcoming-badge" style="background:#e0e7ff;color:#1d4ed8;">4h/day</span>
+        </div>
+
+        <div class="upcoming-item">
+          <span class="upcoming-dot" style="background:#16a34a;"></span>
+          <div>
+            <div class="upcoming-name">Wednesday - Thursday</div>
+            <div class="upcoming-date">Biology and Chemistry study session</div>
+          </div>
+          <span class="upcoming-badge" style="background:#dcfce7;color:#15803d;">3.5h/day</span>
+        </div>
+
+        <div class="upcoming-item">
+          <span class="upcoming-dot" style="background:#f59e0b;"></span>
+          <div>
+            <div class="upcoming-name">Friday</div>
+            <div class="upcoming-date">Review weak topics and complete practice quiz</div>
+          </div>
+          <span class="upcoming-badge" style="background:#fff4db;color:#b25f11;">5h</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="margin-top:20px;">Generate Study Schedule</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Reminders and Tutor Session</div>
+
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="act-icon" style="background:#eef7ff;color:#1c5db6;">R1</div>
+          <div>
+            <div class="act-title">Biology Review Reminder</div>
+            <div class="act-sub">Today at 8:00 PM</div>
+          </div>
+          <div class="act-time">Active</div>
+        </div>
+
+        <div class="activity-item">
+          <div class="act-icon" style="background:#fff4e6;color:#b25f11;">R2</div>
+          <div>
+            <div class="act-title">Math Practice Reminder</div>
+            <div class="act-sub">Tomorrow at 10:00 AM</div>
+          </div>
+          <div class="act-time">Set</div>
+        </div>
+
+        <div class="activity-item">
+          <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;">TS</div>
+          <div>
+            <div class="act-title">Tutor Session</div>
+            <div class="act-sub">Book a tutor based on the selected study plan</div>
+          </div>
+          <button class="btn-primary" style="width:auto;padding:8px 14px;" onclick="window.location.href='../../views/tutors/tutors_index.html'">
+            Book
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 `,
 analytics: `
-<div class="topbar">
-  <div class="search-wrap">
-    <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search notes, quizzes, flashcards…" />
-  </div>
-  <div class="notif-btn">🔔<span class="notif-dot"></span></div>
-  <div class="topbar-avatar">{{ initials }}</div>
-</div>
-
-<div class="greeting">
-  <h1>{{ pageTitle }}</h1>
-  <p>{{ pageSubtitle }}</p>
-</div>
-
-<div class="stats-row">
-
-  <div class="stat-card">
-    <div class="stat-val">26.5 hrs</div>
-    <div class="stat-label">Total Study Time</div>
+  <div class="topbar">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input
+        type="text"
+        v-model="analyticsSearch"
+        placeholder="Search subjects, scores, mastery, or study time..."
+      />
+    </div>
+    <div class="notif-btn">●<span class="notif-dot"></span></div>
+    <div class="topbar-avatar">{{ initials }}</div>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-val">92%</div>
-    <div class="stat-label">Average Quiz Score</div>
+  <div class="greeting">
+    <h1>{{ pageTitle }}</h1>
+    <p>{{ pageSubtitle }}</p>
   </div>
 
-  <div class="stat-card">
-    <div class="stat-val">85%</div>
-    <div class="stat-label">Weekly Goal Completion</div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-val">12</div>
-    <div class="stat-label">Study Streak (Days)</div>
-  </div>
-
-</div>
-
-<div class="bottom-grid">
-
-  <div class="card">
-    <div class="section-title">💪 Strengths</div>
-
-    <div class="activity-list">
-
-      <div class="activity-item">
-        <div class="act-icon">🧪</div>
-        <div>
-          <div class="act-title">Chemistry</div>
-          <div class="act-sub">95% average quiz score</div>
-        </div>
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val">
+        {{ analyticsRecords.reduce((total, r) => total + Number(r.study_minutes || r.total_minutes_studied || 0), 0) }} min
       </div>
+      <div class="stat-label">Total Study Time</div>
+    </div>
 
-      <div class="activity-item">
-        <div class="act-icon">➗</div>
-        <div>
-          <div class="act-title">Mathematics</div>
-          <div class="act-sub">Strong problem-solving skills</div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-val">
+        {{ analyticsRecords.length ? Math.round(analyticsRecords.reduce((total, r) => total + Number(r.quiz_score || r.average_quiz_score || 0), 0) / analyticsRecords.length) : 0 }}%
       </div>
+      <div class="stat-label">Average Quiz Score</div>
+    </div>
 
-      <div class="activity-item">
-        <div class="act-icon">🧬</div>
-        <div>
-          <div class="act-title">Biology</div>
-          <div class="act-sub">Excellent retention rate</div>
-        </div>
+    <div class="stat-card">
+      <div class="stat-val">
+        {{ analyticsRecords.length ? Math.round(analyticsRecords.reduce((total, r) => total + Number(r.mastery || 0), 0) / analyticsRecords.length) : 0 }}%
       </div>
+      <div class="stat-label">Average Mastery</div>
+    </div>
 
+    <div class="stat-card">
+      <div class="stat-val">
+        {{ analyticsRecords.filter(r => r.skill_gap === true || r.mastery < 70 || r.quiz_score < 70 || r.average_quiz_score < 70).length }}
+      </div>
+      <div class="stat-label">Skill Gaps Found</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="section-title">🎯 Areas to Improve</div>
-
-    <div class="activity-list">
-
-      <div class="activity-item">
-        <div class="act-icon">📖</div>
+  <div class="bottom-grid">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
         <div>
-          <div class="act-title">History</div>
-          <div class="act-sub">Needs more active recall practice</div>
+          <div class="section-title" style="margin-bottom:4px;">Performance Dashboard</div>
+          <p style="color:var(--muted);font-size:.9rem;margin:0;">
+            Data is loaded asynchronously from data/analytics.json using the Fetch API.
+          </p>
+        </div>
+        <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="fetchAnalyticsData">
+          Refresh
+        </button>
+      </div>
+
+      <div v-if="analyticsLoading" class="card" style="box-shadow:none;background:#f8fafc;">
+        Loading analytics data...
+      </div>
+
+      <div v-if="analyticsError" class="error-msg">
+        {{ analyticsError }}
+      </div>
+
+      <div class="activity-list" v-if="!analyticsLoading && filteredAnalyticsRecords.length">
+        <div class="activity-item" v-for="record in filteredAnalyticsRecords" :key="record.id || record.subject || record.date">
+          <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;">
+            {{ (record.subject || record.date || 'A').charAt(0) }}
+          </div>
+          <div>
+            <div class="act-title">{{ record.subject || record.date }}</div>
+            <div class="act-sub">
+              Study Time: {{ record.study_minutes || record.total_minutes_studied }} minutes ·
+              Modules: {{ record.modules_completed || 0 }} ·
+              Mastery: {{ record.mastery || 'N/A' }}%
+            </div>
+          </div>
+          <div class="act-time">{{ record.quiz_score || record.average_quiz_score }}%</div>
         </div>
       </div>
 
-      <div class="activity-item">
-        <div class="act-icon">⚛️</div>
-        <div>
-          <div class="act-title">Physics</div>
-          <div class="act-sub">Focus on application questions</div>
+      <div v-if="!analyticsLoading && !analyticsError && !filteredAnalyticsRecords.length" class="card" style="box-shadow:none;background:#f8fafc;">
+        No matching analytics records found.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Mastery Tracking</div>
+
+      <div class="qa-card" v-for="record in filteredAnalyticsRecords" :key="'mastery-' + (record.id || record.subject || record.date)">
+        <div class="qa-name">{{ record.subject || record.date }}</div>
+        <div class="qa-desc">
+          Mastery Level: {{ record.mastery || 'N/A' }}% · Quiz Score: {{ record.quiz_score || record.average_quiz_score }}%
         </div>
       </div>
-
     </div>
   </div>
 
-</div>
+  <div class="bottom-grid" style="margin-top:24px;">
+    <div class="card">
+      <div class="section-title">AI Skill Gap Analysis</div>
+
+      <div class="activity-list">
+        <div
+          class="activity-item"
+          v-for="record in analyticsRecords.filter(r => r.skill_gap === true || r.mastery < 70 || r.quiz_score < 70 || r.average_quiz_score < 70)"
+          :key="'gap-' + (record.id || record.subject || record.date)"
+        >
+          <div class="act-icon" style="background:#ffe5e1;color:#d92d20;">
+            {{ (record.subject || record.date || 'G').substring(0,2).toUpperCase() }}
+          </div>
+          <div>
+            <div class="act-title">{{ record.subject || record.date }}</div>
+            <div class="act-sub">Needs additional practice based on current performance data</div>
+          </div>
+          <div class="act-time">Weak</div>
+        </div>
+
+        <div
+          v-if="!analyticsRecords.filter(r => r.skill_gap === true || r.mastery < 70 || r.quiz_score < 70 || r.average_quiz_score < 70).length"
+          class="card"
+          style="box-shadow:none;background:#f8fafc;"
+        >
+          No major skill gaps detected.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Tutor Review and Feedback</div>
+
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="act-icon" style="background:#eef7ff;color:#1c5db6;">FB</div>
+          <div>
+            <div class="act-title">Tutor Feedback</div>
+            <div class="act-sub">Focus more on subjects with mastery below 70%.</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;">RA</div>
+          <div>
+            <div class="act-title">Recommended Action</div>
+            <div class="act-sub">Book one tutor session for the weakest subject this week.</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="act-icon" style="background:#fff4e6;color:#b25f11;">NS</div>
+          <div>
+            <div class="act-title">Next Step</div>
+            <div class="act-sub">Revise weak topics before the next quiz attempt.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 `,
   content: `
       <div class="topbar">
@@ -1395,6 +1556,42 @@ function mountViewApp() {
     components: { SidebarComponent },
     data() { return appData; },
     computed: {
+      filteredPlannerTasks() {
+        const query = (this.plannerSearch || '').trim().toLowerCase();
+
+        return (this.plannerTasks || []).filter(task => {
+          const taskName = (task.task || '').toLowerCase();
+          const deadline = (task.deadline || '').toLowerCase();
+          const status = (task.status || '').toLowerCase();
+
+          return !query ||
+            taskName.includes(query) ||
+            deadline.includes(query) ||
+            status.includes(query);
+        });
+      },
+
+      filteredAnalyticsRecords() {
+        const query = (this.analyticsSearch || '').trim().toLowerCase();
+
+        return (this.analyticsRecords || []).filter(record => {
+          const subject = (record.subject || record.date || '').toLowerCase();
+          const mastery = String(record.mastery || '');
+          const quizScore = String(record.quiz_score || record.average_quiz_score || '');
+          const studyMinutes = String(record.study_minutes || record.total_minutes_studied || '');
+          const modules = String(record.modules_completed || '');
+          const skillGap = String(record.skill_gap || '').toLowerCase();
+
+          return !query ||
+            subject.includes(query) ||
+            mastery.includes(query) ||
+            quizScore.includes(query) ||
+            studyMinutes.includes(query) ||
+            modules.includes(query) ||
+            skillGap.includes(query);
+        });
+      },
+
       filteredTutors() {
         if (!this.tutors) return [];
         return this.tutors.filter(t => {
@@ -1471,6 +1668,47 @@ function mountViewApp() {
       },
     },
     methods: {
+      async fetchPlannerData() {
+        this.plannerLoading = true;
+        this.plannerError = '';
+
+        try {
+          const response = await fetch(rootRel + 'data/planner.json');
+
+          if (!response.ok) {
+            throw new Error('Failed to load planner.json');
+          }
+
+          this.plannerTasks = await response.json();
+          console.log('Planner data loaded:', this.plannerTasks);
+        } catch (error) {
+          this.plannerError = 'Unable to load planner data. Check that data/planner.json exists.';
+          console.error(error);
+        } finally {
+          this.plannerLoading = false;
+        }
+      },
+
+      async fetchAnalyticsData() {
+        this.analyticsLoading = true;
+        this.analyticsError = '';
+
+        try {
+          const response = await fetch(rootRel + 'data/analytics.json');
+
+          if (!response.ok) {
+            throw new Error('Failed to load analytics.json');
+          }
+
+          this.analyticsRecords = await response.json();
+          console.log('Analytics data loaded:', this.analyticsRecords);
+        } catch (error) {
+          this.analyticsError = 'Unable to load analytics data. Check that data/analytics.json exists.';
+          console.error(error);
+        } finally {
+          this.analyticsLoading = false;
+        }
+      },
       logout() { window.location.href = rootRel + 'index.html'; },
       startQuiz(id) { window.location.href = rootRel + 'views/quizzes/quiz.html#' + id; },
 
@@ -1688,6 +1926,17 @@ function mountViewApp() {
         this.closeAddTaskModal();
       }
     },
+    mounted() {
+
+  if (this.activeNav === 'planner') {
+    this.fetchPlannerData();
+  }
+
+  if (this.activeNav === 'analytics') {
+    this.fetchAnalyticsData();
+  }
+
+},
     template: `
       <div class="app-shell">
         <sidebar-component

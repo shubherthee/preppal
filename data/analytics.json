@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "user_id": 101,
+    "subject": "Biology",
+    "date": "2026-05-01",
+    "study_minutes": 420,
+    "total_minutes_studied": 420,
+    "modules_completed": 6,
+    "mastery": 88,
+    "quiz_score": 91,
+    "average_quiz_score": 91,
+    "skill_gap": false
+  },
+  {
+    "id": 2,
+    "user_id": 101,
+    "subject": "Chemistry",
+    "date": "2026-05-02",
+    "study_minutes": 390,
+    "total_minutes_studied": 390,
+    "modules_completed": 5,
+    "mastery": 92,
+    "quiz_score": 94,
+    "average_quiz_score": 94,
+    "skill_gap": false
+  },
+  {
+    "id": 3,
+    "user_id": 101,
+    "subject": "Physics",
+    "date": "2026-05-03",
+    "study_minutes": 240,
+    "total_minutes_studied": 240,
+    "modules_completed": 3,
+    "mastery": 63,
+    "quiz_score": 68,
+    "average_quiz_score": 68,
+    "skill_gap": true
+  },
+  {
+    "id": 4,
+    "user_id": 101,
+    "subject": "History",
+    "date": "2026-05-04",
+    "study_minutes": 180,
+    "total_minutes_studied": 180,
+    "modules_completed": 2,
+    "mastery": 57,
+    "quiz_score": 61,
+    "average_quiz_score": 61,
+    "skill_gap": true
+  }
+]
