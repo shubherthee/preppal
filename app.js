@@ -28,6 +28,30 @@ createApp({
       this.loading = true;
       setTimeout(() => {
         this.loading = false;
+        
+        // Sync profile email in localStorage on successful login
+        const defaultProfile = {
+          name: 'Alex Chen',
+          email: this.email,
+          role: 'Student',
+          initials: 'AC',
+          bio: 'A passionate student eager to learn and improve skills.',
+          avatarBg: 'linear-gradient(135deg, var(--indigo), var(--mint))'
+        };
+
+        const stored = localStorage.getItem('preppal_profile');
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored);
+            parsed.email = this.email;
+            localStorage.setItem('preppal_profile', JSON.stringify(parsed));
+          } catch (e) {
+            localStorage.setItem('preppal_profile', JSON.stringify(defaultProfile));
+          }
+        } else {
+          localStorage.setItem('preppal_profile', JSON.stringify(defaultProfile));
+        }
+
         window.location.href = 'dashboard.html';
       }, 900);
     },

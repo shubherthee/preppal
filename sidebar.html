@@ -25,12 +25,15 @@
     </div>
 
     <div class="sidebar-user">
-      <div class="avatar">{{ initials }}</div>
-      <div>
-        <div class="user-name">{{ userName }}</div>
-        <div class="user-role">Student</div>
+      <div class="avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
+      <div style="flex: 1; min-width: 0;">
+        <div class="user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ userName }}</div>
+        <div class="user-role">{{ userRole || 'Student' }}</div>
       </div>
-      <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+      <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+        <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile">⚙</button>
+        <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+      </div>
     </div>
   </aside>
 </template>

@@ -18,13 +18,63 @@ const navItems = [
   { id: 'tracker', icon: '⏰', label: 'Exam Tracker', route: rootRel + 'views/tracker/tracker_index.html' },
 ];
 
+const defaultProfile = {
+  name: 'Alex Chen',
+  email: 'alex@school.edu',
+  role: 'Student',
+  initials: 'AC',
+  bio: 'A passionate student eager to learn and improve skills.',
+  avatarBg: 'linear-gradient(135deg, var(--indigo), var(--mint))'
+};
+
+function getStoredProfile() {
+  const stored = localStorage.getItem('preppal_profile');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch (e) {
+      console.error('Error loading profile:', e);
+    }
+  }
+  return defaultProfile;
+}
+
+function getInitials(name) {
+  if (!name) return '??';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+const activeProfile = getStoredProfile();
+
 const appData = {
   pageTitle, pageSubtitle,
   activeNav: pageId,
   navItems,
   rootRel,
-  userName: 'Alex Chen',
-  initials: 'AC',
+  userName: activeProfile.name,
+  userEmail: activeProfile.email,
+  userRole: activeProfile.role || 'Student',
+  initials: activeProfile.initials || 'AC',
+  userBio: activeProfile.bio || '',
+  userAvatarBg: activeProfile.avatarBg || 'linear-gradient(135deg, var(--indigo), var(--mint))',
+
+  // Temp form fields
+  tempName: activeProfile.name,
+  tempEmail: activeProfile.email,
+  tempRole: activeProfile.role || 'Student',
+  tempPassword: '',
+  tempBio: activeProfile.bio || '',
+  tempAvatarBg: activeProfile.avatarBg || 'linear-gradient(135deg, var(--indigo), var(--mint))',
+  avatarPresets: [
+    { name: 'Indigo Mint', gradient: 'linear-gradient(135deg, var(--indigo), var(--mint))' },
+    { name: 'Sunset Gold', gradient: 'linear-gradient(135deg, var(--rose), var(--amber))' },
+    { name: 'Ocean Breeze', gradient: 'linear-gradient(135deg, var(--indigo-dk), var(--sky))' },
+    { name: 'Royal Lavender', gradient: 'linear-gradient(135deg, #8A2BE2, #FF69B4)' },
+    { name: 'Emerald Forest', gradient: 'linear-gradient(135deg, #11998e, #38ef7d)' },
+    { name: 'Deep Space', gradient: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)' },
+  ],
   stats: [
     { icon: '📈', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
     { icon: '🧠', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
@@ -200,8 +250,8 @@ trackerCurrentView: 'List View',
 
 // ── Sidebar component (fully self-contained template string) ──────────────
 const SidebarComponent = {
-  props: ['navItems', 'activeNav', 'userName', 'initials'],
-  emits: ['update:activeNav', 'logout'],
+  props: ['navItems', 'activeNav', 'userName', 'initials', 'userAvatarBg', 'userRole'],
+  emits: ['update:activeNav', 'logout', 'goToProfile'],
   template: `
     <aside class="sidebar">
       <div class="sidebar-brand">
@@ -225,12 +275,15 @@ const SidebarComponent = {
         <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
       </div>
       <div class="sidebar-user">
-        <div class="avatar">{{ initials }}</div>
-        <div>
-          <div class="user-name">{{ userName }}</div>
-          <div class="user-role">Student</div>
+        <div class="avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
+        <div style="flex: 1; min-width: 0;">
+          <div class="user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ userName }}</div>
+          <div class="user-role">{{ userRole || 'Student' }}</div>
         </div>
-        <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+        <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
+          <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile">⚙</button>
+          <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+        </div>
       </div>
     </aside>
   `,
@@ -254,7 +307,7 @@ const pageTemplates = {
         <input type="text" placeholder="Search notes, quizzes, flashcards…" />
       </div>
       <div class="notif-btn">🔔<span class="notif-dot"></span></div>
-      <div class="topbar-avatar">{{ initials }}</div>
+      <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
     <div class="greeting">
       <h1>{{ pageTitle }}</h1>
@@ -732,7 +785,7 @@ const pageTemplates = {
           <img :src="rootRel + bookingTutor.avatar" class="modal-tutor-avatar" />
           <div>
             <div class="modal-tutor-name">{{ bookingTutor.name }}</div>
-            <div class="modal-tutor-rate">\${{ bookingTutor.rate }}/hr · Study Session</div>
+            <div class="modal-tutor-rate">RM{{ bookingTutor.rate }}/hr · Study Session</div>
           </div>
         </div>
         <div class="modal-body">
@@ -756,7 +809,7 @@ const pageTemplates = {
           <div class="cost-summary">
             <div class="cost-row">
               <span>Rate</span>
-              <span>\${{ bookingTutor.rate }} / hr</span>
+              <span>RM{{ bookingTutor.rate }} / hr</span>
             </div>
             <div class="cost-row">
               <span>Duration</span>
@@ -765,7 +818,7 @@ const pageTemplates = {
             <hr class="cost-divider" />
             <div class="cost-row total-row">
               <span>Total Cost</span>
-              <span class="total-price">\${{ bookingTutor.rate * bookingDuration }}</span>
+              <span class="total-price">RM{{ bookingTutor.rate * bookingDuration }}</span>
             </div>
           </div>
         </div>
@@ -787,7 +840,7 @@ planner: `
       />
     </div>
     <div class="notif-btn">●<span class="notif-dot"></span></div>
-    <div class="topbar-avatar">{{ initials }}</div>
+    <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
   </div>
 
   <div class="greeting">
@@ -967,7 +1020,7 @@ analytics: `
       />
     </div>
     <div class="notif-btn">●<span class="notif-dot"></span></div>
-    <div class="topbar-avatar">{{ initials }}</div>
+    <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
   </div>
 
   <div class="greeting">
@@ -1129,7 +1182,7 @@ analytics: `
           <input type="text" placeholder="Search notes, folders, or AI summaries…" />
         </div>
         <div class="notif-btn">🔔<span class="notif-dot"></span></div>
-        <div class="topbar-avatar">{{ initials }}</div>
+        <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
       </div>
       
       <div class="greeting content-actions-row" style="margin-bottom: 24px;">
@@ -1173,7 +1226,7 @@ tracker: `
         <input type="text" placeholder="Search exams, assignments…" />
       </div>
       <div class="notif-btn">🔔<span class="notif-dot"></span></div>
-      <div class="topbar-avatar">{{ initials }}</div>
+      <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
 
     <div class="greeting content-actions-row" style="margin-bottom: 24px;">
@@ -1542,6 +1595,91 @@ tracker: `
           <button class="btn-secondary" style="width: auto; padding: 12px 24px;" @click="showEditTutorModal = false">Cancel</button>
           <button class="btn-primary" style="width: auto; padding: 12px 24px;" @click="updateTutor">Save Changes</button>
         </div>
+    </div>
+  `,
+  profile: `
+    <div class="greeting">
+      <h1>{{ pageTitle }}</h1>
+      <p>{{ pageSubtitle }}</p>
+    </div>
+
+    <div class="profile-grid">
+      <!-- Profile Preview Column -->
+      <div class="card" style="padding: 28px; display: flex; flex-direction: column; align-items: center; text-align: center; height: fit-content; position: sticky; top: 20px;">
+        <div class="avatar-preview" :style="{ background: tempAvatarBg }">
+          {{ computedInitials }}
+        </div>
+        <h2 style="font-family: 'Sora', sans-serif; font-size: 1.35rem; font-weight: 700; color: var(--text); margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; width: 100%; white-space: nowrap;">{{ tempName || 'Your Name' }}</h2>
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--indigo); background: var(--indigo-lt); padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;">
+          {{ tempRole }}
+        </div>
+        <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+          <span>📧</span> {{ tempEmail || 'email@school.edu' }}
+        </div>
+        <hr style="border: none; border-top: 1px solid var(--border); width: 100%; margin-bottom: 20px;" />
+        <div style="text-align: left; width: 100%;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Biography</div>
+          <p style="font-size: 0.88rem; color: var(--muted); line-height: 1.5; font-style: italic; overflow-wrap: break-word;">
+            {{ tempBio || 'No biography written yet. Tell us a bit about yourself!' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Edit Profile Form Column -->
+      <div class="card" style="padding: 28px;">
+        <div class="section-title" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+          <span>👤</span> Profile Settings
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div class="field" style="margin-bottom: 0;">
+            <label>Full Name</label>
+            <input type="text" v-model="tempName" placeholder="Alex Chen" required />
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>Email Address</label>
+            <input type="email" v-model="tempEmail" placeholder="alex@school.edu" required />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div class="field" style="margin-bottom: 0;">
+            <label>Change Password (Optional)</label>
+            <input type="password" v-model="tempPassword" placeholder="••••••••" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom: 24px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px;">
+            <label style="margin-bottom: 0;">Biography</label>
+            <span style="font-size: 0.72rem; color: (tempBio || '').length > 150 ? 'var(--rose)' : 'var(--muted)'; font-weight: 500;">
+              {{ (tempBio || '').length }} / 150
+            </span>
+          </div>
+          <textarea v-model="tempBio" placeholder="Tell us about yourself..." class="modal-textarea" rows="3" style="width:100%; border:1.5px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-family:inherit; font-size:.95rem; outline:none; background:var(--bg); transition:border-color .2s; resize:vertical;" maxlength="150"></textarea>
+        </div>
+
+        <div style="margin-bottom: 28px;">
+          <label style="display: block; font-size: .82rem; font-weight: 600; color: var(--text); margin-bottom: 10px; letter-spacing: .02em;">Avatar Background Gradient</label>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+            <div v-for="preset in avatarPresets" :key="preset.name"
+                 @click="tempAvatarBg = preset.gradient"
+                 class="avatar-preset-bubble"
+                 :class="{ active: tempAvatarBg === preset.gradient }"
+                 :style="{ background: preset.gradient }"
+                 :title="preset.name">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px;">
+          <button class="btn-secondary" style="width: auto; padding: 12px 24px;" @click="resetForm">
+            Reset Fields
+          </button>
+          <button class="btn-primary" style="width: auto; padding: 12px 24px;" @click="saveProfileChanges">
+            Save Profile
+          </button>
+        </div>
       </div>
     </div>
   `
@@ -1665,6 +1803,9 @@ function mountViewApp() {
       deckWrongCards() {
         if (!this.playingDeck) return [];
         return this.playingDeck.cards.map((c,i)=>({...c,index:i})).filter(c=>this.cardResults[c.index]==='wrong');
+      },
+      computedInitials() {
+        return getInitials(this.tempName);
       },
     },
     methods: {
@@ -1924,6 +2065,55 @@ function mountViewApp() {
         });
 
         this.closeAddTaskModal();
+      },
+      goToProfile() {
+        window.location.href = this.rootRel + 'views/profile/profile_index.html';
+      },
+      saveProfileChanges() {
+        if (!this.tempName.trim()) {
+          alert('Full Name cannot be empty.');
+          return;
+        }
+        if (!this.tempEmail.trim() || !this.tempEmail.includes('@')) {
+          alert('Please enter a valid email address.');
+          return;
+        }
+
+        const updatedProfile = {
+          name: this.tempName,
+          email: this.tempEmail,
+          role: this.tempRole,
+          initials: getInitials(this.tempName),
+          bio: this.tempBio,
+          avatarBg: this.tempAvatarBg
+        };
+
+        localStorage.setItem('preppal_profile', JSON.stringify(updatedProfile));
+
+        // Update the app state
+        this.userName = updatedProfile.name;
+        this.userEmail = updatedProfile.email;
+        this.userRole = updatedProfile.role;
+        this.initials = updatedProfile.initials;
+        this.userBio = updatedProfile.bio;
+        this.userAvatarBg = updatedProfile.avatarBg;
+
+        if (this.tempPassword) {
+          localStorage.setItem('preppal_password', this.tempPassword);
+          this.tempPassword = '';
+          alert('Profile and password updated successfully!');
+        } else {
+          alert('Profile updated successfully!');
+        }
+      },
+      resetForm() {
+        const currentProfile = getStoredProfile();
+        this.tempName = currentProfile.name;
+        this.tempEmail = currentProfile.email;
+        this.tempRole = currentProfile.role;
+        this.tempBio = currentProfile.bio;
+        this.tempAvatarBg = currentProfile.avatarBg;
+        this.tempPassword = '';
       }
     },
     mounted() {
@@ -1944,7 +2134,10 @@ function mountViewApp() {
           :active-nav="activeNav"
           :user-name="userName"
           :initials="initials"
+          :user-avatar-bg="userAvatarBg"
+          :user-role="userRole"
           @logout="logout"
+          @goToProfile="goToProfile"
         />
         <main class="main">
           ${mainTemplate}
