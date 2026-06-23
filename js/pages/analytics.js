@@ -5,244 +5,539 @@
   const api = PrepPalAPI;
 
   const template = `
-    <div class="topbar">
-      <div class="search-wrap">
-        <span class="search-icon"></span>
+    <style>
+      /* Spacious UI Inspiration Style Overrides */
+      .app-shell {
+        background: linear-gradient(135deg, #f8f7fd 0%, #f1edf9 100%) !important;
+      }
+      
+      .main {
+        padding: 36px !important;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Clean, Rounded Typography */
+      h1 {
+        font-family: 'Sora', sans-serif !important;
+        font-weight: 700 !important;
+        color: #2e265c !important;
+        letter-spacing: -0.7px;
+        font-size: 2.2rem;
+      }
+      h2, .section-title {
+        font-family: 'Sora', sans-serif !important;
+        font-weight: 700 !important;
+        color: #2e265c !important;
+        font-size: 1.25rem;
+        margin-bottom: 4px;
+      }
+      p {
+        font-family: 'DM Sans', sans-serif !important;
+        color: #7b7597 !important;
+        font-size: 0.9rem;
+      }
+
+      /* Premium Rounded Cards (Inspiration-Spec) */
+      .card {
+        background: #ffffff !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        border-radius: 28px !important;
+        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important;
+        padding: 28px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 45px rgba(124, 58, 237, 0.06) !important;
+      }
+
+      /* Topbar Search and Notification Bubble buttons */
+      .circle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.04) !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .circle-btn:hover {
+        background: #f4efff !important;
+        border-color: #d8c8ff !important;
+        transform: scale(1.05);
+      }
+
+      /* Custom Form Inputs */
+      input, select, textarea {
+        border: 1px solid #e5e0f9 !important;
+        background: #fdfcff !important;
+        border-radius: 14px !important;
+        outline: none !important;
+        color: #2e265c !important;
+        padding: 10px 14px !important;
+        font-family: inherit !important;
+        font-size: 0.9rem !important;
+        transition: all 0.2s ease !important;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: #7c3aed !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12) !important;
+        background: #ffffff !important;
+      }
+
+      /* Premium Buttons */
+      .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        padding: 12px 28px !important;
+        box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer !important;
+        width: auto !important;
+      }
+      .btn-primary:hover {
+        transform: scale(1.05) translateY(-2px) !important;
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.3) !important;
+      }
+      .btn-secondary {
+        background: #f3f0ff !important;
+        border: 2px solid #e9e3ff !important;
+        color: #7c3aed !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        padding: 10px 26px !important;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer !important;
+      }
+      .btn-secondary:hover {
+        background: #eae5ff !important;
+        border-color: #d8cdff !important;
+        transform: scale(1.05) translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08) !important;
+      }
+
+      /* Inspiration-style Rounded List Rows (Pills) */
+      .pill-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+      }
+      
+      /* Alternating pastel theme card row styles */
+      .pill-row-mint {
+        background: #e8f7f4 !important;
+        color: #1f5e52 !important;
+        border-color: rgba(170, 227, 215, 0.3) !important;
+      }
+      .pill-row-mint:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
+        border-color: #aae3d7 !important;
+      }
+      .pill-row-lavender {
+        background: #f4f0ff !important;
+        color: #4f3b8c !important;
+        border-color: rgba(216, 200, 255, 0.3) !important;
+      }
+      .pill-row-lavender:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
+        border-color: #d8c8ff !important;
+      }
+
+      /* Round Arrow Buttons */
+      .arrow-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        border: none !important;
+        color: #7c3aed !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        padding: 0 !important;
+      }
+      .arrow-btn:hover {
+        transform: scale(1.15) translateY(-1px) !important;
+        background: #7c3aed !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2) !important;
+      }
+
+      /* Growing plant mastery bars */
+      .mastery-grow-bar {
+        background: #efeefc;
+        height: 8px;
+        border-radius: 4px;
+        width: 100%;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .mastery-fill {
+        height: 100%;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .badge-status {
+        display: inline-block !important;
+        padding: 4px 10px !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+        line-height: 1.2 !important;
+      }
+      .status-completed {
+        background: #e8f7f4 !important;
+        color: #1f5e52 !important;
+        border: 1px solid rgba(170, 227, 215, 0.4) !important;
+      }
+      .status-pending {
+        background: #fffbeb !important;
+        color: #b45309 !important;
+        border: 1px solid rgba(253, 230, 138, 0.4) !important;
+      }
+      .status-inprogress {
+        background: #eff6ff !important;
+        color: #1d4ed8 !important;
+        border: 1px solid rgba(191, 219, 254, 0.4) !important;
+      }
+      .status-scheduled {
+        background: #faf5ff !important;
+        color: #6b21a8 !important;
+        border: 1px solid rgba(233, 213, 255, 0.4) !important;
+      }
+    </style>
+
+    <!-- Topbar Navigation Header -->
+    <div class="topbar" style="margin-bottom: 28px;">
+      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius:24px; box-shadow:0 4px 16px rgba(124,58,237,0.02);">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
         <input
           type="text"
           v-model="analyticsSearch"
           placeholder="Search subjects, scores, mastery, or study time..."
+          style="border:none !important; background:transparent !important; box-shadow:none !important; padding:4px 8px !important;"
         />
       </div>
-      <div class="notif-btn">●<span class="notif-dot" v-if="skillGaps.length"></span></div>
-      <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--indigo), var(--mint))">{{ initials }}</div>
-    </div>
-
-    <div class="greeting">
-      <h1>{{ pageTitle }}</h1>
-      <p>{{ pageSubtitle }}</p>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val">{{ totalStudyMinutes }} min</div>
-        <div class="stat-label">Total Study Time</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-val">{{ averageQuizScore }}%</div>
-        <div class="stat-label">Average Quiz Score</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-val">{{ averageMastery }}%</div>
-        <div class="stat-label">Average Mastery</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-val" :style="{ color: skillGaps.length > 0 ? 'var(--rose)' : 'inherit' }">{{ skillGaps.length }}</div>
-        <div class="stat-label">Skill Gaps Found</div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="circle-btn" style="position:relative;" title="Reminders Alert">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" v-if="skillGaps.length" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #ff6b7a; border: 1.5px solid #ffffff;"></span>
+        </div>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, #7c3aed, #c084fc); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
       </div>
     </div>
 
-    <div class="bottom-grid">
-      <!-- Performance Dashboard -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
-          <div>
-            <div class="section-title" style="margin-bottom:4px;">Performance Dashboard</div>
-            <p style="color:var(--muted);font-size:.9rem;margin:0;">
-              Your academic tracking logs (integrated with real quiz and flashcard history).
-            </p>
-          </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="showLogForm = !showLogForm">
-              {{ showLogForm ? 'Close Form' : '+ Log Study Session' }}
-            </button>
-            <button class="btn-primary" style="width:auto;padding:8px 16px;background:var(--border);color:var(--text)" @click="loadAnalyticsData">
-              Refresh
-            </button>
-          </div>
-        </div>
-
-        <!-- Log Study Session Form -->
-        <div v-if="showLogForm" class="card" style="box-shadow:none;background:#f8fafc;border:1px solid var(--border);margin-bottom:16px;padding:16px;">
-          <h3 style="margin-top:0;margin-bottom:12px;font-size:1rem;">Log Study Session</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Subject</label>
-              <input type="text" v-model="newLog.subject" placeholder="e.g. Organic Chemistry" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Date</label>
-              <input type="date" v-model="newLog.date" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Study Minutes</label>
-              <input type="number" v-model.number="newLog.study_minutes" placeholder="60" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Modules Completed</label>
-              <input type="number" v-model.number="newLog.modules_completed" placeholder="1" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Mastery Level (%)</label>
-              <input type="number" v-model.number="newLog.mastery" placeholder="e.g. 80" min="0" max="100" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Quiz Score (%, Optional)</label>
-              <input type="number" v-model.number="newLog.quiz_score" placeholder="e.g. 85" min="0" max="100" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-          </div>
-          <div style="text-align:right;">
-            <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="logSession">Save Session Log</button>
-          </div>
-        </div>
-
-        <div v-if="analyticsLoading" class="card" style="box-shadow:none;background:#f8fafc;">
-          Loading analytics data...
-        </div>
-
-        <div v-if="errorMsg" class="error-msg">
-          {{ errorMsg }}
-        </div>
-
-        <div class="activity-list" v-if="!analyticsLoading && filteredAnalyticsRecords.length">
-          <div class="activity-item" v-for="record in filteredAnalyticsRecords" :key="record.id">
-            <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;">
-              {{ (record.subject || 'A').charAt(0) }}
-            </div>
-            <div>
-              <div class="act-title" style="font-weight:600;">{{ record.subject }}</div>
-              <div class="act-sub">
-                Study Time: {{ record.study_minutes }} minutes ·
-                Modules: {{ record.modules_completed }} ·
-                Mastery: {{ record.mastery }}%
-              </div>
-            </div>
-            <div class="act-time" style="font-weight:700;font-size:1.1rem;color:var(--indigo-dk)">
-              {{ record.quiz_score !== null && record.quiz_score !== undefined ? record.quiz_score + '%' : 'N/A' }}
-            </div>
-          </div>
-        </div>
-
-        <div v-if="!analyticsLoading && !errorMsg && !filteredAnalyticsRecords.length" class="card" style="box-shadow:none;background:#f8fafc;text-align:center;padding:24px;">
-          No matching performance logs found.
-        </div>
+    <!-- Header Progress / Greeting Block -->
+    <div class="card user-progress-card" style="margin-bottom: 28px; padding: 28px; border-radius: 28px; background: #ffffff !important; display: flex; align-items: center; gap: 20px; border: 1px solid rgba(225, 220, 245, 0.6) !important;">
+      <div class="user-avatar-large" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #c084fc); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; flex-shrink: 0; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.15);">
+        {{ initials }}
       </div>
-
-      <!-- Mastery Tracking -->
-      <div class="card">
-        <div class="section-title">Mastery Tracking</div>
-        <p style="color:var(--muted);font-size:.9rem;margin-bottom:18px;">
-          A summary of your skill profiles and subject competence levels.
-        </p>
-
-        <div class="activity-list" v-if="analyticsRecords.length">
-          <div class="qa-card" v-for="record in analyticsRecords.slice(0, 5)" :key="'mastery-' + record.id" style="margin-bottom:10px;padding:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-              <div class="qa-name" style="font-weight:600;">{{ record.subject }}</div>
-              <span class="badge" :style="{
-                background: record.mastery >= 85 ? '#edf7f0' : record.mastery >= 70 ? '#eef7ff' : '#ffe5e1',
-                color: record.mastery >= 85 ? '#1f7a4c' : record.mastery >= 70 ? '#1c5db6' : '#d92d20'
-              }">{{ record.mastery }}% Mastery</span>
-            </div>
-            <div style="background:var(--border);height:6px;border-radius:3px;width:100%;overflow:hidden;">
-              <div :style="{ 
-                width: record.mastery + '%',
-                background: record.mastery >= 85 ? 'var(--mint)' : record.mastery >= 70 ? 'var(--indigo)' : 'var(--rose)'
-              }" style="height:100%"></div>
-            </div>
+      <div style="flex-grow: 1; min-width: 0;">
+        <div style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 700; color: #2e265c;">Hello {{ userName.split(' ')[0] }}!</div>
+        <p style="margin: 4px 0 12px 0; font-size: 0.9rem; color: #7b7597;">Here is your study progress overview for today.</p>
+        <!-- Thin, Rounded Progress Meter -->
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div style="flex-grow: 1; min-width: 150px; height: 6px; background: #f0ecfa; border-radius: 3px; overflow: hidden;">
+            <div :style="{ width: averageMastery + '%' }" style="height: 100%; background: linear-gradient(90deg, #a78bfa 0%, #7c3aed 100%); border-radius: 3px; transition: width 0.8s ease;"></div>
           </div>
-        </div>
-        <div v-else style="text-align:center;color:var(--muted);padding:16px;background:#f8fafc;border-radius:6px;">
-          Log study sessions to view skill mastery breakdown.
+          <span style="font-size: 0.82rem; font-weight: 700; color: #7c3aed; white-space: nowrap;">{{ averageMastery }}% overall mastery</span>
         </div>
       </div>
     </div>
 
-    <div class="bottom-grid" style="margin-top:24px;">
-      <!-- AI Skill Gap Analysis -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;">
-          <div class="section-title" style="margin:0;">AI Skill Gap Analysis</div>
-          <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="runSkillGapAnalysis" :disabled="analyzingSkillGaps">
-            {{ analyzingSkillGaps ? 'Analyzing...' : 'Run Skill Gap Analysis' }}
-          </button>
+    <!-- Stats row -->
+    <div class="stats-row" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      
+      <!-- Card 1: Study Time -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02);">
+        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
-        <p style="color:var(--muted);font-size:.9rem;margin-bottom:18px;">
-          Queries the OpenRouter AI service to highlight weaker subjects based on recent performance scores and maps out actionable steps.
-        </p>
-
-        <div v-if="analyzingSkillGaps" style="text-align:center;padding:24px;background:#f8fafc;border-radius:6px;">
-           AI is searching for scoring anomalies and learning weak points...
-        </div>
-
-        <div class="activity-list" v-else-if="skillGaps.length">
-          <div
-            class="activity-item"
-            v-for="(gap, idx) in skillGaps"
-            :key="'gap-' + idx"
-            style="margin-bottom:8px;"
-          >
-            <div class="act-icon" :style="{ 
-              background: gap.status === 'Critical' ? '#ffe5e1' : '#fff4db',
-              color: gap.status === 'Critical' ? '#d92d20' : '#b25f11'
-            }">
-              {{ gap.subject.substring(0,2).toUpperCase() }}
-            </div>
-            <div style="flex-grow:1;padding-right:12px;">
-              <div class="act-title" style="font-weight:600;">{{ gap.subject }}</div>
-              <div class="act-sub">{{ gap.reason }}</div>
-            </div>
-            <div class="act-time" :style="{
-              color: gap.status === 'Critical' ? 'var(--rose)' : 'var(--amber)'
-            }" style="font-weight:700;">{{ gap.status }}</div>
-          </div>
-        </div>
-        <div v-else style="text-align:center;color:var(--muted);padding:24px;background:#f8fafc;border-radius:6px;">
-          No skill gaps loaded. Run analysis to identify learning gaps with AI.
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1; font-family:'Sora',sans-serif;">{{ totalStudyMinutes }}m</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Study Time</div>
         </div>
       </div>
 
-      <!-- Tutor Review and Feedback -->
-      <div class="card">
-        <div class="section-title">Tutor Review & Study Tips</div>
-        <p style="color:var(--muted);font-size:.9rem;margin-bottom:18px;">
-          Strategic tips and feedback to improve study efficiency.
-        </p>
+      <!-- Card 2: Avg Quiz Score -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02);">
+        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1; font-family:'Sora',sans-serif;">{{ averageQuizScore }}%</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #1f5e52; opacity: 0.8; margin-top: 2px; font-weight: 600;">Avg Quiz Score</div>
+        </div>
+      </div>
 
-        <div class="activity-list">
-          <div class="activity-item">
-            <div class="act-icon" style="background:#eef7ff;color:#1c5db6;"></div>
+      <!-- Card 3: Avg Mastery -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02);">
+        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1; font-family:'Sora',sans-serif;">{{ averageMastery }}%</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Avg Mastery</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Gaps Identified -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02);">
+        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);" :style="{ color: skillGaps.length > 0 ? '#b91c1c' : '#1f5e52' }">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1; font-family:'Sora',sans-serif;" :style="{ color: skillGaps.length > 0 ? '#b91c1c' : '#1f5e52' }">{{ skillGaps.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #1f5e52; opacity: 0.8; margin-top: 2px; font-weight: 600;" :style="{ color: skillGaps.length > 0 ? '#b91c1c' : '#1f5e52', opacity: skillGaps.length > 0 ? 0.9 : 0.8 }">Gaps Identified</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Spacious grid layout -->
+    <div class="bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+      
+      <!-- Left Column: Performance Logs -->
+      <div style="display:flex; flex-direction:column; gap:32px;">
+        
+        <!-- Performance Dashboard Card -->
+        <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.25) !important; box-shadow: 0 10px 40px rgba(16, 185, 129, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
             <div>
-              <div class="act-title" style="font-weight:600;">Spaced Repetition</div>
-              <div class="act-sub">Practice flashcards 1 day, 3 days, and 7 days after reading slides to lock content in long-term memory.</div>
+              <h2 style="margin:0;">Performance Logs</h2>
+              <p style="margin:2px 0 0 0;">Integrated overview of manual study sessions and quiz attempts.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="showLogForm = !showLogForm">
+                {{ showLogForm ? 'Close' : '+ Log Session' }}
+              </button>
+              <button class="btn-secondary" style="padding:8px 20px; font-size:0.85rem; border-radius:12px;" @click="loadAnalyticsData">
+                Refresh
+              </button>
             </div>
           </div>
 
-          <div class="activity-item">
-            <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;"></div>
-            <div>
-              <div class="act-title" style="font-weight:600;">Active Recall</div>
-              <div class="act-sub">Try taking quizzes before reviewing the syllabus. Testing mistakes forces the brain to form stronger neural links.</div>
-            </div>
-          </div>
-
-          <div class="activity-item" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;">
-            <div style="display:flex;gap:12px;align-items:center;">
-              <div class="act-icon" style="background:#fff4e6;color:#b25f11;"></div>
+          <!-- Log Form inside Card -->
+          <div v-if="showLogForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
+            <h3 style="margin-top:0; margin-bottom:14px; font-size:1rem; color:#2e265c; font-family:'Sora',sans-serif; font-weight:700;">Log Study Session</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
               <div>
-                <div class="act-title" style="font-weight:600;">Need expert feedback?</div>
-                <div class="act-sub">Share your analytics dashboard with a verified PrepPal tutor.</div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Subject</label>
+                <input type="text" v-model="newLog.subject" placeholder="e.g. Organic Chemistry" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Date</label>
+                <input type="date" v-model="newLog.date" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Study Minutes</label>
+                <input type="number" v-model.number="newLog.study_minutes" placeholder="60" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Modules Completed</label>
+                <input type="number" v-model.number="newLog.modules_completed" placeholder="1" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Mastery Level (%)</label>
+                <input type="number" v-model.number="newLog.mastery" placeholder="80" min="0" max="100" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Quiz Score (%, Optional)</label>
+                <input type="number" v-model.number="newLog.quiz_score" placeholder="85" min="0" max="100" style="width:100%;" />
               </div>
             </div>
-            <button class="btn-primary" style="width:auto;padding:8px 14px;" @click="goToTutors">
+            <div style="text-align:right;">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="logSession">Save Session Log</button>
+            </div>
+          </div>
+
+          <!-- Logs List -->
+          <div v-if="analyticsLoading" style="text-align:center; padding:20px; color:#6c6684;">
+            Loading performance statistics...
+          </div>
+          <div v-if="errorMsg" class="error-msg" style="margin-bottom:12px;">
+            {{ errorMsg }}
+          </div>
+
+          <div v-if="!analyticsLoading && filteredAnalyticsRecords.length" style="margin-top:10px;">
+            <div 
+              v-for="(record, index) in filteredAnalyticsRecords" 
+              :key="record.id"
+              class="pill-row"
+              :class="index % 2 === 0 ? 'pill-row-mint' : 'pill-row-lavender'"
+              style="margin-bottom: 12px;"
+            >
+              <div style="flex-grow: 1; padding-right: 16px;">
+                <div style="font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed; flex-shrink: 0;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2V4H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+                  <span>{{ record.subject }}</span>
+                </div>
+                <div style="font-size: 0.78rem; opacity: 0.85; margin-top: 6px; font-weight: 500; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <span style="display: flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ record.study_minutes }} min</span>
+                  <span style="display: flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> {{ record.modules_completed }} module(s)</span>
+                  <span style="display: flex; align-items: center; gap: 4px;"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Mastery: {{ record.mastery }}%</span>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+                <span style="font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: #ffffff; display: flex; align-items: center; gap: 4px;">
+                  <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>{{ formatDate(record.date) }}</span>
+                </span>
+                <span class="badge-status" :class="record.quiz_score !== null && record.quiz_score !== undefined ? 'status-completed' : 'status-pending'">
+                  {{ record.quiz_score !== null && record.quiz_score !== undefined ? 'Quiz: ' + record.quiz_score + '%' : 'No Quiz' }}
+                </span>
+                <button class="arrow-btn" @click="goToTutors" title="Discuss with Tutor" style="background:#ffffff; color:#7c3aed;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="!analyticsLoading && !errorMsg && !filteredAnalyticsRecords.length" style="text-align:center; color:#7b7597; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(225,220,245,0.8);">
+            No study sessions logged yet.
+          </div>
+        </div>
+
+        <!-- AI Skill Gap Analysis Card -->
+        <div class="card" style="border: 1px solid rgba(239, 68, 68, 0.25) !important; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:18px; flex-wrap:wrap;">
+            <div>
+              <h2 style="margin:0;">AI Skill Gap Analysis</h2>
+              <p style="margin:2px 0 0 0;">Identify and review weak points with OpenRouter AI suggestions.</p>
+            </div>
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius: 50px !important; background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15) !important; border: none !important; color: white !important;" @click="runSkillGapAnalysis" :disabled="analyzingSkillGaps">
+              {{ analyzingSkillGaps ? 'Analyzing...' : 'Run Analysis' }}
+            </button>
+          </div>
+
+          <div v-if="analyzingSkillGaps" style="text-align:center; padding:20px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem;">
+            Analyzing learning gaps and compiling recommendations...
+          </div>
+
+          <div v-else-if="skillGaps.length" style="display:flex; flex-direction:column; gap:10px;">
+            <div 
+              v-for="(gap, idx) in skillGaps" 
+              :key="'gap-' + idx" 
+              class="pill-row"
+              :class="idx % 2 === 0 ? 'pill-row-mint' : 'pill-row-lavender'"
+              style="margin-bottom:0; padding: 16px; align-items: flex-start; flex-direction: column; gap: 6px;"
+            >
+              <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                <span style="font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px;">{{ gap.subject }}</span>
+                <span 
+                  :style="{ color: gap.status === 'Critical' ? '#ef4444' : 'inherit' }" 
+                  style="font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:8px; background:#ffffff;"
+                >
+                  {{ gap.status }}
+                </span>
+              </div>
+              <div style="font-size:0.85rem; line-height:1.4; font-weight: 500;">{{ gap.reason }}</div>
+            </div>
+          </div>
+          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+            Click Run Analysis to inspect your performance history.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Mastery & Tips -->
+      <div style="display:flex; flex-direction:column; gap:32px;">
+        
+        <!-- Mastery Tracking Card -->
+        <div class="card" style="border: 1px solid rgba(139, 92, 246, 0.25) !important; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.03) !important;">
+          <h2 style="margin:0; margin-bottom:4px;">Mastery Tracking</h2>
+          <p style="margin-bottom:16px;">Current competency status by subject.</p>
+
+          <div v-if="analyticsRecords.length" style="display:flex; flex-direction:column; gap:12px;">
+            <div 
+              v-for="(record, index) in analyticsRecords.slice(0, 5)" 
+              :key="'mastery-' + record.id" 
+              class="pill-row" 
+              :class="index % 2 === 0 ? 'pill-row-mint' : 'pill-row-lavender'"
+              style="padding: 16px 20px; flex-direction: column; align-items: stretch; margin-bottom: 0; gap: 8px;"
+            >
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="font-weight:700; font-size:0.92rem;">{{ record.subject }}</div>
+                <span style="font-weight:800; font-size:0.92rem;">{{ record.mastery }}%</span>
+              </div>
+              <div class="mastery-grow-bar" style="height: 8px; border-radius: 4px; background: #ffffff; width: 100%; overflow: hidden; margin-top: 0;">
+                <div 
+                  class="mastery-fill" 
+                  :style="{ 
+                    width: record.mastery + '%',
+                    background: index % 2 === 0 ? 'linear-gradient(90deg, #aae3d7, #1f5e52)' : 'linear-gradient(90deg, #d8c8ff, #7c3aed)'
+                  }"
+                  style="height: 100%; border-radius: 4px; transition: width 0.8s ease;"
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+            Log study sessions to populate subject mastery charts.
+          </div>
+        </div>
+
+        <!-- Tutor Tips Card -->
+        <div class="card" style="border: 1px solid rgba(99, 102, 241, 0.25) !important; box-shadow: 0 10px 40px rgba(99, 102, 241, 0.03) !important;">
+          <h2 style="margin:0; margin-bottom:4px;">Tutor Review & Tips</h2>
+          <p style="margin-bottom:16px;">Strategic feedback to lock in knowledge.</p>
+
+          <div style="display:flex; flex-direction:column; gap:12px;">
+            <div class="pill-row pill-row-lavender" style="margin-bottom:0; display:flex; gap:12px; align-items:flex-start; padding: 16px;">
+              <span style="color:#4f3b8c; padding-top:2px; flex-shrink: 0;">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5v-15A2.5 2.5 0 0 1 6.5 2V4H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Spaced Repetition</div>
+                <div style="font-size:0.78rem; opacity:0.85; margin-top:4px; line-height:1.4; font-weight: 500;">Review flashcards 1, 3, and 7 days after reading slides to build durable neural recall routes.</div>
+              </div>
+            </div>
+
+            <div class="pill-row pill-row-mint" style="margin-bottom:0; display:flex; gap:12px; align-items:flex-start; padding: 16px;">
+              <span style="color:#1f5e52; padding-top:2px; flex-shrink: 0;">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              </span>
+              <div>
+                <div style="font-weight:700; font-size:0.9rem;">Active Recall</div>
+                <div style="font-size:0.78rem; opacity:0.85; margin-top:4px; line-height:1.4; font-weight: 500;">Try taking practice quizzes before reading textbooks. Making mistakes highlights learning gaps.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid rgba(225,220,245,0.6); padding-top:16px; margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap: 8px;">
+            <div>
+              <div style="font-weight:700; font-size:0.85rem; color:#2e265c;">Struggling with a topic?</div>
+              <div style="font-size:0.75rem; color:#7b7597; margin-top:2px;">Discuss statistics with an expert tutor</div>
+            </div>
+            <button class="btn-primary" style="width: auto !important; padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15) !important; border: none !important; color: white !important; flex-shrink: 0;" @click="goToTutors">
               Find Tutor
             </button>
           </div>
         </div>
+
       </div>
+
     </div>
   `;
 
@@ -305,6 +600,11 @@
       }
     },
     methods: {
+      formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      },
       async loadAnalyticsData() {
         this.analyticsLoading = true;
         this.errorMsg = '';

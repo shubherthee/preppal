@@ -5,261 +5,757 @@
   const api = PrepPalAPI;
 
   const template = `
-    <div class="topbar">
-      <div class="search-wrap">
-        <span class="search-icon"></span>
+    <style>
+      /* Spacious UI Inspiration Style Overrides */
+      .app-shell {
+        background: linear-gradient(135deg, #f8f7fd 0%, #f1edf9 100%) !important;
+      }
+      
+      .main {
+        padding: 36px !important;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      /* Clean, Rounded Typography */
+      h1 {
+        font-family: 'Sora', sans-serif !important;
+        font-weight: 700 !important;
+        color: #2e265c !important;
+        letter-spacing: -0.7px;
+        font-size: 2.2rem;
+      }
+      h2, .section-title {
+        font-family: 'Sora', sans-serif !important;
+        font-weight: 700 !important;
+        color: #2e265c !important;
+        font-size: 1.25rem;
+        margin-bottom: 4px;
+      }
+      p {
+        font-family: 'DM Sans', sans-serif !important;
+        color: #7b7597 !important;
+        font-size: 0.9rem;
+      }
+
+      /* Premium Rounded Cards (Inspiration-Spec) */
+      .card {
+        background: #ffffff !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        border-radius: 28px !important;
+        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important;
+        padding: 28px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 45px rgba(124, 58, 237, 0.06) !important;
+      }
+
+      /* Topbar Search and Notification Bubble buttons */
+      .circle-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.04) !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .circle-btn:hover {
+        background: #f4efff !important;
+        border-color: #d8c8ff !important;
+        transform: scale(1.05);
+      }
+
+      /* Custom Form Inputs */
+      input, select, textarea {
+        border: 1px solid #e5e0f9 !important;
+        background: #fdfcff !important;
+        border-radius: 14px !important;
+        outline: none !important;
+        color: #2e265c !important;
+        padding: 10px 14px !important;
+        font-family: inherit !important;
+        font-size: 0.9rem !important;
+        transition: all 0.2s ease !important;
+      }
+      input:focus, select:focus, textarea:focus {
+        border-color: #7c3aed !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12) !important;
+        background: #ffffff !important;
+      }
+
+      /* Premium Buttons */
+      .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+        border: none !important;
+        color: white !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        padding: 12px 28px !important;
+        box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer !important;
+        width: auto !important;
+      }
+      .btn-primary:hover {
+        transform: scale(1.05) translateY(-2px) !important;
+        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.3) !important;
+      }
+      .btn-secondary {
+        background: #f3f0ff !important;
+        border: 2px solid #e9e3ff !important;
+        color: #7c3aed !important;
+        border-radius: 50px !important;
+        font-weight: 700 !important;
+        padding: 10px 26px !important;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer !important;
+      }
+      .btn-secondary:hover {
+        background: #eae5ff !important;
+        border-color: #d8cdff !important;
+        transform: scale(1.05) translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08) !important;
+      }
+
+      /* Inspiration-style Rounded List Rows (Pills) */
+      .pill-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid transparent;
+      }
+      
+      /* Alternating pastel theme card row styles */
+      .pill-row-mint {
+        background: #e8f7f4 !important;
+        color: #1f5e52 !important;
+        border-color: rgba(170, 227, 215, 0.3) !important;
+      }
+      .pill-row-mint:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
+        border-color: #aae3d7 !important;
+      }
+      .pill-row-lavender {
+        background: #f4f0ff !important;
+        color: #4f3b8c !important;
+        border-color: rgba(216, 200, 255, 0.3) !important;
+      }
+      .pill-row-lavender:hover {
+        transform: translateX(3px);
+        box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
+        border-color: #d8c8ff !important;
+      }
+
+      /* Timer Mode Tabs */
+      .timer-tabs-wrap {
+        display: flex !important;
+        gap: 6px !important;
+        margin-bottom: 30px !important;
+        padding: 6px !important;
+        background: #f4f2fa !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        border-radius: 30px !important;
+      }
+      .timer-mode-btn {
+        padding: 10px 24px !important;
+        border-radius: 30px !important;
+        border: none !important;
+        background: transparent !important;
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: #7b7597 !important;
+        cursor: pointer !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      }
+      .timer-mode-btn:hover {
+        transform: scale(1.05) !important;
+      }
+      .timer-mode-btn.active {
+        color: #ffffff !important;
+        transform: scale(1.05) !important;
+      }
+      /* Distinct shades of purple for the active and hover states of the focus mode buttons */
+      .timer-mode-btn.mode-pomodoro:hover {
+        color: #7c3aed !important;
+      }
+      .timer-mode-btn.mode-pomodoro.active {
+        background: #7c3aed !important;
+        box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25) !important;
+      }
+      .timer-mode-btn.mode-stopwatch:hover {
+        color: #9333ea !important;
+      }
+      .timer-mode-btn.mode-stopwatch.active {
+        background: #9333ea !important;
+        box-shadow: 0 6px 16px rgba(147, 51, 234, 0.25) !important;
+      }
+      .timer-mode-btn.mode-tracking:hover {
+        color: #a855f7 !important;
+      }
+      .timer-mode-btn.mode-tracking.active {
+        background: #a855f7 !important;
+        box-shadow: 0 6px 16px rgba(168, 85, 247, 0.25) !important;
+      }
+
+      /* Round Arrow/Action Buttons */
+      .arrow-btn {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 50% !important;
+        background: #ffffff !important;
+        border: none !important;
+        color: #7c3aed !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        padding: 0 !important;
+      }
+      .arrow-btn:hover {
+        transform: scale(1.15) translateY(-1px) !important;
+        background: #7c3aed !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2) !important;
+      }
+      .pastel-color-dot {
+        width: 24px !important;
+        height: 24px !important;
+        border-radius: 50% !important;
+        border: 2px solid transparent !important;
+        cursor: pointer !important;
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        padding: 0 !important;
+      }
+      .pastel-color-dot.active {
+        border-color: #7c3aed !important;
+        transform: scale(1.25) !important;
+        box-shadow: 0 0 12px rgba(124, 58, 237, 0.4) !important;
+      }
+      .pastel-color-dot:hover {
+        transform: scale(1.2) !important;
+      }
+      .badge-status {
+        display: inline-block !important;
+        padding: 4px 10px !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        border-radius: 12px !important;
+        text-align: center !important;
+        line-height: 1.2 !important;
+      }
+      .status-completed {
+        background: #e8f7f4 !important;
+        color: #1f5e52 !important;
+        border: 1px solid rgba(170, 227, 215, 0.4) !important;
+      }
+      .status-pending {
+        background: #fffbeb !important;
+        color: #b45309 !important;
+        border: 1px solid rgba(253, 230, 138, 0.4) !important;
+      }
+      .status-inprogress {
+        background: #eff6ff !important;
+        color: #1d4ed8 !important;
+        border: 1px solid rgba(191, 219, 254, 0.4) !important;
+      }
+      .status-scheduled {
+        background: #faf5ff !important;
+        color: #6b21a8 !important;
+        border: 1px solid rgba(233, 213, 255, 0.4) !important;
+      }
+      
+      /* Premium Activity Blocks for list items */
+      .activity-block {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff !important;
+        border: 1px solid rgba(225, 220, 245, 0.6) !important;
+        border-radius: 18px !important;
+        padding: 16px 20px !important;
+        margin-bottom: 12px !important;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.02) !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      }
+      .activity-block:hover {
+        transform: translateY(-2px) scale(1.01) !important;
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.06) !important;
+      }
+      
+      /* Left accent color coding per block theme */
+      .activity-block-mint {
+        border-left: 5px solid #10b981 !important;
+        border-top-left-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+      }
+      .activity-block-mint:hover {
+        border-color: rgba(16, 185, 129, 0.5) !important;
+        border-left-color: #10b981 !important;
+      }
+      
+      .activity-block-blue {
+        border-left: 5px solid #3b82f6 !important;
+        border-top-left-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+      }
+      .activity-block-blue:hover {
+        border-color: rgba(59, 130, 246, 0.5) !important;
+        border-left-color: #3b82f6 !important;
+      }
+
+      .activity-block-amber {
+        border-left: 5px solid #f59e0b !important;
+        border-top-left-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+      }
+      .activity-block-amber:hover {
+        border-color: rgba(245, 158, 11, 0.5) !important;
+        border-left-color: #f59e0b !important;
+      }
+
+      .activity-block-purple {
+        border-left: 5px solid #8b5cf6 !important;
+        border-top-left-radius: 6px !important;
+        border-bottom-left-radius: 6px !important;
+      }
+      .activity-block-purple:hover {
+        border-color: rgba(139, 92, 246, 0.5) !important;
+        border-left-color: #8b5cf6 !important;
+      }
+    </style>
+
+    <!-- Topbar Navigation Header -->
+    <div class="topbar" style="margin-bottom: 28px;">
+      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius:24px; box-shadow:0 4px 16px rgba(124,58,237,0.02);">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
         <input
           type="text"
           v-model="plannerSearch"
-          placeholder="Search study plans, deadlines, or status..."
+          placeholder="Search study goals, deadlines, or status..."
+          style="border:none !important; background:transparent !important; box-shadow:none !important; padding:4px 8px !important;"
         />
       </div>
-      <div class="notif-btn">●<span class="notif-dot" v-if="reminders.length"></span></div>
-      <div class="topbar-avatar" style="background: linear-gradient(135deg, var(--indigo), var(--mint))">{{ initials }}</div>
-    </div>
-
-    <div class="greeting">
-      <h1>{{ pageTitle }}</h1>
-      <p>{{ pageSubtitle }}</p>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-top">
-          <div class="stat-icon" style="background:#eef7ff;color:#1c5db6;"></div>
-          <span class="stat-badge" style="background:#eef7ff;color:#1c5db6;">Active</span>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="circle-btn" style="position:relative;" title="Reminders Alert">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" v-if="reminders.length" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #ff6b7a; border: 1.5px solid #ffffff;"></span>
         </div>
-        <div class="stat-val">{{ plannerTasks.length }}</div>
-        <div class="stat-label">Loaded Study Plans</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-top">
-          <div class="stat-icon" style="background:#fff4e6;color:#b25f11;"></div>
-          <span class="stat-badge" style="background:#fff4e6;color:#b25f11;">Active</span>
-        </div>
-        <div class="stat-val">{{ reminders.filter(r => r.status === 'Active' || r.status === 'Set').length }}</div>
-        <div class="stat-label">Reminders Set</div>
-      </div>
-
-      <div class="stat-card">
-        <div class="stat-top">
-          <div class="stat-icon" style="background:#edf7f0;color:#1f7a4c;"></div>
-          <span class="stat-badge" style="background:#edf7f0;color:#1f7a4c;">Files</span>
-        </div>
-        <div class="stat-val">{{ materials.length }}</div>
-        <div class="stat-label">Uploaded Materials</div>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, #7c3aed, #c084fc); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
       </div>
     </div>
 
-    <div class="bottom-grid">
-      <!-- Study Plan Tasks -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;">
-          <div>
-            <div class="section-title" style="margin-bottom:4px;">Study Plan Tasks</div>
-            <p style="color:var(--muted);font-size:.9rem;margin:0;">
-              Manage your tasks, set deadlines, and track status.
-            </p>
+    <!-- Greetings Area -->
+    <div class="greeting" style="margin-bottom: 28px;">
+      <h1>Study Planner</h1>
+      <p>Organize your study goals, track session timings, and view AI recommendations.</p>
+    </div>
+
+    <!-- Statistics Overview Row -->
+    <div class="stats-row" style="margin-bottom: 28px;">
+      <!-- Goals Card -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02);">
+        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1;">{{ plannerTasks.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #1f5e52; opacity: 0.8; margin-top: 2px; font-weight: 600;">Active Tasks</div>
+        </div>
+      </div>
+
+      <!-- Reminders Card -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02);">
+        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1;">{{ reminders.filter(r => r.status === 'Active' || r.status === 'Set').length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Reminders Set</div>
+        </div>
+      </div>
+
+      <!-- Materials Card -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #ffffff; border: 1px solid rgba(225, 220, 245, 0.6); box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02);">
+        <div style="background:#f4f0ff; color:#7c3aed; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.03);">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #2e265c; line-height: 1.1;">{{ materials.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #7b7597; margin-top: 2px; font-weight: 600;">Syllabus Files</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Centered Glass Focus & Study Timer Card -->
+    <div class="card" style="margin-bottom: 32px; padding: 40px; display: flex; flex-direction: column; align-items: center; text-align: center; background: linear-gradient(135deg, rgba(244, 240, 255, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%) !important;">
+      <div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 24px;">
+        <div style="display:flex; align-items:center; gap:10px; justify-content:center;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h2 style="margin:0; font-size:1.4rem; color:#2e265c;">Study Focus Timer</h2>
+        </div>
+        <p style="margin:8px 0 0 0; font-size:0.88rem; max-width: 500px;">Boost focus using the Pomodoro technique or manual tracking sessions.</p>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="timer-tabs-wrap">
+        <button class="timer-mode-btn mode-pomodoro" :class="{ active: timerMode === 'pomodoro' }" @click="setTimerMode('pomodoro')">Pomodoro</button>
+        <button class="timer-mode-btn mode-stopwatch" :class="{ active: timerMode === 'stopwatch' }" @click="setTimerMode('stopwatch')">Stopwatch</button>
+        <button class="timer-mode-btn mode-tracking" :class="{ active: timerMode === 'tracking' }" @click="setTimerMode('tracking')">Custom Tracker</button>
+      </div>
+
+      <!-- Glassmorphic Clock Circle with Pastel Tint -->
+      <div 
+        :style="{ 
+          background: activeColorOption.pastelBg, 
+          borderColor: activeColorOption.pastelBorder,
+          boxShadow: timerState === 'running' ? '0 0 35px ' + timerColor + '55, inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
+        }" 
+        style="width: 220px; height: 220px; border-radius: 50%; border: 4px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);"
+      >
+        <div style="font-size: 2.8rem; font-weight: 700; font-family:'Sora',sans-serif; color:#2e265c; letter-spacing: -1.2px;">
+          {{ formattedTime }}
+        </div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #574e7d; font-weight: 700; margin-top: 4px;">
+          {{ timerState === 'running' ? 'Focusing' : timerState === 'paused' ? 'Paused' : 'Ready' }}
+        </div>
+        
+        <!-- Floating badge showing subject -->
+        <div 
+          :style="{ background: timerColor }" 
+          style="position: absolute; bottom: -10px; color: white; padding: 6px 18px; border-radius: 24px; font-size: 0.78rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+        >
+          {{ activeSubjectDisplay }}
+        </div>
+      </div>
+
+      <!-- Settings configuration panel -->
+      <div style="display:flex; justify-content:center; gap:20px; align-items:center; flex-wrap:wrap; margin-top:36px; margin-bottom:20px;">
+        <!-- Subject Selection -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Subject:</span>
+          <select v-model="timerSubject" style="width:170px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important; cursor:pointer;">
+            <option v-for="sub in subjectsList" :key="sub" :value="sub">{{ sub }}</option>
+          </select>
+          <input v-if="timerSubject === 'Other'" type="text" v-model="customSubjectName" placeholder="Subject Name" style="width:130px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important;" />
+        </div>
+
+        <!-- Custom Duration Input if mode is custom tracking -->
+        <div v-if="timerMode === 'tracking'" style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Duration (min):</span>
+          <input type="number" v-model.number="timerCustomDuration" min="1" max="180" style="width:85px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important;" @change="resetTimer" />
+        </div>
+      </div>
+
+      <!-- Color Selector Picker (Pastel Theme spec) -->
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:30px;">
+        <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Choose Focus Theme Color:</span>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button 
+            v-for="color in timerColorOptions" 
+            :key="color.value"
+            @click="timerColor = color.value"
+            class="pastel-color-dot"
+            :class="{ active: timerColor === color.value }"
+            :style="{ background: color.value }"
+            :title="color.label"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Controls Buttons -->
+      <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <button v-if="timerState === 'idle' || timerState === 'paused'" class="btn-primary" :style="{ background: 'linear-gradient(135deg, ' + timerColor + ', ' + timerColor + 'dd) !important', boxShadow: '0 6px 18px ' + timerColor + '40 !important' }" style="min-width: 150px;" @click="startTimer">
+          Start Focus
+        </button>
+        <button v-if="timerState === 'running'" class="btn-primary" style="min-width: 150px; background: linear-gradient(135deg, #fbbf24, #d97706) !important; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25) !important;" @click="pauseTimer">
+          Pause Focus
+        </button>
+        <button class="btn-secondary" style="min-width: 100px;" @click="resetTimer">
+          Reset
+        </button>
+        <button v-if="shouldShowSave" class="btn-primary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.2) !important;" @click="saveTimerSession">
+          Save Focus Session
+        </button>
+      </div>
+      
+      <div style="margin-top:20px; height: 16px; font-size:0.85rem; color:#7c3aed; font-weight: 500; font-style:italic;">
+        <span v-if="timerState === 'running'">Your focus block is ticking. Remain concentrated...</span>
+      </div>
+    </div>
+
+    <!-- Tutor Consultations Banner -->
+    <div class="card" style="margin-bottom: 32px; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #eae5ff 0%, #f4f0ff 100%) !important; border: 1px solid rgba(216, 200, 255, 0.4) !important; border-radius: 24px !important; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.04) !important; gap: 20px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 20px; min-width: 280px; flex: 1;">
+        <div style="background: #ffffff; color: #7c3aed; display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.12); flex-shrink: 0;">
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div style="text-align: left;">
+          <h3 style="margin: 0; font-family: 'Sora', sans-serif; font-size: 1.1rem; color: #2e265c; font-weight: 700;">Tutor Consultations</h3>
+          <p style="margin: 4px 0 0 0; color: #574e7d; font-size: 0.88rem; font-weight: 500;">Struggling with a topic? Book a live 1-on-1 session with an expert tutor now.</p>
+        </div>
+      </div>
+      <button class="btn-primary" style="padding: 12px 28px; font-size: 0.9rem; border-radius: 50px; background: #7c3aed !important; color: #ffffff !important; box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25) !important;" @click="goToTutors">
+        Explore Tutors & Book Session
+      </button>
+    </div>
+
+    <!-- Bottom spacious grid -->
+    <div class="bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+      
+      <!-- Left Column: Tasks & Reminders -->
+      <div style="display:flex; flex-direction:column; gap:32px;">
+        
+        <!-- Study Plan Tasks Card -->
+        <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.25) !important; box-shadow: 0 10px 40px rgba(16, 185, 129, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
+            <div>
+              <h2 style="margin:0;">Active Study Tasks</h2>
+              <p style="margin:2px 0 0 0;">Manage tasks, deadlines, and tracking states.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="showAddPlanForm = !showAddPlanForm">
+                {{ showAddPlanForm ? 'Close' : '+ Add Task' }}
+              </button>
+              <button class="btn-secondary" style="padding:8px 20px; font-size:0.85rem; border-radius:12px;" @click="loadPlannerData">
+                Refresh
+              </button>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;">
-            <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="showAddPlanForm = !showAddPlanForm">
-              {{ showAddPlanForm ? 'Close Form' : '+ Add Plan' }}
+
+          <!-- Add Task Form inside Card -->
+          <div v-if="showAddPlanForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
+            <h3 style="margin-top:0; margin-bottom:14px; font-size:1rem; color:#2e265c; font-family:'Sora',sans-serif; font-weight:700;">New Study Goal</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Task Name</label>
+                <input type="text" v-model="newPlan.task" placeholder="e.g. Mathematics HW" style="width:100%;" />
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Deadline</label>
+                <input type="date" v-model="newPlan.deadline" style="width:100%;" />
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <label style="font-size:0.75rem; color:#6c6684; font-weight: 600;">Status:</label>
+                <select v-model="newPlan.status" style="padding:6px 12px; border-radius:10px;">
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Scheduled">Scheduled</option>
+                </select>
+              </div>
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="createPlan">Save Goal</button>
+            </div>
+          </div>
+
+          <!-- Tasks list -->
+          <div v-if="plannerLoading" style="text-align:center; padding:20px; color:#6c6684;">
+            Loading active tasks...
+          </div>
+          <div v-if="errorMsg" class="error-msg" style="margin-bottom:12px;">
+            {{ errorMsg }}
+          </div>
+
+          <div v-if="!plannerLoading && filteredPlannerTasks.length" style="margin-top:10px;">
+            <div 
+              v-for="(task, index) in filteredPlannerTasks" 
+              :key="task.plan_id"
+              class="activity-block activity-block-mint" 
+            >
+              <div style="flex-grow:1; padding-right:16px;">
+                <div style="font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:8px;" :style="task.status === 'Completed' ? 'text-decoration: line-through; opacity: 0.55;' : ''">
+                  <svg v-if="task.status === 'Completed'" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981; flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                  <svg v-else viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#7c3aed; flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>
+                  <span>{{ task.task }}</span>
+                </div>
+                <div style="font-size:0.75rem; opacity: 0.8; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px;">
+                  <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <span>Deadline: {{ formatDate(task.deadline) }}</span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; flex-shrink: 0;">
+                <span class="badge-status" :class="{
+                  'status-completed': task.status === 'Completed',
+                  'status-pending': task.status === 'Pending',
+                  'status-inprogress': task.status === 'In Progress',
+                  'status-scheduled': task.status === 'Scheduled'
+                }">{{ task.status }}</span>
+                
+                <select v-model="task.status" @change="updatePlanStatus(task)" style="padding:6px 12px !important; font-size:0.78rem !important; border-radius:10px !important; border:1px solid rgba(124, 58, 237, 0.2) !important; cursor:pointer !important; background: #ffffff !important; color:#2e265c !important; outline:none !important;">
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Scheduled">Scheduled</option>
+                </select>
+                <button class="arrow-btn" @click="deletePlan(task.plan_id)" title="Delete Task" style="background:#ffffff; color:#ff6b7a;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div v-if="!plannerLoading && !errorMsg && !filteredPlannerTasks.length" style="text-align:center; color:#7b7597; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(225,220,245,0.8);">
+            No study goals registered yet.
+          </div>
+        </div>
+
+        <!-- Reminders Card -->
+        <div class="card" style="border: 1px solid rgba(59, 130, 246, 0.25) !important; box-shadow: 0 10px 40px rgba(59, 130, 246, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 style="margin:0;">Reminders</h2>
+              <p style="margin:2px 0 0 0;">Manage upcoming sessions and reviews.</p>
+            </div>
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important; border: none !important; color: white !important;" @click="showAddReminderForm = !showAddReminderForm">
+              {{ showAddReminderForm ? 'Cancel' : '+ Add Reminder' }}
             </button>
-            <button class="btn-primary" style="width:auto;padding:8px 16px;background:var(--border);color:var(--text)" @click="loadPlannerData">
-              Refresh
+          </div>
+
+          <!-- Add Reminder Form inside Card -->
+          <div v-if="showAddReminderForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
+            <div style="margin-bottom:12px;">
+              <input type="text" v-model="newReminder.title" placeholder="e.g. Biology Quiz Review" style="width:100%;" />
+            </div>
+            <div style="margin-bottom:12px;">
+              <input type="datetime-local" v-model="newReminder.time" style="width:100%;" />
+            </div>
+            <div style="text-align:right;">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important; border: none !important; color: white !important;" @click="createReminder">Set Reminder</button>
+            </div>
+          </div>
+
+          <div v-if="reminders.length" style="display:flex; flex-direction:column;">
+            <div 
+              v-for="(rem, index) in reminders" 
+              :key="rem.id" 
+              class="activity-block activity-block-blue" 
+            >
+              <div style="flex-grow:1; padding-right:12px;">
+                <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed; flex-shrink: 0;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <span>{{ rem.title }}</span>
+                </div>
+                <div style="font-size:0.75rem; opacity:0.8; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px;">
+                  <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>{{ rem.time }}</span>
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
+                <span class="badge-status status-scheduled" style="font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:12px; background:#ffffff;">{{ rem.status }}</span>
+                <button class="arrow-btn" @click="deleteReminder(rem.id)" title="Delete Reminder" style="background:#ffffff; color:#ff6b7a;">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div v-else style="text-align:center; color:#7b7597; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(225,220,245,0.8);">
+            No reminders scheduled.
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Materials & AI Recommendations -->
+      <div style="display:flex; flex-direction:column; gap:32px;">
+        
+        <!-- AI Recommendations Card -->
+        <div class="card" style="border: 1px solid rgba(245, 158, 11, 0.25) !important; box-shadow: 0 10px 40px rgba(245, 158, 11, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
+            <h2 style="margin:0;">AI Planner</h2>
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15) !important; border: none !important; color: white !important;" @click="generateSchedule" :disabled="generatingSchedule">
+              {{ generatingSchedule ? 'Analyzing...' : 'Generate' }}
             </button>
           </div>
-        </div>
+          <p style="margin-bottom:20px;">AI recommended study block schedule mapped directly to active goals.</p>
 
-        <!-- Add Plan Form -->
-        <div v-if="showAddPlanForm" class="card" style="box-shadow:none;background:#f8fafc;border:1px solid var(--border);margin-bottom:16px;padding:16px;">
-          <h3 style="margin-top:0;margin-bottom:12px;font-size:1rem;">New Study Plan Task</h3>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Task Name</label>
-              <input type="text" v-model="newPlan.task" placeholder="e.g. Complete Mathematics Revision" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
-            </div>
-            <div>
-              <label style="display:block;font-size:.8rem;color:var(--muted);margin-bottom:4px;">Deadline</label>
-              <input type="date" v-model="newPlan.deadline" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:4px;" />
+          <div v-if="generatingSchedule" style="text-align:center; padding:20px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem;">
+            Analyzing goals and plotting sessions...
+          </div>
+
+          <div v-else-if="aiSchedule.length" style="display:flex; flex-direction:column;">
+            <div 
+              v-for="(item, idx) in aiSchedule" 
+              :key="idx" 
+              class="activity-block activity-block-amber"
+              style="align-items: flex-start; flex-direction: column; gap: 6px; padding: 16px;"
+            >
+              <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                <span style="font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px;">{{ item.day }}</span>
+                <span style="font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:8px; background:#ffffff;">{{ item.hours }}</span>
+              </div>
+              <div style="font-size:0.85rem; line-height:1.4; font-weight: 500;">{{ item.task }}</div>
             </div>
           </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <label style="font-size:.8rem;color:var(--muted);margin-right:8px;">Status</label>
-              <select v-model="newPlan.status" style="padding:6px;border:1px solid var(--border);border-radius:4px;">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Scheduled">Scheduled</option>
-              </select>
-            </div>
-            <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="createPlan">Save Task</button>
+          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+            Click Generate to query the AI scheduler.
           </div>
         </div>
 
-        <div v-if="plannerLoading" class="card" style="box-shadow:none;background:#f8fafc;">
-          Loading study planner data...
-        </div>
+        <!-- Reference Materials Card -->
+        <div class="card" style="border: 1px solid rgba(139, 92, 246, 0.25) !important; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.03) !important;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+            <h2 style="margin:0;">Syllabus Materials</h2>
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15) !important; border: none !important; color: white !important;" @click="showAddMaterialForm = !showAddMaterialForm">
+              {{ showAddMaterialForm ? 'Cancel' : '+ File' }}
+            </button>
+          </div>
+          <p style="margin-bottom:20px;">Reference slides, formula sheets, and study files.</p>
 
-        <div v-if="errorMsg" class="error-msg">
-          {{ errorMsg }}
-        </div>
+          <!-- Add Material Form inside Card -->
+          <div v-if="showAddMaterialForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:16px; padding:14px; border-radius: 20px;">
+            <div style="margin-bottom:10px;">
+              <input type="text" v-model="newMaterial.filename" placeholder="e.g. Biology_Slide_Deck.pdf" style="width:100%;" />
+            </div>
+            <div style="margin-bottom:10px;">
+              <input type="text" v-model="newMaterial.description" placeholder="Short description" style="width:100%;" />
+            </div>
+            <div style="text-align:right;">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15) !important; border: none !important; color: white !important;" @click="createMaterial">Save File</button>
+            </div>
+          </div>
 
-        <div class="activity-list" v-if="!plannerLoading && filteredPlannerTasks.length">
-          <div class="activity-item" v-for="task in filteredPlannerTasks" :key="task.plan_id">
-            <div class="act-icon" style="background:#eef7ff;color:#1c5db6;">
-              {{ (task.task || 'P').charAt(0) }}
+          <div v-if="materials.length" style="display:flex; flex-direction:column;">
+            <div 
+              v-for="mat in materials" 
+              :key="mat.id" 
+              class="activity-block activity-block-purple" 
+              style="flex-direction: column; align-items: flex-start; padding: 16px;"
+            >
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width: 100%;">
+                <div style="font-weight:700; font-size:0.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display: flex; align-items: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span>{{ mat.filename }}</span>
+                </div>
+                <span style="font-size:0.7rem; opacity:0.8; white-space:nowrap; font-weight: 600;">{{ formatDate(mat.created_at) }}</span>
+              </div>
+              <div style="font-size:0.78rem; opacity:0.8; margin-top:6px; padding-left:24px; font-weight: 500;">{{ mat.description }}</div>
             </div>
-            <div style="flex-grow:1;padding-right:16px;">
-              <div class="act-title" :style="task.status === 'Completed' ? 'text-decoration: line-through; color: var(--muted);' : ''">{{ task.task }}</div>
-              <div class="act-sub">Deadline: {{ task.deadline }}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <select v-model="task.status" @change="updatePlanStatus(task)" style="padding:4px 8px;border:1px solid var(--border);border-radius:4px;font-size:0.8rem;outline:none;">
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                <option value="Scheduled">Scheduled</option>
-              </select>
-              <button @click="deletePlan(task.plan_id)" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:1.1rem;" title="Delete Plan"></button>
-            </div>
+          </div>
+          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+            No syllabus materials uploaded.
           </div>
         </div>
 
-        <div v-if="!plannerLoading && !errorMsg && !filteredPlannerTasks.length" class="card" style="box-shadow:none;background:#f8fafc;text-align:center;padding:24px;">
-          No matching study plans found.
-        </div>
       </div>
 
-      <!-- Resource Materials -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="section-title" style="margin:0;">Resource Materials</div>
-          <button class="btn-primary" style="width:auto;padding:6px 12px;font-size:0.8rem;" @click="showAddMaterialForm = !showAddMaterialForm">
-            {{ showAddMaterialForm ? 'Cancel' : '+ Add File' }}
-          </button>
-        </div>
-        <p style="color:var(--muted);margin-bottom:18px;font-size:.9rem;">
-          Upload lecture notes, slides, PDFs, and references needed for the study plan.
-        </p>
-
-        <!-- Add Material Form -->
-        <div v-if="showAddMaterialForm" class="card" style="box-shadow:none;background:#f8fafc;border:1px solid var(--border);margin-bottom:16px;padding:12px;">
-          <div style="margin-bottom:8px;">
-            <input type="text" v-model="newMaterial.filename" placeholder="File name (e.g. Biology_Lecture_1.pdf)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;" />
-          </div>
-          <div style="margin-bottom:8px;">
-            <input type="text" v-model="newMaterial.description" placeholder="Short description" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;" />
-          </div>
-          <div style="text-align:right;">
-            <button class="btn-primary" style="width:auto;padding:6px 12px;font-size:0.8rem;" @click="createMaterial">Save Reference</button>
-          </div>
-        </div>
-
-        <div class="activity-list" v-if="materials.length">
-          <div class="qa-card" v-for="mat in materials" :key="mat.id" style="margin-bottom:8px;padding:10px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div class="qa-name" style="font-weight:600;font-size:0.9rem;"> {{ mat.filename }}</div>
-              <span style="font-size:0.7rem;color:var(--muted)">{{ formatDate(mat.created_at) }}</span>
-            </div>
-            <div class="qa-desc" style="font-size:0.8rem;color:var(--muted);margin-top:4px;">{{ mat.description }}</div>
-          </div>
-        </div>
-        <div v-else style="text-align:center;color:var(--muted);padding:16px;font-size:0.85rem;background:#f8fafc;border-radius:6px;">
-          No study materials logged yet.
-        </div>
-      </div>
-    </div>
-
-    <div class="bottom-grid" style="margin-top:24px;">
-      <!-- AI Recommended Schedule -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px;">
-          <div class="section-title" style="margin:0;">AI Recommended Schedule</div>
-          <button class="btn-primary" style="width:auto;padding:8px 16px;" @click="generateSchedule" :disabled="generatingSchedule">
-            {{ generatingSchedule ? 'Generating...' : 'Generate Study Schedule' }}
-          </button>
-        </div>
-        <p style="color:var(--muted);font-size:.9rem;margin-bottom:18px;">
-          Leverages OpenRouter AI models to analyze your plans and performance, mapping out a personalized study routine.
-        </p>
-
-        <div v-if="generatingSchedule" style="text-align:center;padding:24px;background:#f8fafc;border-radius:6px;">
-           AI is analyzing your goals and quiz scores to compile a schedule...
-        </div>
-
-        <div class="upcoming-list" v-else-if="aiSchedule.length">
-          <div class="upcoming-item" v-for="(item, idx) in aiSchedule" :key="idx">
-            <span class="upcoming-dot" :style="{ background: idx === 0 ? '#1d4ed8' : idx === 1 ? '#16a34a' : '#f59e0b' }"></span>
-            <div style="flex-grow:1;padding-right:8px;">
-              <div class="upcoming-name" style="font-weight:600;">{{ item.day }}</div>
-              <div class="upcoming-date" style="font-size:0.85rem;color:var(--muted);">{{ item.task }}</div>
-            </div>
-            <span class="upcoming-badge" :style="{ 
-              background: idx === 0 ? '#e0e7ff' : idx === 1 ? '#dcfce7' : '#fff4db',
-              color: idx === 0 ? '#1d4ed8' : idx === 1 ? '#15803d' : '#b25f11'
-            }">{{ item.hours }}</span>
-          </div>
-        </div>
-        <div v-else style="text-align:center;color:var(--muted);padding:24px;background:#f8fafc;border-radius:6px;">
-          No AI schedule generated yet. Click the button to customize your schedule with AI.
-        </div>
-      </div>
-
-      <!-- Reminders -->
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div class="section-title" style="margin:0;">Reminders and Tutor Session</div>
-          <button class="btn-primary" style="width:auto;padding:6px 12px;font-size:0.8rem;" @click="showAddReminderForm = !showAddReminderForm">
-            {{ showAddReminderForm ? 'Cancel' : '+ Add Reminder' }}
-          </button>
-        </div>
-
-        <!-- Add Reminder Form -->
-        <div v-if="showAddReminderForm" class="card" style="box-shadow:none;background:#f8fafc;border:1px solid var(--border);margin-bottom:16px;padding:12px;">
-          <div style="margin-bottom:8px;">
-            <input type="text" v-model="newReminder.title" placeholder="Reminder Title (e.g. Math Practice Review)" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;" />
-          </div>
-          <div style="margin-bottom:8px;">
-            <input type="datetime-local" v-model="newReminder.time" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:4px;" />
-          </div>
-          <div style="text-align:right;">
-            <button class="btn-primary" style="width:auto;padding:6px 12px;font-size:0.8rem;" @click="createReminder">Set Reminder</button>
-          </div>
-        </div>
-
-        <div class="activity-list" v-if="reminders.length">
-          <div class="activity-item" v-for="rem in reminders" :key="rem.id">
-            <div class="act-icon" style="background:#eef7ff;color:#1c5db6;">R</div>
-            <div style="flex-grow:1;padding-right:12px;">
-              <div class="act-title" style="font-weight:600;">{{ rem.title }}</div>
-              <div class="act-sub">{{ rem.time }}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <span class="badge" style="background:#eef7ff;color:#1c5db6;font-size:0.75rem;padding:4px 8px;">{{ rem.status }}</span>
-              <button @click="deleteReminder(rem.id)" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:1rem;" title="Delete Reminder"></button>
-            </div>
-          </div>
-        </div>
-        <div v-else style="text-align:center;color:var(--muted);padding:16px;font-size:0.85rem;background:#f8fafc;border-radius:6px;margin-bottom:12px;">
-          No active reminders.
-        </div>
-
-        <div class="activity-item" style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;gap:12px;align-items:center;">
-            <div class="act-icon" style="background:#edf7f0;color:#1f7a4c;">TS</div>
-            <div>
-              <div class="act-title" style="font-weight:600;">Booked Tutor Sessions</div>
-              <div class="act-sub">Schedule live review calls with verified tutors</div>
-            </div>
-          </div>
-          <button class="btn-primary" style="width:auto;padding:8px 14px;" @click="goToTutors">
-            Book
-          </button>
-        </div>
-      </div>
     </div>
   `;
 
@@ -284,7 +780,27 @@
         // Forms data
         newPlan: { task: '', deadline: '', status: 'Pending' },
         newReminder: { title: '', time: '', status: 'Set' },
-        newMaterial: { filename: '', description: '' }
+        newMaterial: { filename: '', description: '' },
+
+        // Timer States
+        timerMode: 'pomodoro', // 'pomodoro' | 'stopwatch' | 'tracking'
+        timerState: 'idle', // 'idle' | 'running' | 'paused'
+        timerSeconds: 1500, // starts at 25 minutes (1500 secs)
+        timerTotalDuration: 1500,
+        timerInterval: null,
+        timerSubject: 'General Study',
+        customSubjectName: '',
+        timerColor: '#c084fc', // pastel purple default
+        timerCustomDuration: 25,
+        timerSecondsStudied: 0,
+        subjectsList: ['Mathematics', 'Biology', 'Chemistry', 'Physics', 'History', 'General Study', 'Other'],
+        timerColorOptions: [
+          { value: '#c084fc', pastelBg: 'rgba(192, 132, 252, 0.1)', pastelBorder: 'rgba(192, 132, 252, 0.45)', label: 'Pastel Purple' },
+          { value: '#60a5fa', pastelBg: 'rgba(96, 165, 250, 0.1)', pastelBorder: 'rgba(96, 165, 250, 0.45)', label: 'Pastel Blue' },
+          { value: '#34d399', pastelBg: 'rgba(52, 211, 153, 0.1)', pastelBorder: 'rgba(52, 211, 153, 0.45)', label: 'Pastel Mint' },
+          { value: '#fbbf24', pastelBg: 'rgba(251, 191, 36, 0.1)', pastelBorder: 'rgba(251, 191, 36, 0.45)', label: 'Pastel Amber' },
+          { value: '#f87171', pastelBg: 'rgba(248, 113, 113, 0.1)', pastelBorder: 'rgba(248, 113, 113, 0.45)', label: 'Pastel Rose' }
+        ]
       };
     },
     computed: {
@@ -299,6 +815,23 @@
             deadline.includes(query) ||
             status.includes(query);
         });
+      },
+      formattedTime() {
+        const mins = Math.floor(Math.abs(this.timerSeconds) / 60);
+        const secs = Math.abs(this.timerSeconds) % 60;
+        return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      },
+      activeSubjectDisplay() {
+        if (this.timerSubject === 'Other') {
+          return this.customSubjectName.trim() || 'Custom Subject';
+        }
+        return this.timerSubject;
+      },
+      shouldShowSave() {
+        return (this.timerState === 'idle' || this.timerState === 'paused') && this.timerSecondsStudied >= 10;
+      },
+      activeColorOption() {
+        return this.timerColorOptions.find(o => o.value === this.timerColor) || this.timerColorOptions[0];
       }
     },
     methods: {
@@ -415,10 +948,100 @@
       },
       goToTutors() {
         window.location.href = '../../views/tutors/tutors_index.html';
+      },
+      setTimerMode(mode) {
+        if (this.timerState === 'running') {
+          if (!confirm('This will stop and reset the active focus timer. Proceed?')) return;
+        }
+        this.timerMode = mode;
+        this.resetTimer();
+      },
+      startTimer() {
+        if (this.timerState === 'running') return;
+        
+        if (this.timerState === 'idle') {
+          this.timerSecondsStudied = 0;
+          if (this.timerMode === 'pomodoro') {
+            this.timerSeconds = 25 * 60;
+            this.timerTotalDuration = 25 * 60;
+          } else if (this.timerMode === 'tracking') {
+            this.timerSeconds = (this.timerCustomDuration || 25) * 60;
+            this.timerTotalDuration = (this.timerCustomDuration || 25) * 60;
+          } else if (this.timerMode === 'stopwatch') {
+            this.timerSeconds = 0;
+            this.timerTotalDuration = 0;
+          }
+        }
+        
+        this.timerState = 'running';
+        this.timerInterval = setInterval(() => {
+          if (this.timerMode === 'stopwatch') {
+            this.timerSeconds++;
+            this.timerSecondsStudied++;
+          } else {
+            this.timerSeconds--;
+            this.timerSecondsStudied++;
+            if (this.timerSeconds <= 0) {
+              this.timerSeconds = 0;
+              this.pauseTimer();
+              this.timerState = 'idle';
+              alert(`Focus session for ${this.activeSubjectDisplay} completed!`);
+            }
+          }
+        }, 1000);
+      },
+      pauseTimer() {
+        this.timerState = 'paused';
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+        }
+      },
+      resetTimer() {
+        this.timerState = 'idle';
+        this.timerSecondsStudied = 0;
+        if (this.timerInterval) {
+          clearInterval(this.timerInterval);
+          this.timerInterval = null;
+        }
+        if (this.timerMode === 'pomodoro') {
+          this.timerSeconds = 25 * 60;
+          this.timerTotalDuration = 25 * 60;
+        } else if (this.timerMode === 'tracking') {
+          this.timerSeconds = (this.timerCustomDuration || 25) * 60;
+          this.timerTotalDuration = (this.timerCustomDuration || 25) * 60;
+        } else if (this.timerMode === 'stopwatch') {
+          this.timerSeconds = 0;
+          this.timerTotalDuration = 0;
+        }
+      },
+      async saveTimerSession() {
+        const minutes = Math.max(1, Math.round(this.timerSecondsStudied / 60));
+        const subjectName = this.activeSubjectDisplay;
+        
+        try {
+          await api.createAnalyticsRecord({
+            subject: subjectName,
+            date: new Date().toISOString().substring(0, 10),
+            study_minutes: minutes,
+            modules_completed: 1,
+            mastery: 70,
+            quiz_score: null
+          });
+          alert(`Focus session of ${minutes} minute(s) successfully logged to your Progress Analytics!`);
+          this.resetTimer();
+        } catch (err) {
+          alert('Failed to save study session to analytics: ' + err.message);
+        }
       }
     },
     mounted() {
       this.loadPlannerData();
+    },
+    beforeUnmount() {
+      if (this.timerInterval) {
+        clearInterval(this.timerInterval);
+      }
     }
   });
 })();
