@@ -6,16 +6,66 @@ const atViews = /\/views\//.test(window.location.pathname);
 const rootRel = atViews ? '../../' : '';
 
 const navItems = [
-  { id: 'dashboard', icon: '', label: 'Dashboard', route: rootRel + 'dashboard.html' },
-  { id: 'admins', icon: '', label: 'Admins', route: rootRel + 'views/admins/admins_index.html' },
-  { id: 'ai', icon: '', label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html' },
-  { id: 'content', icon: '', label: 'Content Hub', route: rootRel + 'views/content/content_index.html' },
-  { id: 'flashcards', icon: '', label: 'Flashcards', route: rootRel + 'views/flashcards/flashcards_index.html' },
-  { id: 'quizzes', icon: '', label: 'Quizzes', route: rootRel + 'views/quizzes/quizzes_index.html' },
-  { id: 'planner', icon: '', label: 'Planner', route: rootRel + 'views/planner/planner_index.html' },
-  { id: 'analytics', icon: '', label: 'Analytics', route: rootRel + 'views/analytics/analytics_index.html' },
-  { id: 'tutors', icon: '', label: 'Tutors', route: rootRel + 'views/tutors/tutors_index.html' },
-  { id: 'tracker', icon: '', label: 'Exam Tracker', route: rootRel + 'views/tracker/tracker_index.html' },
+  { 
+    id: 'dashboard',  
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,   
+    label: 'Dashboard',    
+    route: rootRel + 'dashboard.html' 
+  },
+  { 
+    id: 'admins',     
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,   
+    label: 'Admins',       
+    route: rootRel + 'views/admins/admins_index.html' 
+  },
+  { 
+    id: 'ai',         
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,   
+    label: 'AI Assistant', 
+    route: rootRel + 'views/ai/ai_index.html' 
+  },
+  { 
+    id: 'content',    
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,   
+    label: 'Content Hub',  
+    route: rootRel + 'views/content/content_index.html' 
+  },
+  { 
+    id: 'flashcards', 
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>`,   
+    label: 'Flashcards',   
+    route: rootRel + 'views/flashcards/flashcards_index.html' 
+  },
+  { 
+    id: 'quizzes',    
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,   
+    label: 'Quizzes',      
+    route: rootRel + 'views/quizzes/quizzes_index.html' 
+  },
+  { 
+    id: 'planner',    
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,   
+    label: 'Planner',      
+    route: rootRel + 'views/planner/planner_index.html' 
+  },
+  { 
+    id: 'analytics',  
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,   
+    label: 'Analytics',    
+    route: rootRel + 'views/analytics/analytics_index.html' 
+  },
+  { 
+    id: 'tutors',     
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,  
+    label: 'Tutors',       
+    route: rootRel + 'views/tutors/tutors_index.html' 
+  },
+  { 
+    id: 'tracker',    
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,   
+    label: 'Exam Tracker', 
+    route: rootRel + 'views/tracker/tracker_index.html' 
+  },
 ];
 
 const defaultProfile = {
@@ -76,14 +126,14 @@ const appData = {
     { name: 'Deep Space', gradient: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)' },
   ],
   stats: [
-    { icon: '', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
-    { icon: '', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
-    { icon: '', value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
+    { icon: `<svg viewBox="0 0 24 24" width="20" height="20" stroke="#1f7a4c" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`, value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
+    { icon: `<svg viewBox="0 0 24 24" width="20" height="20" stroke="#1c5db6" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`, value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
+    { icon: `<svg viewBox="0 0 24 24" width="20" height="20" stroke="#b25f11" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`, value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
   ],
   quickActions: [
-    { icon: '', name: 'Write Notes', desc: 'Capture quick ideas from class.' },
-    { icon: '', name: 'Skill Drills', desc: 'Practice short review sessions.' },
-    { icon: '', name: 'Plan Study', desc: 'Schedule tasks for the week.' },
+    { icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>`, name: 'Write Notes', desc: 'Capture quick ideas from class.' },
+    { icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`, name: 'Skill Drills', desc: 'Practice short review sessions.' },
+    { icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`, name: 'Plan Study', desc: 'Schedule tasks for the week.' },
   ],
   quizzes: [
     { id: 'bio-5', title: 'Biology — Chapter 5', desc: 'Cell structure and function', questions: 10, time: '10m', difficulty: 'Medium' },
@@ -91,9 +141,9 @@ const appData = {
     { id: 'math-quiz', title: 'Algebra Practice', desc: 'Linear equations', questions: 8, time: '8m', difficulty: 'Hard' },
   ],
   activity: [
-    { icon: '', title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
-    { icon: '', title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
-    { icon: '', title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
+    { icon: `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#1f7a4c" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`, title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
+    { icon: `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#1c5db6" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`, title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
+    { icon: `<svg viewBox="0 0 24 24" width="16" height="16" stroke="#b25f11" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>`, title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
   ],
   upcoming: [
     { name: 'Biology Quiz', date: 'Today · 5:00 PM', tag: 'Due', dotColor: '#d92d20', badgeBg: '#ffe5e1' },
@@ -255,7 +305,9 @@ const SidebarComponent = {
   template: `
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-icon"></div>
+        <div class="sidebar-brand-icon" style="color: white; display: flex; align-items: center; justify-content: center;">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
         <div>
           <div class="sidebar-brand-name">PrepPal</div>
           <div class="sidebar-brand-sub">AI Study Assistant</div>
@@ -265,24 +317,32 @@ const SidebarComponent = {
         <a v-for="item in navItems" :key="item.id"
            :href="item.route"
            class="nav-item"
-           :class="{ active: activeNav === item.id }">
-          <span class="nav-icon">{{ item.icon }}</span>
-          {{ item.label }}
+           :class="{ active: activeNav === item.id }"
+           style="display: flex; align-items: center;">
+          <span class="nav-icon" v-html="item.icon" style="display: inline-flex; align-items: center; justify-content: center; margin-right: 2px;"></span>
+          <span class="nav-label">{{ item.label }}</span>
         </a>
       </nav>
       <div class="tip-box">
-        <div class="tip-title"> Study Tip</div>
+        <div class="tip-title">
+          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.5 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6M10 22h4"/></svg>
+          Study Tip
+        </div>
         <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
       </div>
-      <div class="sidebar-user">
-        <div class="avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
-        <div style="flex: 1; min-width: 0;">
-          <div class="user-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ userName }}</div>
+      <div class="sidebar-user" style="display: flex; align-items: center;">
+        <div class="avatar" :style="{ background: userAvatarBg || 'linear-gradient(135deg, #7c3aed, #c084fc)' }">{{ initials }}</div>
+        <div style="flex-grow: 1; min-width: 0; padding-right: 6px;">
+          <div class="user-name" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ userName }}</div>
           <div class="user-role">{{ userRole || 'Student' }}</div>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-          <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile"></button>
-          <button class="logout-btn" @click="$emit('logout')" title="Sign out"></button>
+        <div style="display: flex; gap: 4px; align-items: center; margin-left: auto; flex-shrink: 0;">
+          <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <button class="logout-btn" @click="$emit('logout')" title="Sign out">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
         </div>
       </div>
     </aside>
@@ -301,63 +361,86 @@ const pageTemplates = {
     </div>
   `,
   dashboard: `
-    <div class="topbar">
-      <div class="search-wrap">
-        <span class="search-icon"></span>
-        <input type="text" placeholder="Search notes, quizzes, flashcards…" />
+    <div class="topbar" style="margin-bottom: 28px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+      <div class="search-wrap" style="flex-grow: 1; max-width: 400px; position: relative; display: flex; align-items: center; background: #ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius: 24px; padding: 4px 16px; box-shadow: 0 4px 16px rgba(124,58,237,0.02);">
+        <span class="search-icon" style="display: inline-flex; align-items: center; justify-content: center; margin-right: 8px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input type="text" placeholder="Search notes, quizzes, flashcards…" style="border: none !important; background: transparent !important; box-shadow: none !important; outline: none !important; width: 100%; padding: 6px 0 !important; color: #2e265c;" />
       </div>
-      <div class="notif-btn"><span class="notif-dot"></span></div>
-      <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
-    </div>
-    <div class="greeting">
-      <h1>{{ pageTitle }}</h1>
-      <p>{{ pageSubtitle }}</p>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card" v-for="s in stats" :key="s.label">
-        <div class="stat-top">
-          <div class="stat-icon" :style="{ background: s.bg }">{{ s.icon }}</div>
-          <span class="stat-badge" :style="{ background: s.bg, color: s.color }">{{ s.change }}</span>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="circle-btn" style="position:relative;" title="Notifications">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-dot" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #ff6b7a; border: 1.5px solid #ffffff;"></span>
         </div>
-        <div class="stat-val">{{ s.value }}</div>
-        <div class="stat-label">{{ s.label }}</div>
+        <div class="topbar-avatar" :style="{ background: userAvatarBg }" style="border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
       </div>
     </div>
-    <div class="section-title">Quick Actions</div>
-    <div class="quick-actions">
-      <div class="qa-card" v-for="q in quickActions" :key="q.name">
-        <div class="qa-icon">{{ q.icon }}</div>
-        <div class="qa-name">{{ q.name }}</div>
-        <div class="qa-desc">{{ q.desc }}</div>
+    
+    <div class="greeting" style="margin-bottom: 28px;">
+      <h1 style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; letter-spacing: -0.7px; font-size: 2.2rem;">{{ pageTitle }}</h1>
+      <p style="font-family: 'DM Sans', sans-serif !important; color: #7b7597 !important; font-size: 0.9rem;">{{ pageSubtitle }}</p>
+    </div>
+
+    <!-- Stats row -->
+    <div class="stats-row" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      <div class="stat-card" v-for="(s, index) in stats" :key="s.label" :style="{ background: index % 2 === 0 ? '#f4f0ff' : '#e8f7f4', border: index % 2 === 0 ? '1px solid rgba(216, 200, 255, 0.4)' : '1px solid rgba(170, 227, 215, 0.4)' }" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02); transition: all 0.3s ease;">
+        <div :style="{ color: index % 2 === 0 ? '#4f3b8c' : '#1f5e52' }" style="background:#ffffff; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04);" v-html="s.icon"></div>
+        <div style="flex-grow: 1;">
+          <div class="stat-val" :style="{ color: index % 2 === 0 ? '#4f3b8c' : '#1f5e52' }" style="font-size: 1.8rem; font-weight: 700; line-height: 1.1; font-family:'Sora',sans-serif;">{{ s.value }}</div>
+          <div class="stat-label" :style="{ color: index % 2 === 0 ? '#4f3b8c' : '#1f5e52' }" style="font-size: 0.8rem; opacity: 0.8; margin-top: 2px; font-weight: 600;">{{ s.label }}</div>
+        </div>
+        <span class="stat-badge" :style="{ background: '#ffffff', color: index % 2 === 0 ? '#4f3b8c' : '#1f5e52', border: index % 2 === 0 ? '1px solid rgba(216, 200, 255, 0.4)' : '1px solid rgba(170, 227, 215, 0.4)' }" style="padding: 4px 8px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; box-shadow: 0 2px 6px rgba(124, 58, 237, 0.02);">{{ s.change }}</span>
       </div>
     </div>
-    <div class="bottom-grid">
-      <div class="card">
-        <div class="section-title">Recent Activity</div>
-        <div class="activity-list">
-          <div class="activity-item" v-for="a in activity" :key="a.title">
-            <div class="act-icon" :style="{ background: a.bg }">{{ a.icon }}</div>
-            <div>
-              <div class="act-title">{{ a.title }}</div>
-              <div class="act-sub">{{ a.sub }}</div>
+
+    <div class="section-title" style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; font-size: 1.25rem; margin-bottom: 16px;">Quick Actions</div>
+    <div class="quick-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 32px;">
+      <div class="qa-card" v-for="(q, index) in quickActions" :key="q.name" :style="{ background: '#ffffff', border: '1px solid rgba(225, 220, 245, 0.6)' }" style="padding: 24px; border-radius: 24px; box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03); display: flex; flex-direction: column; gap: 12px; transition: all 0.3s ease; cursor: pointer;">
+        <div style="background: #f4f0ff; color: #7c3aed; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;" v-html="q.icon"></div>
+        <div>
+          <div class="qa-name" style="font-family: 'Sora', sans-serif; font-weight: 700; color: #2e265c; font-size: 1rem; margin-bottom: 4px;">{{ q.name }}</div>
+          <div class="qa-desc" style="font-family: 'DM Sans', sans-serif; color: #7b7597; font-size: 0.82rem; line-height: 1.4;">{{ q.desc }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: start;">
+      
+      <!-- Recent Activity Card -->
+      <div class="card" style="background: #ffffff !important; border: 1px solid rgba(225, 220, 245, 0.6) !important; border-radius: 28px !important; box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important; padding: 28px !important;">
+        <div class="section-title" style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; font-size: 1.25rem; margin-bottom: 16px;">Recent Activity</div>
+        <div class="activity-list" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="pill-row" v-for="(a, index) in activity" :key="a.title" :class="index % 2 === 0 ? 'pill-row-mint' : 'pill-row-lavender'" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 14px; flex-grow: 1;">
+              <div :style="{ background: '#ffffff', color: index % 2 === 0 ? '#1f5e52' : '#4f3b8c' }" style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;" v-html="a.icon"></div>
+              <div>
+                <div class="act-title" style="font-weight: 700; font-size: 0.9rem;">{{ a.title }}</div>
+                <div class="act-sub" style="font-size: 0.75rem; opacity: 0.8; margin-top: 2px;">{{ a.sub }}</div>
+              </div>
             </div>
-            <div class="act-time">{{ a.time }}</div>
+            <div class="act-time" style="font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: #ffffff; flex-shrink: 0;">{{ a.time }}</div>
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="section-title">Upcoming Deadlines</div>
-        <div class="upcoming-list">
-          <div class="upcoming-item" v-for="u in upcoming" :key="u.name" :class="u.color">
-            <span class="upcoming-dot" :style="{ background: u.dotColor }"></span>
-            <div>
-              <div class="upcoming-name">{{ u.name }}</div>
-              <div class="upcoming-date">{{ u.date }}</div>
+
+      <!-- Upcoming Deadlines Card -->
+      <div class="card" style="background: #ffffff !important; border: 1px solid rgba(225, 220, 245, 0.6) !important; border-radius: 28px !important; box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important; padding: 28px !important;">
+        <div class="section-title" style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; font-size: 1.25rem; margin-bottom: 16px;">Upcoming Deadlines</div>
+        <div class="upcoming-list" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="pill-row" v-for="(u, index) in upcoming" :key="u.name" :class="index % 2 === 0 ? 'pill-row-mint' : 'pill-row-lavender'" style="margin-bottom: 0;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+              <span class="upcoming-dot" :style="{ background: u.dotColor }" style="width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;"></span>
+              <div>
+                <div class="upcoming-name" style="font-weight: 700; font-size: 0.9rem;">{{ u.name }}</div>
+                <div class="upcoming-date" style="font-size: 0.75rem; opacity: 0.8; margin-top: 2px; font-weight: 500;">{{ u.date }}</div>
+              </div>
             </div>
-            <span class="upcoming-badge" :style="{ background: u.badgeBg, color: u.dotColor }">{{ u.tag }}</span>
+            <span class="upcoming-badge" :style="{ background: u.badgeBg, color: u.dotColor }" style="padding: 4px 10px; border-radius: 12px; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;">{{ u.tag }}</span>
           </div>
         </div>
       </div>
+
     </div>
   `,
   quizzes: `
@@ -660,8 +743,9 @@ const pageTemplates = {
             class="clear-search-btn" 
             @click="tutorSearchQuery = ''"
             title="Clear search"
+            style="display: inline-flex; align-items: center; justify-content: center;"
           >
-            ×
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </div>
       </div>
@@ -779,7 +863,7 @@ const pageTemplates = {
       <div class="booking-modal card">
         <div class="modal-header">
           <h3>Book Study Session</h3>
-          <button class="modal-close-btn" @click="bookingTutor = null">×</button>
+          <button class="modal-close-btn" @click="bookingTutor = null" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; padding:0; transition: all 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="modal-tutor-summary">
           <img :src="rootRel + bookingTutor.avatar" class="modal-tutor-avatar" />
@@ -1298,7 +1382,7 @@ tracker: `
       <div class="booking-modal card">
         <div class="modal-header">
           <h3>Add New Deadline</h3>
-          <button class="modal-close-btn" @click="closeAddTaskModal">×</button>
+          <button class="modal-close-btn" @click="closeAddTaskModal" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; padding:0; transition: all 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="modal-body">
           <div style="margin-bottom: 12px;">
@@ -1525,7 +1609,7 @@ tracker: `
       <div class="booking-modal card">
         <div class="modal-header">
           <h3>Add New Tutor</h3>
-          <button class="modal-close-btn" @click="showAddTutorModal = false">×</button>
+          <button class="modal-close-btn" @click="showAddTutorModal = false" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; padding:0; transition: all 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="modal-body">
           <div class="field">
@@ -1564,7 +1648,7 @@ tracker: `
       <div class="booking-modal card">
         <div class="modal-header">
           <h3>Edit Tutor Details</h3>
-          <button class="modal-close-btn" @click="showEditTutorModal = false">×</button>
+          <button class="modal-close-btn" @click="showEditTutorModal = false" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; padding:0; transition: all 0.2s;"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
         </div>
         <div class="modal-body">
           <div class="field">
