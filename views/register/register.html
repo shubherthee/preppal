@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PrepPal – Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="login-page">
+        <div class="login-left">
+          <div class="brand-badge">
+            <div class="brand-icon">📚</div>
+            <div>
+              <div class="brand-name">PrepPal</div>
+              <div class="brand-sub">AI-Powered Study Assistant</div>
+            </div>
+          </div>
+          <div class="hero-headline">Study smarter,<br />not harder.</div>
+          <div class="hero-sub">AI-generated quizzes, flashcards, and personalized study plans — all in one place.</div>
+          <div class="floating-cards">
+            <div class="f-card">
+              <span class="f-card-icon">🧠</span>
+              <div>
+                <div class="f-card-text">AI Quiz Generator</div>
+                <div class="f-card-sub">Turn notes into instant quizzes</div>
+              </div>
+            </div>
+            <div class="f-card">
+              <span class="f-card-icon">🃏</span>
+              <div>
+                <div class="f-card-text">Smart Flashcards</div>
+                <div class="f-card-sub">Spaced repetition built-in</div>
+              </div>
+            </div>
+            <div class="f-card">
+              <span class="f-card-icon">📅</span>
+              <div>
+                <div class="f-card-text">Personalized Planner</div>
+                <div class="f-card-sub">Adaptive study schedules</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="login-right">
+          <div class="login-form-wrap">
+            <h2>Create Account</h2>
+            <p>Join PrepPal and start your smart study journey today.</p>
+
+            <div v-if="registerError" class="error-msg">{{ registerError }}</div>
+            <div v-if="successMsg" class="success-msg" style="background:#edf7f0; border:1px solid #c2eacb; color:#1f7a4c; font-size:.84rem; padding:10px 14px; margin-bottom: 18px; border-radius:var(--radius-sm);">{{ successMsg }}</div>
+
+            <div class="field">
+              <label>Full Name</label>
+              <input type="text" v-model="name" placeholder="Alex Chen" @keyup.enter="handleRegister" />
+            </div>
+
+            <div class="field">
+              <label>Email address</label>
+              <input type="email" v-model="email" placeholder="alex@school.edu" @keyup.enter="handleRegister" />
+            </div>
+
+            <div class="field">
+              <label>Password</label>
+              <input type="password" v-model="password" placeholder="••••••••" @keyup.enter="handleRegister" />
+            </div>
+
+            <div class="field">
+              <label>Confirm Password</label>
+              <input type="password" v-model="confirmPassword" placeholder="••••••••" @keyup.enter="handleRegister" />
+            </div>
+
+            <button class="btn-primary" @click="handleRegister" style="margin-top: 10px;">
+              {{ loading ? 'Creating Account…' : 'Sign Up' }}
+            </button>
+
+            <p class="signup-link">Already have an account? <a href="../../index.html">Sign In</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="../../js/api.js"></script>
+    <script src="../../js/pages/register.js"></script>
+  </body>
+</html>

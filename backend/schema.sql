@@ -6,11 +6,14 @@ USE preppal;
 
 --  USERS 
 CREATE TABLE IF NOT EXISTS users (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  name       VARCHAR(100) NOT NULL,
-  email      VARCHAR(150) UNIQUE,
-  initials   VARCHAR(5) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  name          VARCHAR(100) NOT NULL,
+  email         VARCHAR(150) UNIQUE,
+  initials      VARCHAR(5) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role          ENUM('admin', 'student', 'tutor') NOT NULL DEFAULT 'student',
+  bio           TEXT DEFAULT NULL,
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 --  QUIZZES 
@@ -89,11 +92,77 @@ CREATE TABLE IF NOT EXISTS flashcard_attempts (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
---  SEED DATA 
-INSERT INTO users (id, name, email, initials) VALUES
-  (1, 'Alex Chen', 'alex@school.edu', 'AC'),
-  (2, 'Sam Lee',   'sam@school.edu',  'SL')
-ON DUPLICATE KEY UPDATE name=VALUES(name);
+-- ── TUTOR PROFILES ────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS tutor_profiles (
+  user_id       INT PRIMARY KEY,
+  rate          DECIMAL(10, 2) NOT NULL DEFAULT 30.00,
+  subjects      JSON NOT NULL,                 -- e.g. ["Mathematics", "Physics"]
+  rating        DECIMAL(3, 2) DEFAULT 5.00,
+  reviews_count INT DEFAULT 0,
+  status        ENUM('available', 'busy') DEFAULT 'available',
+  verified      BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── TUTOR BOOKINGS ────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS bookings (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  student_id    INT NOT NULL,
+  tutor_id      INT NOT NULL,
+  booking_date  DATE NOT NULL,
+  booking_time  TIME NOT NULL,
+  duration      INT NOT NULL DEFAULT 1,        -- in hours
+  total_cost    DECIMAL(10, 2) NOT NULL,
+  status        ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'confirmed',
+  payment_status ENUM('unpaid', 'paid', 'refunded', 'payout_completed') DEFAULT 'paid',
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (tutor_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── FLAGGED CONTENT ───────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS flagged_content (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  reporter_id   INT NOT NULL,
+  content_type  ENUM('quiz', 'deck', 'material') NOT NULL,
+  content_id    INT NOT NULL,                  -- points to quiz_id or deck_id
+  reason        VARCHAR(255) NOT NULL,         -- e.g. "Inaccurate answers", "Spam"
+  status        ENUM('pending', 'reviewed', 'dismissed', 'deleted') DEFAULT 'pending',
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── SYSTEM ANNOUNCEMENTS ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS announcements (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  author_id     INT NOT NULL,
+  title         VARCHAR(150) NOT NULL,
+  message       TEXT NOT NULL,
+  type          ENUM('info', 'success', 'warning', 'danger') DEFAULT 'info',
+  starts_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at    TIMESTAMP NULL,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- ── SEED DATA ─────────────────────────────────────────────────────────
+INSERT INTO users (id, name, email, initials, password_hash, role, bio) VALUES
+  (1, 'Alex Chen', 'alex@school.edu', 'AC', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'student', 'A passionate student eager to learn and improve skills.'),
+  (2, 'Sam Lee',   'sam@school.edu',  'SL', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Expert tutor ready to help.'),
+  (3, 'Admin', 'admin@school.edu', 'AD', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'admin', 'Administrator of the PrepPal system.'),
+  (4, 'Dr. Sarah Jenkins', 'sarah@school.edu', 'SJ', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Former university professor with 10+ years teaching science courses.'),
+  (5, 'Prof. James Miller', 'james@school.edu', 'JM', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Passionate about making calculus and physics intuitive and visual.'),
+  (6, 'Mrs. Emily Chen', 'emily@school.edu', 'EC', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Dedicated to improving students\' essay writing and critical analysis skills.'),
+  (7, 'Mr. David Kross', 'david@school.edu', 'DK', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Software engineer teaching algorithms and high school geometry.')
+ON DUPLICATE KEY UPDATE name=VALUES(name), password_hash=VALUES(password_hash), role=VALUES(role), bio=VALUES(bio);
+
+-- Tutor profile seed
+INSERT INTO tutor_profiles (user_id, rate, subjects, rating, reviews_count, status, verified) VALUES
+  (2, 35.00, '["Biology"]', 4.5, 12, 'available', TRUE),
+  (4, 45.00, '["Chemistry", "Biology"]', 4.9, 42, 'available', TRUE),
+  (5, 50.00, '["Mathematics", "Physics"]', 4.8, 38, 'available', TRUE),
+  (6, 40.00, '["English Literature", "History"]', 4.7, 29, 'busy', TRUE),
+  (7, 55.00, '["Computer Science", "Mathematics"]', 5.0, 15, 'available', TRUE)
+ON DUPLICATE KEY UPDATE rate=VALUES(rate), subjects=VALUES(subjects), rating=VALUES(rating), reviews_count=VALUES(reviews_count), status=VALUES(status), verified=VALUES(verified);
 
 -- Sample quiz
 INSERT INTO quizzes (id, title, subject, topic, difficulty, visibility, owner_id) VALUES
@@ -126,6 +195,23 @@ INSERT INTO flashcards (deck_id, question, answer, position) VALUES
   (2, 'Goodbye', 'Adiós', 1),
   (2, 'Thank you', 'Gracias', 2),
   (3, 'Derivative of x²?', '2x', 0),
+  (3, 'Integral of 2x?', 'x² + C', 1);
+
+-- Seed some bookings
+INSERT INTO bookings (id, student_id, tutor_id, booking_date, booking_time, duration, total_cost, status, payment_status) VALUES
+  (1, 1, 4, '2026-06-25', '15:00:00', 2, 90.00, 'confirmed', 'paid'),
+  (2, 1, 5, '2026-06-26', '10:00:00', 1, 50.00, 'confirmed', 'paid')
+ON DUPLICATE KEY UPDATE total_cost=VALUES(total_cost);
+
+-- Seed flagged content
+INSERT INTO flagged_content (id, reporter_id, content_type, content_id, reason, status) VALUES
+  (1, 1, 'quiz', 1, 'Question 2 has a spelling error', 'pending')
+ON DUPLICATE KEY UPDATE reason=VALUES(reason);
+
+-- Seed announcements
+INSERT INTO announcements (id, author_id, title, message, type, expires_at) VALUES
+  (1, 3, 'Welcome to PrepPal!', 'We are excited to launch our new dashboard built on express and database-backed services.', 'success', '2026-07-01 00:00:00')
+ON DUPLICATE KEY UPDATE message=VALUES(message);
   (3, 'Integral of 2x?', 'x² + C', 1)
 ON DUPLICATE KEY UPDATE question=VALUES(question);
 
