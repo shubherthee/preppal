@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// ── GET /api/decks ─────────────────────────────────────────────────────
+//  GET /api/decks 
 // Query params: subject, topic, search, mine=true
 router.get('/', async (req, res) => {
   try {
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ── GET /api/decks/attempts/mine ──────────────────────────────────────
+//  GET /api/decks/attempts/mine 
 // All past study sessions by the current user, across all decks
 router.get('/attempts/mine', async (req, res) => {
   try {
@@ -66,7 +66,7 @@ router.get('/attempts/mine', async (req, res) => {
   }
 });
 
-// ── GET /api/decks/attempts/:attemptId ────────────────────────────────
+//  GET /api/decks/attempts/:attemptId 
 // Full detail (including the cards marked wrong) for one past session
 router.get('/attempts/:attemptId', async (req, res) => {
   try {
@@ -110,7 +110,7 @@ router.get('/attempts/:attemptId', async (req, res) => {
   }
 });
 
-// ── GET /api/decks/meta/filters ───────────────────────────────────────
+//  GET /api/decks/meta/filters 
 router.get('/meta/filters', async (req, res) => {
   try {
     const userId = req.userId;
@@ -132,7 +132,7 @@ router.get('/meta/filters', async (req, res) => {
   }
 });
 
-// ── GET /api/decks/:id ─────────────────────────────────────────────────
+//  GET /api/decks/:id 
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -161,7 +161,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ── POST /api/decks ────────────────────────────────────────────────────
+//  POST /api/decks 
 // Body: { title, subject, topic, visibility, cards:[{q,a}] }
 router.post('/', async (req, res) => {
   const conn = await pool.getConnection();
@@ -200,7 +200,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ── PUT /api/decks/:id ──────────────────────────────────────────────────
+//  PUT /api/decks/:id 
 router.put('/:id', async (req, res) => {
   const conn = await pool.getConnection();
   try {
@@ -243,7 +243,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ── DELETE /api/decks/:id ───────────────────────────────────────────────
+//  DELETE /api/decks/:id 
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -261,7 +261,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// ── POST /api/decks/:id/attempts ────────────────────────────────────────
+//  POST /api/decks/:id/attempts 
 // Body: { results: { "<cardId>": "correct"|"wrong", ... } }
 router.post('/:id/attempts', async (req, res) => {
   try {

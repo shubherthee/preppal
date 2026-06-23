@@ -48,13 +48,13 @@
           </div>
         </div>
         <div class="empty-state" v-if="decks.length===0">
-          <div style="font-size:3rem;margin-bottom:12px">🧠</div>
+          <div style="font-size:3rem;margin-bottom:12px"></div>
           <div>No decks found. Create one to get started!</div>
         </div>
       </template>
     </template>
 
-    <!-- ── HISTORY ────────────────────────────────────────────────── -->
+    <!--  HISTORY  -->
     <template v-if="tab==='history' && !deckResults">
       <div v-if="historyLoading" class="empty-state">Loading history…</div>
       <template v-else>
@@ -77,18 +77,18 @@
           </div>
         </div>
         <div class="empty-state" v-if="groupedDeckAttempts.length===0">
-          <div style="font-size:3rem;margin-bottom:12px">📊</div>
+          <div style="font-size:3rem;margin-bottom:12px"></div>
           <div>No study sessions yet. Study a deck to see your history here.</div>
         </div>
       </template>
     </template>
 
-    <!-- ── STUDY SESSION ──────────────────────────────────────────── -->
+    <!--  STUDY SESSION  -->
     <template v-if="tab==='play' && playingDeck && !deckResults">
       <div class="quiz-take-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{playingDeck.title}}</span>
-          <button class="btn-sm" @click="exitDeck">✕ Exit</button>
+          <button class="btn-sm" @click="exitDeck"> Exit</button>
         </div>
         <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentCard+1)/playingDeck.cards.length*100)+'%'}"></div></div>
         <div class="question-num">Card {{currentCard+1}} of {{playingDeck.cards.length}}</div>
@@ -106,14 +106,14 @@
           </div>
         </div>
         <div v-if="cardFlipped" style="display:flex;gap:12px;justify-content:center">
-          <button class="btn-sm" style="flex:1;max-width:180px;padding:12px;color:var(--rose);border-color:var(--rose)" @click="markCard('wrong')">✗ Got it wrong</button>
-          <button class="btn-sm primary" style="flex:1;max-width:180px;padding:12px" @click="markCard('correct')">✓ Got it right</button>
+          <button class="btn-sm" style="flex:1;max-width:180px;padding:12px;color:var(--rose);border-color:var(--rose)" @click="markCard('wrong')"> Got it wrong</button>
+          <button class="btn-sm primary" style="flex:1;max-width:180px;padding:12px" @click="markCard('correct')"> Got it right</button>
         </div>
         <div v-else style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:8px">Flip the card then mark whether you got it right or wrong</div>
       </div>
     </template>
 
-    <!-- ── RESULTS ────────────────────────────────────────────────── -->
+    <!--  RESULTS  -->
     <template v-if="deckResults">
       <div class="quiz-take-wrap">
         <div class="score-circle">
@@ -133,7 +133,7 @@
             <div class="review-ans" style="color:#1D9E75;margin-top:4px">{{c.a}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 You knew all the cards!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> You knew all the cards!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startDeck(resultsDeckId)">Study Again</button>
           <button class="btn-sm primary" @click="backFromResults">{{resultsContext==='history' ? 'Back to History' : 'Back to Browse'}}</button>
@@ -141,12 +141,12 @@
       </div>
     </template>
 
-    <!-- ── CREATE / EDIT MODAL ────────────────────────────────────── -->
+    <!--  CREATE / EDIT MODAL  -->
     <div class="modal-overlay" v-if="showDeckModal" @click.self="showDeckModal=false">
       <div class="modal">
         <div class="modal-header">
           <h3>{{editingDeckId?'Edit Deck':'Create New Deck'}}</h3>
-          <button class="btn-sm" @click="showDeckModal=false">✕</button>
+          <button class="btn-sm" @click="showDeckModal=false"></button>
         </div>
         <div class="modal-body">
           <div v-if="formError" class="error-msg">{{formError}}</div>

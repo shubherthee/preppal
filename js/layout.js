@@ -83,14 +83,14 @@ const appData = {
     { name: 'Deep Space', gradient: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)' },
   ],
   stats: [
-    { icon: '📈', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
-    { icon: '🧠', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
-    { icon: '⏱️', value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
+    { icon: '', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
+    { icon: '', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
+    { icon: '', value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
   ],
   quickActions: [
-    { icon: '📝', name: 'Write Notes', desc: 'Capture quick ideas from class.' },
-    { icon: '⚡', name: 'Skill Drills', desc: 'Practice short review sessions.' },
-    { icon: '📅', name: 'Plan Study', desc: 'Schedule tasks for the week.' },
+    { icon: '', name: 'Write Notes', desc: 'Capture quick ideas from class.' },
+    { icon: '', name: 'Skill Drills', desc: 'Practice short review sessions.' },
+    { icon: '', name: 'Plan Study', desc: 'Schedule tasks for the week.' },
   ],
   quizzes: [
     { id: 'bio-5', title: 'Biology — Chapter 5', desc: 'Cell structure and function', questions: 10, time: '10m', difficulty: 'Medium' },
@@ -98,9 +98,9 @@ const appData = {
     { id: 'math-quiz', title: 'Algebra Practice', desc: 'Linear equations', questions: 8, time: '8m', difficulty: 'Hard' },
   ],
   activity: [
-    { icon: '✅', title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
-    { icon: '🔔', title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
-    { icon: '📌', title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
+    { icon: '', title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
+    { icon: '', title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
+    { icon: '', title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
   ],
   upcoming: [
     { name: 'Biology Quiz', date: 'Today · 5:00 PM', tag: 'Due', dotColor: '#d92d20', badgeBg: '#ffe5e1' },
@@ -109,9 +109,9 @@ const appData = {
   ],
 
   contentItems: [
-    { id: 'c1', title: 'Machine Learning XAI', desc: '4 files • Updated 2 days ago', type: 'folder', icon: '📁', shared: true },
-    { id: 'c2', title: 'Theory of Computer Science', desc: 'PDF • 2.4 MB', type: 'file', icon: '📄', shared: false },
-    { id: 'c3', title: 'LIME Paper Summary', desc: 'AI Generated • Read time: 5m', type: 'summary', icon: '🤖', shared: true }
+    { id: 'c1', title: 'Machine Learning XAI', desc: '4 files • Updated 2 days ago', type: 'folder', icon: '', shared: true },
+    { id: 'c2', title: 'Theory of Computer Science', desc: 'PDF • 2.4 MB', type: 'file', icon: '', shared: false },
+    { id: 'c3', title: 'LIME Paper Summary', desc: 'AI Generated • Read time: 5m', type: 'summary', icon: '', shared: true }
   ],
   trackerTasks: [
     { id: 't1', title: 'Biology Quiz', date: 'May 3, 2026', time: '02:00 PM', colorClass: 'border-orange', badgeText: 'Tomorrow', badgeClass: 'badge-red' },
@@ -265,14 +265,14 @@ const appData = {
   playingDeck: null, currentCard: 0, cardFlipped: false, cardResults: {}, deckResults: false,
 };
 
-// ── Sidebar component (fully self-contained template string) ──────────────
+//  Sidebar component (fully self-contained template string) 
 const SidebarComponent = {
   props: ['navItems', 'activeNav', 'userName', 'initials', 'userAvatarBg', 'userRole'],
   emits: ['update:activeNav', 'logout', 'goToProfile'],
   template: `
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">📚</div>
+        <div class="sidebar-brand-icon"></div>
         <div>
           <div class="sidebar-brand-name">PrepPal</div>
           <div class="sidebar-brand-sub">AI Study Assistant</div>
@@ -288,7 +288,7 @@ const SidebarComponent = {
         </a>
       </nav>
       <div class="tip-box">
-        <div class="tip-title">💡 Study Tip</div>
+        <div class="tip-title"> Study Tip</div>
         <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
       </div>
       <div class="sidebar-user">
@@ -298,15 +298,15 @@ const SidebarComponent = {
           <div class="user-role">{{ userRole || 'Student' }}</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-          <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile">⚙</button>
-          <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+          <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile"></button>
+          <button class="logout-btn" @click="$emit('logout')" title="Sign out"></button>
         </div>
       </div>
     </aside>
   `,
 };
 
-// ── Per-page main content templates ──────────────────────────────────────
+//  Per-page main content templates 
 const pageTemplates = {
   default: `
     <div class="greeting">
@@ -320,10 +320,10 @@ const pageTemplates = {
   dashboard: `
     <div class="topbar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"></span>
         <input type="text" placeholder="Search notes, quizzes, flashcards…" />
       </div>
-      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="notif-btn"><span class="notif-dot"></span></div>
       <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
     <div class="greeting">
@@ -417,7 +417,7 @@ const pageTemplates = {
         </div>
       </div>
       <div class="empty-state" v-if="(quizTab==='my'?myFilteredQuizzes:allFilteredQuizzes).length===0">
-        <div style="font-size:3rem;margin-bottom:12px">✏️</div>
+        <div style="font-size:3rem;margin-bottom:12px"></div>
         <div>No quizzes found. Adjust your filters or create a new quiz.</div>
       </div>
     </template>
@@ -426,7 +426,7 @@ const pageTemplates = {
       <div class="quiz-take-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{takingQuiz.title}}</span>
-          <button class="btn-sm" @click="quizTab='browse';takingQuiz=null">✕ Exit</button>
+          <button class="btn-sm" @click="quizTab='browse';takingQuiz=null"> Exit</button>
         </div>
         <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentQ+1)/takingQuiz.questions.length*100)+'%'}"></div></div>
         <div class="question-num">Question {{currentQ+1}} of {{takingQuiz.questions.length}}</div>
@@ -437,8 +437,8 @@ const pageTemplates = {
             @click="quizAnswers[currentQ]=ci">{{c}}</div>
         </div>
         <div class="quiz-nav">
-          <button class="btn-sm" @click="currentQ--" :disabled="currentQ===0">← Previous</button>
-          <button class="btn-sm primary" v-if="currentQ<takingQuiz.questions.length-1" @click="currentQ++" :disabled="quizAnswers[currentQ]===undefined">Next →</button>
+          <button class="btn-sm" @click="currentQ--" :disabled="currentQ===0"> Previous</button>
+          <button class="btn-sm primary" v-if="currentQ<takingQuiz.questions.length-1" @click="currentQ++" :disabled="quizAnswers[currentQ]===undefined">Next </button>
           <button class="btn-sm primary" v-else @click="submitQuiz" :disabled="quizAnswers[currentQ]===undefined">Submit Quiz</button>
         </div>
       </div>
@@ -464,7 +464,7 @@ const pageTemplates = {
             <div class="review-ans" style="color:#1D9E75;margin-top:2px">Correct: {{q.choices[q.correct]}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 All answers correct!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> All answers correct!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startQuizGame(takingQuiz)">Retake</button>
           <button class="btn-sm primary" @click="quizTab='browse';takingQuiz=null;quizResults=false">Back to Browse</button>
@@ -476,7 +476,7 @@ const pageTemplates = {
       <div class="modal">
         <div class="modal-header">
           <h3>{{editingQuiz?'Edit Quiz':'Create New Quiz'}}</h3>
-          <button class="btn-sm" @click="showQuizModal=false">✕</button>
+          <button class="btn-sm" @click="showQuizModal=false"></button>
         </div>
         <div class="modal-body">
           <div class="form-row">
@@ -510,7 +510,7 @@ const pageTemplates = {
               <div class="choice-row" v-for="(c,ci) in q.choices" :key="ci">
                 <input type="radio" class="correct-radio" :name="'q'+qi" :value="ci" v-model="q.correct"/>
                 <input type="text" v-model="q.choices[ci]" :placeholder="'Choice '+(ci+1)" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:DM Sans,sans-serif;font-size:.88rem;background:var(--surface);color:var(--text);outline:none"/>
-                <button class="btn-sm" style="padding:6px 10px" @click="q.choices.splice(ci,1)" v-if="q.choices.length>2">✕</button>
+                <button class="btn-sm" style="padding:6px 10px" @click="q.choices.splice(ci,1)" v-if="q.choices.length>2"></button>
               </div>
             </div>
             <button class="btn-sm" style="margin-top:8px" @click="q.choices.push('')" v-if="q.choices.length<6">+ Add choice</button>
@@ -560,7 +560,7 @@ const pageTemplates = {
         </div>
       </div>
       <div class="empty-state" v-if="(deckTab==='my'?myFilteredDecks:allFilteredDecks).length===0">
-        <div style="font-size:3rem;margin-bottom:12px">🧠</div>
+        <div style="font-size:3rem;margin-bottom:12px"></div>
         <div>No decks found. Create one to get started!</div>
       </div>
     </template>
@@ -569,7 +569,7 @@ const pageTemplates = {
       <div class="quiz-take-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{playingDeck.title}}</span>
-          <button class="btn-sm" @click="deckTab='browse';playingDeck=null">✕ Exit</button>
+          <button class="btn-sm" @click="deckTab='browse';playingDeck=null"> Exit</button>
         </div>
         <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentCard+1)/playingDeck.cards.length*100)+'%'}"></div></div>
         <div class="question-num">Card {{currentCard+1}} of {{playingDeck.cards.length}}</div>
@@ -587,8 +587,8 @@ const pageTemplates = {
           </div>
         </div>
         <div v-if="cardFlipped" style="display:flex;gap:12px;justify-content:center">
-          <button class="btn-sm" style="flex:1;max-width:180px;padding:12px;color:var(--rose);border-color:var(--rose)" @click="markCard('wrong')">✗ Got it wrong</button>
-          <button class="btn-sm primary" style="flex:1;max-width:180px;padding:12px" @click="markCard('correct')">✓ Got it right</button>
+          <button class="btn-sm" style="flex:1;max-width:180px;padding:12px;color:var(--rose);border-color:var(--rose)" @click="markCard('wrong')"> Got it wrong</button>
+          <button class="btn-sm primary" style="flex:1;max-width:180px;padding:12px" @click="markCard('correct')"> Got it right</button>
         </div>
         <div v-else style="text-align:center;color:var(--muted);font-size:.85rem;margin-top:8px">Flip the card then mark whether you got it right or wrong</div>
       </div>
@@ -613,7 +613,7 @@ const pageTemplates = {
             <div class="review-ans" style="color:#1D9E75;margin-top:4px">{{c.a}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 You knew all the cards!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> You knew all the cards!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startDeck(playingDeck)">Study Again</button>
           <button class="btn-sm primary" @click="deckTab='browse';playingDeck=null;deckResults=false">Back to Browse</button>
@@ -625,7 +625,7 @@ const pageTemplates = {
       <div class="modal">
         <div class="modal-header">
           <h3>{{editingDeck?'Edit Deck':'Create New Deck'}}</h3>
-          <button class="btn-sm" @click="showDeckModal=false">✕</button>
+          <button class="btn-sm" @click="showDeckModal=false"></button>
         </div>
         <div class="modal-body">
           <div class="form-row">
@@ -722,7 +722,7 @@ const pageTemplates = {
     <div class="section-title">Available Tutors ({{ filteredTutors.length }})</div>
     
     <div v-if="filteredTutors.length === 0" class="no-tutors-state card">
-      <div class="no-tutors-icon">🧑‍🏫</div>
+      <div class="no-tutors-icon"></div>
       <h3>No Tutors Found</h3>
       <p>Try adjusting your search filters or check back later.</p>
     </div>
@@ -743,7 +743,7 @@ const pageTemplates = {
           </div>
           <h3 class="tutor-name">{{ tutor.name }}</h3>
           <div class="tutor-rating">
-            <span class="star-icon">⭐</span>
+            <span class="star-icon"></span>
             <span class="rating-val">{{ tutor.rating }}</span>
             <span class="reviews-count">({{ tutor.reviewsCount }} reviews)</span>
           </div>
@@ -778,9 +778,9 @@ const pageTemplates = {
           <div class="session-details">
             <div class="session-tutor-name">{{ session.tutor.name }}</div>
             <div class="session-meta">
-              <span>📅 {{ session.date }}</span>
-              <span>⏰ {{ session.time }} ({{ session.duration }}h)</span>
-              <span>💰 RM{{ session.totalCost }}</span>
+              <span> {{ session.date }}</span>
+              <span> {{ session.time }} ({{ session.duration }}h)</span>
+              <span> RM{{ session.totalCost }}</span>
             </div>
             <div class="session-subjects">
               <span v-for="sub in session.tutor.subjects" class="subject-tag-xs">{{ sub }}</span>
@@ -849,7 +849,7 @@ const pageTemplates = {
   planner: `
   <div class="topbar">
     <div class="search-wrap">
-      <span class="search-icon">⌕</span>
+      <span class="search-icon"></span>
       <input
         type="text"
         v-model="plannerSearch"
@@ -1029,7 +1029,7 @@ const pageTemplates = {
   analytics: `
   <div class="topbar">
     <div class="search-wrap">
-      <span class="search-icon">⌕</span>
+      <span class="search-icon"></span>
       <input
         type="text"
         v-model="analyticsSearch"
@@ -1195,10 +1195,10 @@ const pageTemplates = {
   content: `
       <div class="topbar">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"></span>
           <input type="text" placeholder="Search notes, folders, or AI summaries…" />
         </div>
-        <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+        <div class="notif-btn"><span class="notif-dot"></span></div>
         <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
       </div>
       
@@ -1210,7 +1210,7 @@ const pageTemplates = {
       </div>
 
       <div class="upload-zone">
-        <div class="upload-icon">☁️</div>
+        <div class="upload-icon"></div>
         <div class="upload-text">Drop files here to upload or click to browse</div>
         <div class="upload-sub">Supports: PDF, DOCX, TXT, Links</div>
       </div>
@@ -1239,16 +1239,16 @@ const pageTemplates = {
   tracker: `
     <div class="topbar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"></span>
         <input type="text" placeholder="Search exams, assignments…" />
       </div>
-      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="notif-btn"><span class="notif-dot"></span></div>
       <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
 
     <div class="greeting content-actions-row" style="margin-bottom: 24px;">
       <div>
-        <h1>Exam & Assignment Tracker ⏰</h1>
+        <h1>Exam & Assignment Tracker </h1>
         <p>Never miss a deadline</p>
       </div>
       <button class="btn-primary" @click="openAddTaskModal" style="width: auto; padding: 10px 24px; border-radius: 24px;">+ Add Exam</button>
@@ -1256,19 +1256,19 @@ const pageTemplates = {
 
     <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>❕</span> Upcoming</div>
+        <div class="tracker-stat-header"><span></span> Upcoming</div>
         <div class="tracker-stat-val">3</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>📅</span> This Week</div>
+        <div class="tracker-stat-header"><span></span> This Week</div>
         <div class="tracker-stat-val">2</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>✅</span> Completed</div>
+        <div class="tracker-stat-header"><span></span> Completed</div>
         <div class="tracker-stat-val">8</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>🕒</span> Overdue</div>
+        <div class="tracker-stat-header"><span></span> Overdue</div>
         <div class="tracker-stat-val">0</div>
       </div>
     </div>
@@ -1291,8 +1291,8 @@ const pageTemplates = {
               <div class="tracker-item-title" :style="task.completed ? 'text-decoration: line-through; color: var(--muted);' : ''">{{ task.title }}</div>
             </div>
             <div class="tracker-item-meta" style="padding-left: 30px;">
-              <span>📅 {{ task.date }}</span>
-              <span>🕒 {{ task.time }}</span>
+              <span> {{ task.date }}</span>
+              <span> {{ task.time }}</span>
             </div>
             <div class="tracker-item-actions" style="padding-left: 30px;">
               <button class="btn-pill-primary">Study Now</button>
@@ -1305,7 +1305,7 @@ const pageTemplates = {
       </div>
 
       <div v-if="trackerCurrentView === 'Calendar View'" style="padding: 40px; text-align: center; color: var(--muted);">
-        <div style="font-size: 3rem; margin-bottom: 16px;">🗓️</div>
+        <div style="font-size: 3rem; margin-bottom: 16px;"></div>
         <h3>Calendar View Active</h3>
         <p>This is where the monthly calendar grid will be rendered.</p>
       </div>
@@ -1367,16 +1367,16 @@ const pageTemplates = {
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;">🧑‍🏫</div>
-          <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">Active</span>
+          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;"></div>
+          <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">+{{ tutors.length - 4 }} New</span>
         </div>
         <div class="stat-val">{{ adminTutorCount }}</div>
         <div class="stat-label">Active Tutors</div>
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;">📅</div>
-          <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Confirmed</span>
+          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;"></div>
+          <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Active</span>
         </div>
         <div class="stat-val">{{ adminBookingCount }}</div>
         <div class="stat-label">Total Bookings</div>
@@ -1392,20 +1392,20 @@ const pageTemplates = {
             :class="{ active: adminActiveTab === 'tutors' }" 
             @click="adminActiveTab = 'tutors'"
           >
-            🧑‍🏫 Tutor Directory
+             Tutor Directory
           </button>
           <button 
             class="admin-tab-btn" 
             :class="{ active: adminActiveTab === 'bookings' }" 
             @click="adminActiveTab = 'bookings'"
           >
-            🗓️ Session Bookings
+             Session Bookings
           </button>
         </div>
         
         <!-- Search Input inside controls card -->
         <div class="admin-search-wrap">
-          <span class="admin-search-icon">🔍</span>
+          <span class="admin-search-icon"></span>
           <input 
             type="text" 
             v-model="adminSearchQuery" 
@@ -1418,14 +1418,14 @@ const pageTemplates = {
           class="btn-primary admin-add-btn" 
           @click="openAddTutorModal"
         >
-          ➕ Add New Tutor
+           Add New Tutor
         </button>
       </div>
 
       <!-- Tab Content: Tutors Directory -->
       <div v-if="adminActiveTab === 'tutors'" class="admin-tab-content">
         <div v-if="adminFilteredTutors.length === 0" class="admin-empty-state">
-          <div class="empty-state-icon">🔍</div>
+          <div class="empty-state-icon"></div>
           <h3>No tutors match your search</h3>
           <p>Try entering a different name or subject.</p>
         </div>
@@ -1466,12 +1466,12 @@ const pageTemplates = {
                 </span>
               </td>
               <td>
-                <span class="admin-rating-txt">⭐ {{ t.rating }}</span>
+                <span class="admin-rating-txt"> {{ t.rating }}</span>
               </td>
               <td style="text-align: right;">
                 <div class="admin-action-btns">
-                  <button class="btn-edit" @click="openEditTutorModal(t)" title="Edit Tutor">✏️ Edit</button>
-                  <button class="btn-delete" @click="deleteTutor(t.id)" title="Delete Tutor">🗑️ Delete</button>
+                  <button class="btn-edit" @click="openEditTutorModal(t)" title="Edit Tutor"> Edit</button>
+                  <button class="btn-delete" @click="deleteTutor(t.id)" title="Delete Tutor"> Delete</button>
                 </div>
               </td>
             </tr>
@@ -1482,7 +1482,7 @@ const pageTemplates = {
       <!-- Tab Content: Session Bookings -->
       <div v-if="adminActiveTab === 'bookings'" class="admin-tab-content">
         <div v-if="adminFilteredBookings.length === 0" class="admin-empty-state">
-          <div class="empty-state-icon">📅</div>
+          <div class="empty-state-icon"></div>
           <h3>No bookings logs found</h3>
           <p>Booked sessions will show up here.</p>
         </div>
@@ -1517,8 +1517,8 @@ const pageTemplates = {
               </td>
               <td>
                 <div class="admin-datetime-cell">
-                  <div class="admin-date-txt">📅 {{ b.date }}</div>
-                  <div class="admin-time-txt">⏰ {{ b.time }}</div>
+                  <div class="admin-date-txt"> {{ b.date }}</div>
+                  <div class="admin-time-txt"> {{ b.time }}</div>
                 </div>
               </td>
               <td>{{ b.duration }} hr(s)</td>
@@ -1529,7 +1529,7 @@ const pageTemplates = {
                 <span class="session-status-badge">Confirmed</span>
               </td>
               <td style="text-align: right;">
-                <button class="btn-cancel" @click="deleteBooking(b.id)" title="Cancel Booking">❌ Cancel</button>
+                <button class="btn-cancel" @click="deleteBooking(b.id)" title="Cancel Booking"> Cancel</button>
               </td>
             </tr>
           </tbody>
@@ -1636,7 +1636,7 @@ const pageTemplates = {
           {{ tempRole }}
         </div>
         <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-          <span>📧</span> {{ tempEmail || 'email@school.edu' }}
+          <span></span> {{ tempEmail || 'email@school.edu' }}
         </div>
         <hr style="border: none; border-top: 1px solid var(--border); width: 100%; margin-bottom: 20px;" />
         <div style="text-align: left; width: 100%;">
@@ -1668,7 +1668,7 @@ const pageTemplates = {
         </div>
 
         <div class="section-title" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-          <span>👤</span> Profile Settings
+          <span></span> Profile Settings
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px;">
