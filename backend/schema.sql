@@ -147,11 +147,11 @@ CREATE TABLE IF NOT EXISTS announcements (
 -- ── SEED DATA ─────────────────────────────────────────────────────────
 INSERT INTO users (id, name, email, initials, password_hash, role, bio) VALUES
   (1, 'Alex Chen', 'alex@school.edu', 'AC', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'student', 'A passionate student eager to learn and improve skills.'),
-  (2, 'Sam Lee',   'sam@school.edu',  'SL', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Expert tutor ready to help.'),
+  (2, 'Sam Lee',   'sam@school.edu',  'SL', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'student', 'Expert tutor ready to help.'),
   (3, 'Admin', 'admin@school.edu', 'AD', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'admin', 'Administrator of the PrepPal system.'),
   (4, 'Dr. Sarah Jenkins', 'sarah@school.edu', 'SJ', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Former university professor with 10+ years teaching science courses.'),
   (5, 'Prof. James Miller', 'james@school.edu', 'JM', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Passionate about making calculus and physics intuitive and visual.'),
-  (6, 'Mrs. Emily Chen', 'emily@school.edu', 'EC', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Dedicated to improving students\' essay writing and critical analysis skills.'),
+  (6, 'Mrs. Emily Chen', 'emily@school.edu', 'EC', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Dedicated to improving students essay writing and critical analysis skills.'),
   (7, 'Mr. David Kross', 'david@school.edu', 'DK', '$2b$10$pfYsyYzTRUdB0TjPad6Ah.wpOuqACjlyikCQZaKsmMPXTh01BlqRu', 'tutor', 'Software engineer teaching algorithms and high school geometry.')
 ON DUPLICATE KEY UPDATE name=VALUES(name), password_hash=VALUES(password_hash), role=VALUES(role), bio=VALUES(bio);
 

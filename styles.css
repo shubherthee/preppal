@@ -1529,7 +1529,7 @@ body {
   box-shadow: 0 0 0 2px #fff, var(--shadow-lg);
 }
 .avatar-preset-bubble.active::after {
-  content: '';
+  content: '✓';
   position: absolute;
   top: 50%;
   left: 50%;

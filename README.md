@@ -30,15 +30,31 @@ The API runs on `http://localhost:4000` by default.
 
 ## Authentication
 
-PrepPal uses JSON Web Token (JWT) for authentication. If 'preppal' database already exists after the setup, there will be 3 users available which are:
+PrepPal uses JSON Web Token (JWT) for authentication. If 'preppal' database already exists after the setup, there will be 7 users available, 2 students, 4 tutors and 1 admin which are:
 
 ```bash
-Student Role
+Student Role 1
 Email Address: alex@school.edu
 Password: password123
 
-Tutor Role
+Student Role 2
 Email Address: sam@school.edu
+Password: password123
+
+Tutor Role
+Email Address: sarah@school.edu
+Password: password123
+
+Tutor Role 2
+Email Address: james@school.edu
+Password: password123
+
+Tutor Role 3
+Email Address: emily@school.edu
+Password: password123
+
+Tutor Role 4
+Email Address: david@school.edu
 Password: password123
 
 Admin Role

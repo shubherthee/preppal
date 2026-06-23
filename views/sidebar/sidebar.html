@@ -1,7 +1,7 @@
 <template id="sidebar-template">
   <aside class="sidebar">
     <div class="sidebar-brand">
-      <div class="sidebar-brand-icon"></div>
+      <div class="sidebar-brand-icon">📚</div>
       <div>
         <div class="sidebar-brand-name">PrepPal</div>
         <div class="sidebar-brand-sub">AI Study Assistant</div>
@@ -20,7 +20,7 @@
     </nav>
 
     <div class="tip-box">
-      <div class="tip-title"> Study Tip</div>
+      <div class="tip-title">💡 Study Tip</div>
       <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
     </div>
 
@@ -31,8 +31,8 @@
         <div class="user-role">{{ userRole || 'Student' }}</div>
       </div>
       <div style="display: flex; gap: 8px; align-items: center; margin-left: auto;">
-        <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile"></button>
-        <button class="logout-btn" @click="$emit('logout')" title="Sign out"></button>
+        <button class="profile-btn" @click="$emit('goToProfile')" title="Edit Profile">⚙</button>
+        <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
       </div>
     </div>
   </aside>
