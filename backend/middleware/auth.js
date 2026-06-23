@@ -1,9 +1,29 @@
-// Simplified auth: the frontend sends the logged-in user's id in the
-// `x-user-id` header (stored client-side after login). This is NOT secure
-// for production — swap this out for real session/JWT auth later.
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'preppal_secret_key_change_this_12345';
 
 module.exports = function attachUser(req, res, next) {
-  const userId = parseInt(req.headers['x-user-id'], 10);
-  req.userId = Number.isInteger(userId) ? userId : 1; // default to seed user 1
-  next();
+  // Only protect API routes
+  if (!req.path.startsWith('/api')) {
+    return next();
+  }
+
+  // Allow login, register, and health endpoints without tokens
+  if (req.path.endsWith('/users/login') || req.path.endsWith('/users/register') || req.path.endsWith('/health')) {
+    return next();
+  }
+
+  const authHeader = req.headers['authorization'];
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Bearer token is required' });
+  }
+
+  const token = authHeader.substring(7); // Remove 'Bearer '
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.userId = decoded.id; // decoded payload has the user ID
+    req.userRole = decoded.role; // decoded payload has the user role
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
 };

@@ -6,6 +6,7 @@ const attachUser = require('./middleware/auth');
 const quizzesRouter = require('./routes/quizzes');
 const decksRouter = require('./routes/flashcards');
 const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,6 +20,7 @@ app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 app.use('/api/quizzes', quizzesRouter);
 app.use('/api/decks', decksRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/admin', adminRouter);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

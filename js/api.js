@@ -1,21 +1,30 @@
 // js/api.js
 // Thin fetch wrapper for the PrepPal REST API.
-// Sends the current user's id as `x-user-id` so the backend can enforce
-// "edit/delete only your own quizzes/decks" and visibility rules.
+// Sends the JWT Bearer token in the Authorization header.
 
 window.PrepPalAPI = (function () {
   // Change this if your backend runs elsewhere.
   const BASE_URL = window.PREPPAL_API_BASE || 'http://localhost:4000/api';
 
   async function request(path, options = {}) {
-    const user = PrepPalCore.getCurrentUser();
+    const token = localStorage.getItem('preppal_token');
     const headers = {
       'Content-Type': 'application/json',
-      'x-user-id': user.id,
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     };
 
     const res = await fetch(BASE_URL + path, { ...options, headers });
+
+    if (res.status === 401 && !path.endsWith('/login') && !path.endsWith('/register')) {
+      // Clear credentials and redirect to login page
+      localStorage.removeItem('preppal_token');
+      localStorage.removeItem('preppal_profile');
+      const atViews = /\/views\//.test(window.location.pathname);
+      const rootRel = atViews ? '../../' : '';
+      window.location.href = rootRel + 'index.html';
+      throw new Error('Session expired. Please log in again.');
+    }
 
     if (!res.ok) {
       let message = res.statusText;
@@ -62,5 +71,31 @@ window.PrepPalAPI = (function () {
     // Users
     getMe: () => request('/users/me'),
     getUsers: () => request('/users'),
+    createUser: (data) => request('/users', { method: 'POST', body: JSON.stringify(data) }),
+    updateUser: (id, data) => request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    updateProfile: (data) => request('/users/profile', { method: 'PUT', body: JSON.stringify(data) }),
+    deleteUser: (id) => request(`/users/${id}`, { method: 'DELETE' }),
+    login: (email, password) => request('/users/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    register: (name, email, password) => request('/users/register', { method: 'POST', body: JSON.stringify({ name, email, password }) }),
+
+    // Admin functions
+    getAdminStats: () => request('/admin/stats'),
+    createAdminTutor: (data) => request('/admin/tutors', { method: 'POST', body: JSON.stringify(data) }),
+    updateAdminTutor: (id, data) => request(`/admin/tutors/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deleteAdminTutor: (id) => request(`/admin/tutors/${id}`, { method: 'DELETE' }),
+    toggleTutorStatus: (id, status) => request(`/admin/tutors/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
+    getAdminBookings: () => request('/admin/bookings'),
+    deleteAdminBooking: (id) => request(`/admin/bookings/${id}`, { method: 'DELETE' }),
+    getFlaggedContent: () => request('/admin/moderation'),
+    updateFlaggedStatus: (id, status) => request(`/admin/moderation/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
+    deleteFlaggedContent: (id) => request(`/admin/moderation/${id}/content`, { method: 'DELETE' }),
+    getAnnouncements: () => request('/admin/announcements'),
+    createAnnouncement: (data) => request('/admin/announcements', { method: 'POST', body: JSON.stringify(data) }),
+    deleteAnnouncement: (id) => request(`/admin/announcements/${id}`, { method: 'DELETE' }),
+
+    // Tutors and Bookings on Student side
+    getStudentTutors: () => request('/users/tutors'),
+    createStudentBooking: (data) => request('/users/bookings', { method: 'POST', body: JSON.stringify(data) }),
+    getStudentBookings: () => request('/users/bookings/mine'),
   };
 })();

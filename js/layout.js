@@ -6,16 +6,21 @@ const atViews = /\/views\//.test(window.location.pathname);
 const rootRel = atViews ? '../../' : '';
 
 const navItems = [
-  { id: 'dashboard', icon: '🏠', label: 'Dashboard', route: rootRel + 'dashboard.html' },
-  { id: 'admins', icon: '🔒', label: 'Admins', route: rootRel + 'views/admins/admins_index.html' },
-  { id: 'ai', icon: '🤖', label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html' },
-  { id: 'content', icon: '📚', label: 'Content Hub', route: rootRel + 'views/content/content_index.html' },
-  { id: 'flashcards', icon: '🧠', label: 'Flashcards', route: rootRel + 'views/flashcards/flashcards_index.html' },
-  { id: 'quizzes', icon: '✏️', label: 'Quizzes', route: rootRel + 'views/quizzes/quizzes_index.html' },
-  { id: 'planner', icon: '🗓️', label: 'Planner', route: rootRel + 'views/planner/planner_index.html' },
-  { id: 'analytics', icon: '📊', label: 'Analytics', route: rootRel + 'views/analytics/analytics_index.html' },
-  { id: 'tutors', icon: '🧑‍🏫', label: 'Tutors', route: rootRel + 'views/tutors/tutors_index.html' },
-  { id: 'tracker', icon: '⏰', label: 'Exam Tracker', route: rootRel + 'views/tracker/tracker_index.html' },
+  { id: 'dashboard', icon: '🏠', label: 'Dashboard', route: rootRel + 'views/dashboard/dashboard.html', role: 'Student' },
+  { id: 'admins', icon: '📊', label: 'Admin Dashboard', route: rootRel + 'views/admins/admins_index.html', role: 'Admin' },
+  { id: 'users', icon: '👥', label: 'User Management', route: rootRel + 'views/admins/user_management_index.html', role: 'Admin' },
+  { id: 'moderation', icon: '🛡️', label: 'Content Moderation', route: rootRel + 'views/admins/moderation_index.html', role: 'Admin' },
+  { id: 'bookings', icon: '💼', label: 'Bookings & Payments', route: rootRel + 'views/admins/bookings_index.html', role: 'Admin' },
+  { id: 'announcements', icon: '📢', label: 'Announcements', route: rootRel + 'views/admins/announcements_index.html', role: 'Admin' },
+  { id: 'settings', icon: '⚙️', label: 'System Settings', route: rootRel + 'views/admins/settings_index.html', role: 'Admin' },
+  { id: 'ai', icon: '🤖', label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html', role: 'Student' },
+  { id: 'content', icon: '📚', label: 'Content Hub', route: rootRel + 'views/content/content_index.html', role: 'Student' },
+  { id: 'flashcards', icon: '🧠', label: 'Flashcards', route: rootRel + 'views/flashcards/flashcards_index.html', role: 'Student' },
+  { id: 'quizzes', icon: '✏️', label: 'Quizzes', route: rootRel + 'views/quizzes/quizzes_index.html', role: 'Student' },
+  { id: 'planner', icon: '🗓️', label: 'Planner', route: rootRel + 'views/planner/planner_index.html', role: 'Student' },
+  { id: 'analytics', icon: '📊', label: 'Analytics', route: rootRel + 'views/analytics/analytics_index.html', role: 'Student' },
+  { id: 'tutors', icon: '🧑‍🏫', label: 'Tutors', route: rootRel + 'views/tutors/tutors_index.html', role: 'Student' },
+  { id: 'tracker', icon: '⏰', label: 'Exam Tracker', route: rootRel + 'views/tracker/tracker_index.html', role: 'Student' },
 ];
 
 const defaultProfile = {
@@ -67,6 +72,8 @@ const appData = {
   tempPassword: '',
   tempBio: activeProfile.bio || '',
   tempAvatarBg: activeProfile.avatarBg || 'linear-gradient(135deg, var(--indigo), var(--mint))',
+  profileSuccessMsg: '',
+  profileErrorMsg: '',
   avatarPresets: [
     { name: 'Indigo Mint', gradient: 'linear-gradient(135deg, var(--indigo), var(--mint))' },
     { name: 'Sunset Gold', gradient: 'linear-gradient(135deg, var(--rose), var(--amber))' },
@@ -112,7 +119,7 @@ const appData = {
     { id: 't3', title: 'Math Final', date: 'May 8, 2026', time: '09:00 AM', colorClass: 'border-yellow', badgeText: '6 days left', badgeClass: 'badge-purple' }
   ],
 
-trackerCurrentView: 'List View',
+  trackerCurrentView: 'List View',
   trackerCurrentView: 'List View',
   newTaskForm: {
     title: '',
@@ -188,12 +195,16 @@ trackerCurrentView: 'List View',
   bookingDuration: 1,
   bookedSessions: [],
   // Admin Page State
+  adminStudentCount: 0,
+  adminTutorCount: 0,
+  adminBookingCount: 0,
   adminActiveTab: 'tutors',
   adminSearchQuery: '',
   showAddTutorModal: false,
   showEditTutorModal: false,
   adminTutorForm: {
     name: '',
+    email: '',
     rate: 30,
     subjects: '',
     status: 'available',
@@ -204,47 +215,53 @@ trackerCurrentView: 'List View',
   currentUser: 'Alex Chen',
 
   quizList: [
-    { id:1, title:'Biology — Cell Structure', subject:'Biology', topic:'Cells', difficulty:'Medium', visibility:'public', owner:'Alex Chen',
-      questions:[
-        { text:'What is the powerhouse of the cell?', choices:['Nucleus','Mitochondria','Ribosome','Golgi body'], correct:1 },
-        { text:'Which organelle contains DNA?', choices:['Mitochondria','Lysosome','Nucleus','Vacuole'], correct:2 },
-        { text:'What surrounds plant cells but not animal cells?', choices:['Cell membrane','Cell wall','Nucleus','Cytoplasm'], correct:1 },
+    {
+      id: 1, title: 'Biology — Cell Structure', subject: 'Biology', topic: 'Cells', difficulty: 'Medium', visibility: 'public', owner: 'Alex Chen',
+      questions: [
+        { text: 'What is the powerhouse of the cell?', choices: ['Nucleus', 'Mitochondria', 'Ribosome', 'Golgi body'], correct: 1 },
+        { text: 'Which organelle contains DNA?', choices: ['Mitochondria', 'Lysosome', 'Nucleus', 'Vacuole'], correct: 2 },
+        { text: 'What surrounds plant cells but not animal cells?', choices: ['Cell membrane', 'Cell wall', 'Nucleus', 'Cytoplasm'], correct: 1 },
       ]
     },
-    { id:2, title:'Algebra Basics', subject:'Mathematics', topic:'Algebra', difficulty:'Easy', visibility:'public', owner:'Sam Lee',
-      questions:[
-        { text:'Solve: 2x = 10', choices:['x=2','x=5','x=8','x=20'], correct:1 },
-        { text:'Slope of y = 3x + 2?', choices:['2','3','1','0'], correct:1 },
+    {
+      id: 2, title: 'Algebra Basics', subject: 'Mathematics', topic: 'Algebra', difficulty: 'Easy', visibility: 'public', owner: 'Sam Lee',
+      questions: [
+        { text: 'Solve: 2x = 10', choices: ['x=2', 'x=5', 'x=8', 'x=20'], correct: 1 },
+        { text: 'Slope of y = 3x + 2?', choices: ['2', '3', '1', '0'], correct: 1 },
       ]
     },
-    { id:3, title:'My Private History Quiz', subject:'History', topic:'WW2', difficulty:'Hard', visibility:'private', owner:'Alex Chen',
-      questions:[{ text:'When did WW2 end?', choices:['1943','1944','1945','1946'], correct:2 }]
+    {
+      id: 3, title: 'My Private History Quiz', subject: 'History', topic: 'WW2', difficulty: 'Hard', visibility: 'private', owner: 'Alex Chen',
+      questions: [{ text: 'When did WW2 end?', choices: ['1943', '1944', '1945', '1946'], correct: 2 }]
     },
   ],
   quizTab: 'browse', quizSearch: '', quizFilterSubject: '', quizFilterTopic: '',
   showQuizModal: false, editingQuiz: null,
-  quizForm: { title:'', subject:'', topic:'', difficulty:'Medium', visibility:'public', questions:[] },
+  quizForm: { title: '', subject: '', topic: '', difficulty: 'Medium', visibility: 'public', questions: [] },
   takingQuiz: null, currentQ: 0, quizAnswers: {}, quizResults: false,
 
   deckList: [
-    { id:1, title:'Biology Vocabulary', subject:'Biology', topic:'Cells', visibility:'public', owner:'Alex Chen',
-      cards:[
-        { q:'What is mitosis?', a:'Cell division producing two identical daughter cells' },
-        { q:'Define osmosis', a:'Movement of water through a semipermeable membrane' },
-        { q:'What is ATP?', a:'Adenosine triphosphate — the energy currency of cells' },
-        { q:'Define photosynthesis', a:'Process converting sunlight to glucose in plants' },
+    {
+      id: 1, title: 'Biology Vocabulary', subject: 'Biology', topic: 'Cells', visibility: 'public', owner: 'Alex Chen',
+      cards: [
+        { q: 'What is mitosis?', a: 'Cell division producing two identical daughter cells' },
+        { q: 'Define osmosis', a: 'Movement of water through a semipermeable membrane' },
+        { q: 'What is ATP?', a: 'Adenosine triphosphate — the energy currency of cells' },
+        { q: 'Define photosynthesis', a: 'Process converting sunlight to glucose in plants' },
       ]
     },
-    { id:2, title:'Spanish Vocabulary', subject:'Languages', topic:'Spanish', visibility:'public', owner:'Sam Lee',
-      cards:[{ q:'Hello', a:'Hola' },{ q:'Goodbye', a:'Adiós' },{ q:'Thank you', a:'Gracias' }]
+    {
+      id: 2, title: 'Spanish Vocabulary', subject: 'Languages', topic: 'Spanish', visibility: 'public', owner: 'Sam Lee',
+      cards: [{ q: 'Hello', a: 'Hola' }, { q: 'Goodbye', a: 'Adiós' }, { q: 'Thank you', a: 'Gracias' }]
     },
-    { id:3, title:'My Private Math Cards', subject:'Mathematics', topic:'Calculus', visibility:'private', owner:'Alex Chen',
-      cards:[{ q:'Derivative of x²?', a:'2x' },{ q:'Integral of 2x?', a:'x² + C' }]
+    {
+      id: 3, title: 'My Private Math Cards', subject: 'Mathematics', topic: 'Calculus', visibility: 'private', owner: 'Alex Chen',
+      cards: [{ q: 'Derivative of x²?', a: '2x' }, { q: 'Integral of 2x?', a: 'x² + C' }]
     },
   ],
   deckTab: 'browse', deckSearch: '', deckFilterSubject: '', deckFilterTopic: '',
   showDeckModal: false, editingDeck: null,
-  deckForm: { title:'', subject:'', topic:'', visibility:'public', cards:[] },
+  deckForm: { title: '', subject: '', topic: '', visibility: 'public', cards: [] },
   playingDeck: null, currentCard: 0, cardFlipped: false, cardResults: {}, deckResults: false,
 };
 
@@ -829,7 +846,7 @@ const pageTemplates = {
       </div>
     </div>
   `,
-planner: `
+  planner: `
   <div class="topbar">
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
@@ -1009,7 +1026,7 @@ planner: `
     </div>
   </div>
 `,
-analytics: `
+  analytics: `
   <div class="topbar">
     <div class="search-wrap">
       <span class="search-icon">⌕</span>
@@ -1219,7 +1236,7 @@ analytics: `
       </div>
     `,
 
-tracker: `
+  tracker: `
     <div class="topbar">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
@@ -1343,25 +1360,25 @@ tracker: `
       <div class="stat-card">
         <div class="stat-top">
           <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">🧑‍🎓</div>
-          <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">+12%</span>
+          <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">Total</span>
         </div>
-        <div class="stat-val">1,280</div>
+        <div class="stat-val">{{ adminStudentCount }}</div>
         <div class="stat-label">Total Students</div>
       </div>
       <div class="stat-card">
         <div class="stat-top">
           <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;">🧑‍🏫</div>
-          <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">+{{ tutors.length - 4 }} New</span>
+          <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">Active</span>
         </div>
-        <div class="stat-val">{{ tutors.length }}</div>
+        <div class="stat-val">{{ adminTutorCount }}</div>
         <div class="stat-label">Active Tutors</div>
       </div>
       <div class="stat-card">
         <div class="stat-top">
           <div class="stat-icon" style="background: #fff4e6; color: #b25f11;">📅</div>
-          <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Active</span>
+          <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Confirmed</span>
         </div>
-        <div class="stat-val">{{ bookedSessions.length }}</div>
+        <div class="stat-val">{{ adminBookingCount }}</div>
         <div class="stat-label">Total Bookings</div>
       </div>
     </div>
@@ -1533,6 +1550,10 @@ tracker: `
             <input type="text" v-model="adminTutorForm.name" placeholder="e.g. Dr. Sarah Jenkins" required />
           </div>
           <div class="field">
+            <label>Email Address</label>
+            <input type="email" v-model="adminTutorForm.email" placeholder="e.g. sarah@school.edu" required />
+          </div>
+          <div class="field">
             <label>Hourly Rate (RM/hr)</label>
             <input type="number" v-model.number="adminTutorForm.rate" placeholder="e.g. 45" required />
           </div>
@@ -1595,6 +1616,7 @@ tracker: `
           <button class="btn-secondary" style="width: auto; padding: 12px 24px;" @click="showEditTutorModal = false">Cancel</button>
           <button class="btn-primary" style="width: auto; padding: 12px 24px;" @click="updateTutor">Save Changes</button>
         </div>
+      </div>
     </div>
   `,
   profile: `
@@ -1627,6 +1649,24 @@ tracker: `
 
       <!-- Edit Profile Form Column -->
       <div class="card" style="padding: 28px;">
+        <!-- Success Alert Banner -->
+        <div v-if="profileSuccessMsg" class="success-banner" style="margin-bottom: 20px; padding: 12px 16px; background-color: #edfcf7; border-left: 4px solid #1d9e75; color: #0f5c42; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>✨</span>
+            <span>{{ profileSuccessMsg }}</span>
+          </div>
+          <button @click="profileSuccessMsg = ''" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #0f5c42; line-height: 1; padding: 0 4px;">&times;</button>
+        </div>
+
+        <!-- Error Alert Banner -->
+        <div v-if="profileErrorMsg" class="error-banner" style="margin-bottom: 20px; padding: 12px 16px; background-color: #fdf2f2; border-left: 4px solid #d92d20; color: #9b1c1c; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span>
+            <span>{{ profileErrorMsg }}</span>
+          </div>
+          <button @click="profileErrorMsg = ''" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #9b1c1c; line-height: 1; padding: 0 4px;">&times;</button>
+        </div>
+
         <div class="section-title" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
           <span>👤</span> Profile Settings
         </div>
@@ -1686,6 +1726,10 @@ tracker: `
 };
 
 function mountViewApp() {
+  if (!localStorage.getItem('preppal_token')) {
+    window.location.href = rootRel + 'index.html';
+    return;
+  }
   const { createApp } = Vue;
 
   const mainTemplate = pageTemplates[pageId] || pageTemplates.default;
@@ -1694,6 +1738,14 @@ function mountViewApp() {
     components: { SidebarComponent },
     data() { return appData; },
     computed: {
+      filteredNavItems() {
+        return this.navItems.filter(item => {
+          if (Array.isArray(item.role)) {
+            return item.role.includes(this.userRole);
+          }
+          return item.role === this.userRole;
+        });
+      },
       filteredPlannerTasks() {
         const query = (this.plannerSearch || '').trim().toLowerCase();
 
@@ -1763,46 +1815,46 @@ function mountViewApp() {
         });
       },
       allFilteredQuizzes() {
-        return (this.quizList||[]).filter(q => {
-          if (q.visibility==='private' && q.owner!==this.currentUser) return false;
-          const s=(this.quizSearch||'').toLowerCase();
+        return (this.quizList || []).filter(q => {
+          if (q.visibility === 'private' && q.owner !== this.currentUser) return false;
+          const s = (this.quizSearch || '').toLowerCase();
           if (s && !q.title.toLowerCase().includes(s) && !q.subject.toLowerCase().includes(s) && !q.topic.toLowerCase().includes(s)) return false;
-          if (this.quizFilterSubject && q.subject!==this.quizFilterSubject) return false;
-          if (this.quizFilterTopic && q.topic!==this.quizFilterTopic) return false;
+          if (this.quizFilterSubject && q.subject !== this.quizFilterSubject) return false;
+          if (this.quizFilterTopic && q.topic !== this.quizFilterTopic) return false;
           return true;
         });
       },
-      myFilteredQuizzes() { return this.allFilteredQuizzes.filter(q=>q.owner===this.currentUser); },
-      quizSubjects() { return [...new Set((this.quizList||[]).map(q=>q.subject))]; },
-      quizTopics() { return [...new Set((this.quizList||[]).map(q=>q.topic))]; },
+      myFilteredQuizzes() { return this.allFilteredQuizzes.filter(q => q.owner === this.currentUser); },
+      quizSubjects() { return [...new Set((this.quizList || []).map(q => q.subject))]; },
+      quizTopics() { return [...new Set((this.quizList || []).map(q => q.topic))]; },
       quizScore() {
         if (!this.takingQuiz) return 0;
-        let c=0; this.takingQuiz.questions.forEach((q,i)=>{ if(this.quizAnswers[i]===q.correct) c++; }); return c;
+        let c = 0; this.takingQuiz.questions.forEach((q, i) => { if (this.quizAnswers[i] === q.correct) c++; }); return c;
       },
       quizWrongQuestions() {
         if (!this.takingQuiz) return [];
-        return this.takingQuiz.questions.map((q,i)=>({...q,index:i})).filter(q=>this.quizAnswers[q.index]!==q.correct);
+        return this.takingQuiz.questions.map((q, i) => ({ ...q, index: i })).filter(q => this.quizAnswers[q.index] !== q.correct);
       },
       allFilteredDecks() {
-        return (this.deckList||[]).filter(d => {
-          if (d.visibility==='private' && d.owner!==this.currentUser) return false;
-          const s=(this.deckSearch||'').toLowerCase();
+        return (this.deckList || []).filter(d => {
+          if (d.visibility === 'private' && d.owner !== this.currentUser) return false;
+          const s = (this.deckSearch || '').toLowerCase();
           if (s && !d.title.toLowerCase().includes(s) && !d.subject.toLowerCase().includes(s) && !d.topic.toLowerCase().includes(s)) return false;
-          if (this.deckFilterSubject && d.subject!==this.deckFilterSubject) return false;
-          if (this.deckFilterTopic && d.topic!==this.deckFilterTopic) return false;
+          if (this.deckFilterSubject && d.subject !== this.deckFilterSubject) return false;
+          if (this.deckFilterTopic && d.topic !== this.deckFilterTopic) return false;
           return true;
         });
       },
-      myFilteredDecks() { return this.allFilteredDecks.filter(d=>d.owner===this.currentUser); },
-      deckSubjects() { return [...new Set((this.deckList||[]).map(d=>d.subject))]; },
-      deckTopics() { return [...new Set((this.deckList||[]).map(d=>d.topic))]; },
+      myFilteredDecks() { return this.allFilteredDecks.filter(d => d.owner === this.currentUser); },
+      deckSubjects() { return [...new Set((this.deckList || []).map(d => d.subject))]; },
+      deckTopics() { return [...new Set((this.deckList || []).map(d => d.topic))]; },
       deckCorrectCount() {
         if (!this.playingDeck) return 0;
-        return this.playingDeck.cards.filter((_,i)=>this.cardResults[i]==='correct').length;
+        return this.playingDeck.cards.filter((_, i) => this.cardResults[i] === 'correct').length;
       },
       deckWrongCards() {
         if (!this.playingDeck) return [];
-        return this.playingDeck.cards.map((c,i)=>({...c,index:i})).filter(c=>this.cardResults[c.index]==='wrong');
+        return this.playingDeck.cards.map((c, i) => ({ ...c, index: i })).filter(c => this.cardResults[c.index] === 'wrong');
       },
       computedInitials() {
         return getInitials(this.tempName);
@@ -1850,12 +1902,16 @@ function mountViewApp() {
           this.analyticsLoading = false;
         }
       },
-      logout() { window.location.href = rootRel + 'index.html'; },
+      logout() {
+        localStorage.removeItem('preppal_token');
+        localStorage.removeItem('preppal_profile');
+        window.location.href = rootRel + 'index.html';
+      },
       startQuiz(id) { window.location.href = rootRel + 'views/quizzes/quiz.html#' + id; },
 
       openCreateQuiz() {
         this.editingQuiz = null;
-        this.quizForm = { title:'', subject:'', topic:'', difficulty:'Medium', visibility:'public', questions:[] };
+        this.quizForm = { title: '', subject: '', topic: '', difficulty: 'Medium', visibility: 'public', questions: [] };
         this.addQuizQuestion();
         this.showQuizModal = true;
       },
@@ -1864,18 +1920,18 @@ function mountViewApp() {
         this.quizForm = JSON.parse(JSON.stringify(quiz));
         this.showQuizModal = true;
       },
-      addQuizQuestion() { this.quizForm.questions.push({ text:'', choices:['','','',''], correct:0 }); },
+      addQuizQuestion() { this.quizForm.questions.push({ text: '', choices: ['', '', '', ''], correct: 0 }); },
       saveQuiz() {
         if (!this.quizForm.title || !this.quizForm.subject || !this.quizForm.questions.length) return;
         if (this.editingQuiz) {
-          const idx = this.quizList.findIndex(q=>q.id===this.editingQuiz.id);
-          this.quizList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.quizForm)), id:this.editingQuiz.id, owner:this.editingQuiz.owner });
+          const idx = this.quizList.findIndex(q => q.id === this.editingQuiz.id);
+          this.quizList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.quizForm)), id: this.editingQuiz.id, owner: this.editingQuiz.owner });
         } else {
-          this.quizList.push({ ...JSON.parse(JSON.stringify(this.quizForm)), id:Date.now(), owner:this.currentUser });
+          this.quizList.push({ ...JSON.parse(JSON.stringify(this.quizForm)), id: Date.now(), owner: this.currentUser });
         }
         this.showQuizModal = false;
       },
-      deleteQuiz(id) { const i=this.quizList.findIndex(q=>q.id===id); if(i>=0) this.quizList.splice(i,1); },
+      deleteQuiz(id) { const i = this.quizList.findIndex(q => q.id === id); if (i >= 0) this.quizList.splice(i, 1); },
       startQuizGame(quiz) {
         this.takingQuiz = quiz; this.currentQ = 0; this.quizAnswers = {}; this.quizResults = false; this.quizTab = 'take';
       },
@@ -1883,8 +1939,8 @@ function mountViewApp() {
 
       openCreateDeck() {
         this.editingDeck = null;
-        this.deckForm = { title:'', subject:'', topic:'', visibility:'public', cards:[] };
-        this.deckForm.cards.push({ q:'', a:'' });
+        this.deckForm = { title: '', subject: '', topic: '', visibility: 'public', cards: [] };
+        this.deckForm.cards.push({ q: '', a: '' });
         this.showDeckModal = true;
       },
       openEditDeck(deck) {
@@ -1895,14 +1951,14 @@ function mountViewApp() {
       saveDeck() {
         if (!this.deckForm.title || !this.deckForm.subject || !this.deckForm.cards.length) return;
         if (this.editingDeck) {
-          const idx = this.deckList.findIndex(d=>d.id===this.editingDeck.id);
-          this.deckList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.deckForm)), id:this.editingDeck.id, owner:this.editingDeck.owner });
+          const idx = this.deckList.findIndex(d => d.id === this.editingDeck.id);
+          this.deckList.splice(idx, 1, { ...JSON.parse(JSON.stringify(this.deckForm)), id: this.editingDeck.id, owner: this.editingDeck.owner });
         } else {
-          this.deckList.push({ ...JSON.parse(JSON.stringify(this.deckForm)), id:Date.now(), owner:this.currentUser });
+          this.deckList.push({ ...JSON.parse(JSON.stringify(this.deckForm)), id: Date.now(), owner: this.currentUser });
         }
         this.showDeckModal = false;
       },
-      deleteDeck(id) { const i=this.deckList.findIndex(d=>d.id===id); if(i>=0) this.deckList.splice(i,1); },
+      deleteDeck(id) { const i = this.deckList.findIndex(d => d.id === id); if (i >= 0) this.deckList.splice(i, 1); },
       startDeck(deck) {
         this.playingDeck = deck; this.currentCard = 0; this.cardFlipped = false; this.cardResults = {}; this.deckResults = false; this.deckTab = 'play';
       },
@@ -1922,73 +1978,79 @@ function mountViewApp() {
         this.bookingTime = '14:00';
         this.bookingDuration = 1;
       },
-      confirmBooking() {
+
+      async confirmBooking() {
         if (!this.bookingDate || !this.bookingTime) {
           alert('Please select a date and time.');
           return;
         }
 
-        const newSession = {
-          id: 'session-' + Date.now(),
-          tutor: this.bookingTutor,
-          date: this.bookingDate,
-          time: this.bookingTime,
-          duration: this.bookingDuration,
-          totalCost: this.bookingTutor.rate * this.bookingDuration
-        };
-        this.bookedSessions.push(newSession);
+        try {
+          const payload = {
+            tutorId: this.bookingTutor.id,
+            date: this.bookingDate,
+            time: this.bookingTime + ':00',
+            duration: this.bookingDuration,
+            totalCost: this.bookingTutor.rate * this.bookingDuration
+          };
+          const res = await PrepPalAPI.createStudentBooking(payload);
+          if (res && res.status === 'success') {
+            this.bookedSessions.push(res.booking);
 
-        const index = this.tutors.findIndex(t => t.id === this.bookingTutor.id);
-        if (index !== -1) {
-          this.tutors[index].status = 'busy';
+            const index = this.tutors.findIndex(t => t.id === this.bookingTutor.id);
+            if (index !== -1) {
+              this.tutors[index].status = 'busy';
+            }
+
+            this.bookingTutor = null;
+            alert('Booking confirmed successfully!');
+          }
+        } catch (e) {
+          alert('Booking failed: ' + e.message);
         }
-
-        this.bookingTutor = null;
       },
       openAddTutorModal() {
-        this.adminTutorForm = { name: '', rate: 30, subjects: '', status: 'available', bio: '' };
+        this.adminTutorForm = { name: '', email: '', rate: 30, subjects: '', status: 'available', bio: '' };
         this.showAddTutorModal = true;
       },
-      saveNewTutor() {
+      async saveNewTutor() {
         const form = this.adminTutorForm;
         if (!form.name || !form.subjects) {
           alert('Please fill out Name and Subjects.');
           return;
         }
-        const subArray = form.subjects.split(',').map(s => s.trim()).filter(Boolean);
-        const avatars = [
-          'assets/tutor-sarah.png',
-          'assets/tutor-james.png',
-          'assets/tutor-emily.png',
-          'assets/tutor-david.png'
-        ];
-        const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-        const newTutor = {
-          id: 'tutor-' + Date.now(),
-          name: form.name,
-          avatar: randomAvatar,
-          status: form.status,
-          subjects: subArray.length ? subArray : ['General'],
-          rating: 5.0,
-          reviewsCount: 0,
-          rate: Number(form.rate) || 30,
-          bio: form.bio || 'Experienced academic tutor.'
-        };
-        this.tutors.push(newTutor);
-        this.showAddTutorModal = false;
+        try {
+          const payload = {
+            name: form.name,
+            email: form.email || (form.name.toLowerCase().replace(/[^a-z0-9]/g, '') + '@school.edu'),
+            rate: Number(form.rate) || 30,
+            subjects: form.subjects,
+            status: form.status,
+            bio: form.bio
+          };
+          const res = await PrepPalAPI.createAdminTutor(payload);
+          if (res && res.status === 'success') {
+            this.tutors.push(res.tutor);
+            this.adminTutorCount = this.tutors.length;
+            this.showAddTutorModal = false;
+          }
+        } catch (e) {
+          alert('Failed to add tutor: ' + e.message);
+        }
       },
       openEditTutorModal(tutor) {
         this.editingTutorId = tutor.id;
         this.adminTutorForm = {
           name: tutor.name,
+          email: tutor.email || '',
           rate: tutor.rate,
-          subjects: tutor.subjects.join(', '),
+          subjects: Array.isArray(tutor.subjects) ? tutor.subjects.join(', ') : tutor.subjects,
           status: tutor.status,
           bio: tutor.bio
         };
         this.showEditTutorModal = true;
       },
-      updateTutor() {
+      async updateTutor() {
         const form = this.adminTutorForm;
         const index = this.tutors.findIndex(t => t.id === this.editingTutorId);
         if (index !== -1) {
@@ -1996,34 +2058,56 @@ function mountViewApp() {
             alert('Please fill out Name and Subjects.');
             return;
           }
-          const subArray = form.subjects.split(',').map(s => s.trim()).filter(Boolean);
-          this.tutors[index].name = form.name;
-          this.tutors[index].rate = Number(form.rate) || 30;
-          this.tutors[index].subjects = subArray.length ? subArray : ['General'];
-          this.tutors[index].status = form.status;
-          this.tutors[index].bio = form.bio || 'Experienced academic tutor.';
-          this.showEditTutorModal = false;
-          this.editingTutorId = null;
-        }
-      },
-      deleteTutor(id) {
-        if (confirm('Are you sure you want to delete this tutor?')) {
-          this.tutors = this.tutors.filter(t => t.id !== id);
-        }
-      },
-      toggleTutorStatus(tutor) {
-        tutor.status = tutor.status === 'available' ? 'busy' : 'available';
-      },
-      deleteBooking(id) {
-        if (confirm('Are you sure you want to cancel this booking?')) {
-          const session = this.bookedSessions.find(b => b.id === id);
-          if (session) {
-            const tutorIndex = this.tutors.findIndex(t => t.id === session.tutor.id);
-            if (tutorIndex !== -1) {
-              this.tutors[tutorIndex].status = 'available';
-            }
+          try {
+            await PrepPalAPI.updateAdminTutor(this.editingTutorId, {
+              name: form.name,
+              rate: Number(form.rate) || 30,
+              subjects: form.subjects,
+              status: form.status,
+              bio: form.bio
+            });
+            const subArray = typeof form.subjects === 'string' ? form.subjects.split(',').map(s => s.trim()).filter(Boolean) : form.subjects;
+            this.tutors[index].name = form.name;
+            this.tutors[index].rate = Number(form.rate) || 30;
+            this.tutors[index].subjects = subArray.length ? subArray : ['General'];
+            this.tutors[index].status = form.status;
+            this.tutors[index].bio = form.bio || 'Experienced academic tutor.';
+            this.showEditTutorModal = false;
+            this.editingTutorId = null;
+          } catch (e) {
+            alert('Failed to update tutor: ' + e.message);
           }
-          this.bookedSessions = this.bookedSessions.filter(b => b.id !== id);
+        }
+      },
+      async deleteTutor(id) {
+        if (confirm('Are you sure you want to delete this tutor?')) {
+          try {
+            await PrepPalAPI.deleteAdminTutor(id);
+            this.tutors = this.tutors.filter(t => t.id !== id);
+            this.adminTutorCount = this.tutors.length;
+          } catch (e) {
+            alert('Failed to delete tutor: ' + e.message);
+          }
+        }
+      },
+      async toggleTutorStatus(tutor) {
+        const nextStatus = tutor.status === 'available' ? 'busy' : 'available';
+        try {
+          await PrepPalAPI.toggleTutorStatus(tutor.id, nextStatus);
+          tutor.status = nextStatus;
+        } catch (e) {
+          alert('Failed to update tutor status: ' + e.message);
+        }
+      },
+      async deleteBooking(id) {
+        if (confirm('Are you sure you want to cancel this booking?')) {
+          try {
+            await PrepPalAPI.deleteAdminBooking(id);
+            this.bookedSessions = this.bookedSessions.filter(b => b.id !== id);
+            this.adminBookingCount = this.bookedSessions.length;
+          } catch (e) {
+            alert('Failed to cancel booking: ' + e.message);
+          }
         }
       },
       openAddTaskModal() {
@@ -2043,7 +2127,7 @@ function mountViewApp() {
         // Assign colors based on priority
         let colorClass = 'border-blue';
         let badgeClass = 'badge-purple';
-        
+
         if (this.newTaskForm.priority === 'priority-high') {
           colorClass = 'border-orange';
           badgeClass = 'badge-red';
@@ -2069,41 +2153,78 @@ function mountViewApp() {
       goToProfile() {
         window.location.href = this.rootRel + 'views/profile/profile_index.html';
       },
-      saveProfileChanges() {
+      async saveProfileChanges() {
+        this.profileSuccessMsg = '';
+        this.profileErrorMsg = '';
+
         if (!this.tempName.trim()) {
-          alert('Full Name cannot be empty.');
+          this.profileErrorMsg = 'Full Name cannot be empty.';
           return;
         }
         if (!this.tempEmail.trim() || !this.tempEmail.includes('@')) {
-          alert('Please enter a valid email address.');
+          this.profileErrorMsg = 'Please enter a valid email address.';
           return;
         }
 
-        const updatedProfile = {
-          name: this.tempName,
-          email: this.tempEmail,
-          role: this.tempRole,
-          initials: getInitials(this.tempName),
-          bio: this.tempBio,
-          avatarBg: this.tempAvatarBg
-        };
+        try {
+          const payload = {
+            name: this.tempName.trim(),
+            email: this.tempEmail.trim(),
+            bio: this.tempBio || ''
+          };
+          if (this.tempPassword) {
+            if (this.tempPassword.length < 4) {
+              this.profileErrorMsg = 'Password must be at least 4 characters long.';
+              return;
+            }
+            payload.password = this.tempPassword;
+          }
 
-        localStorage.setItem('preppal_profile', JSON.stringify(updatedProfile));
+          const response = await PrepPalAPI.updateProfile(payload);
 
-        // Update the app state
-        this.userName = updatedProfile.name;
-        this.userEmail = updatedProfile.email;
-        this.userRole = updatedProfile.role;
-        this.initials = updatedProfile.initials;
-        this.userBio = updatedProfile.bio;
-        this.userAvatarBg = updatedProfile.avatarBg;
+          if (response && response.status === 'success') {
+            if (response.token) {
+              localStorage.setItem('preppal_token', response.token);
+            }
 
-        if (this.tempPassword) {
-          localStorage.setItem('preppal_password', this.tempPassword);
-          this.tempPassword = '';
-          alert('Profile and password updated successfully!');
-        } else {
-          alert('Profile updated successfully!');
+            const rawRole = response.user.role || 'student';
+            const capitalizedRole = rawRole.charAt(0).toUpperCase() + rawRole.slice(1);
+
+            const updatedProfile = {
+              id: response.user.id,
+              name: response.user.name,
+              email: response.user.email,
+              role: capitalizedRole,
+              initials: response.user.initials || '??',
+              bio: response.user.bio || '',
+              avatarBg: this.tempAvatarBg
+            };
+
+            localStorage.setItem('preppal_profile', JSON.stringify(updatedProfile));
+
+            // Update the app state
+            this.userName = updatedProfile.name;
+            this.userEmail = updatedProfile.email;
+            this.userRole = updatedProfile.role;
+            this.initials = updatedProfile.initials;
+            this.userBio = updatedProfile.bio;
+            this.userAvatarBg = updatedProfile.avatarBg;
+
+            this.tempPassword = '';
+            this.profileSuccessMsg = 'Profile updated successfully!';
+
+            // Auto-hide success message after 5 seconds
+            setTimeout(() => {
+              if (this.profileSuccessMsg === 'Profile updated successfully!') {
+                this.profileSuccessMsg = '';
+              }
+            }, 5000);
+          } else {
+            this.profileErrorMsg = 'Failed to update profile. Server returned an error.';
+          }
+        } catch (error) {
+          console.error(error);
+          this.profileErrorMsg = error.message || 'An error occurred while updating profile.';
         }
       },
       resetForm() {
@@ -2114,23 +2235,68 @@ function mountViewApp() {
         this.tempBio = currentProfile.bio;
         this.tempAvatarBg = currentProfile.avatarBg;
         this.tempPassword = '';
+        this.profileSuccessMsg = '';
+        this.profileErrorMsg = '';
+      },
+      async fetchAdminStats() {
+        try {
+          const res = await PrepPalAPI.getAdminStats();
+          this.adminStudentCount = res.studentCount;
+          this.adminTutorCount = res.tutorCount;
+          this.adminBookingCount = res.bookingCount;
+          this.tutors = res.tutors;
+        } catch (e) {
+          console.error('Failed to load admin stats:', e);
+        }
+      },
+      async fetchAdminBookings() {
+        try {
+          const res = await PrepPalAPI.getAdminBookings();
+          this.bookedSessions = res;
+        } catch (e) {
+          console.error('Failed to load admin bookings:', e);
+        }
+      },
+      async fetchStudentTutors() {
+        try {
+          const res = await PrepPalAPI.getStudentTutors();
+          this.tutors = res;
+        } catch (e) {
+          console.error('Failed to load student tutors:', e);
+        }
+      },
+      async fetchStudentBookings() {
+        try {
+          const res = await PrepPalAPI.getStudentBookings();
+          this.bookedSessions = res;
+        } catch (e) {
+          console.error('Failed to load student bookings:', e);
+        }
       }
     },
     mounted() {
+      if (this.activeNav === 'admins') {
+        this.fetchAdminStats();
+        this.fetchAdminBookings();
+      }
 
-  if (this.activeNav === 'planner') {
-    this.fetchPlannerData();
-  }
+      if (this.activeNav === 'tutors') {
+        this.fetchStudentTutors();
+        this.fetchStudentBookings();
+      }
 
-  if (this.activeNav === 'analytics') {
-    this.fetchAnalyticsData();
-  }
+      if (this.activeNav === 'planner') {
+        this.fetchPlannerData();
+      }
 
-},
+      if (this.activeNav === 'analytics') {
+        this.fetchAnalyticsData();
+      }
+    },
     template: `
       <div class="app-shell">
         <sidebar-component
-          :nav-items="navItems"
+          :nav-items="filteredNavItems"
           :active-nav="activeNav"
           :user-name="userName"
           :initials="initials"
@@ -2149,8 +2315,107 @@ function mountViewApp() {
   app.mount('#view-app');
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', mountViewApp);
-} else {
-  mountViewApp();
+// Helper to retrieve user profile data
+function getCurrentUser() {
+  const profile = getStoredProfile();
+  return {
+    id: profile.id || 1,
+    name: profile.name,
+    initials: profile.initials || getInitials(profile.name),
+    role: profile.role || 'Student',
+    avatarBg: profile.avatarBg || 'linear-gradient(135deg, var(--indigo), var(--mint))'
+  };
 }
+
+// Reusable app-mount wrapper for modular pages
+function mountApp(pageOptions) {
+  if (!localStorage.getItem('preppal_token')) {
+    window.location.href = rootRel + 'index.html';
+    return;
+  }
+  const { createApp } = Vue;
+  const user = getCurrentUser();
+
+  const app = createApp({
+    components: { SidebarComponent, ...(pageOptions.components || {}) },
+    data() {
+      const base = {
+        pageTitle, pageSubtitle,
+        activeNav: pageId,
+        navItems,
+        userName: user.name,
+        initials: user.initials,
+        currentUserId: user.id,
+        userRole: user.role,
+        userAvatarBg: user.avatarBg,
+      };
+      const extra = pageOptions.data ? pageOptions.data.call(this) : {};
+      return { ...base, ...extra };
+    },
+    computed: {
+      filteredNavItems() {
+        return this.navItems.filter(item => {
+          if (Array.isArray(item.role)) {
+            return item.role.includes(this.userRole);
+          }
+          return item.role === this.userRole;
+        });
+      },
+      ...(pageOptions.computed || {}),
+    },
+    methods: {
+      logout() {
+        localStorage.removeItem('preppal_token');
+        localStorage.removeItem('preppal_profile');
+        window.location.href = rootRel + 'index.html';
+      },
+      goToProfile() {
+        window.location.href = rootRel + 'views/profile/profile_index.html';
+      },
+      ...(pageOptions.methods || {}),
+    },
+    mounted() {
+      if (pageOptions.mounted) pageOptions.mounted.call(this);
+    },
+    template: `
+      <div class="app-shell">
+        <sidebar-component
+          :nav-items="filteredNavItems"
+          :active-nav="activeNav"
+          :user-name="userName"
+          :initials="initials"
+          :user-avatar-bg="userAvatarBg"
+          :user-role="userRole"
+          @logout="logout"
+          @goToProfile="goToProfile"
+        />
+        <main class="main">${pageOptions.template}</main>
+      </div>`,
+  });
+
+  app.mount('#view-app');
+  return app;
+}
+
+// Expose PrepPalCore namespace for backward-compatibility
+window.PrepPalCore = {
+  pageId,
+  pageTitle,
+  pageSubtitle,
+  rootRel,
+  navItems,
+  SidebarComponent,
+  getCurrentUser,
+  mountApp
+};
+
+// Automatic mount for monolithic pages, skipping modular pages
+const modularPages = ['quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings'];
+if (!modularPages.includes(pageId)) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountViewApp);
+  } else {
+    mountViewApp();
+  }
+}
+

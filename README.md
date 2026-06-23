@@ -28,12 +28,23 @@ npm start
 
 The API runs on `http://localhost:4000` by default.
 
-## Auth (simplified)
+## Authentication
 
-There's no full login system yet. The frontend sends an `x-user-id` header
-with every request (defaults to `1` / Alex Chen if missing). This lets
-ownership checks (edit/delete only your own quizzes/decks) work correctly.
-Swap this out for real session/JWT auth when you add a proper login flow.
+PrepPal uses JSON Web Token (JWT) for authentication. If 'preppal' database already exists after the setup, there will be 3 users available which are:
+
+```bash
+Student Role
+Email Address: alex@school.edu
+Password: password123
+
+Tutor Role
+Email Address: sam@school.edu
+Password: password123
+
+Admin Role
+Email Address: admin@school.edu
+Password: password123
+```
 
 ## API Reference
 
