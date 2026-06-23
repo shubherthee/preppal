@@ -4,7 +4,7 @@
 CREATE DATABASE IF NOT EXISTS preppal CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE preppal;
 
--- ── USERS ─────────────────────────────────────────────────────────────
+--  USERS 
 CREATE TABLE IF NOT EXISTS users (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   name       VARCHAR(100) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ── QUIZZES ───────────────────────────────────────────────────────────
+--  QUIZZES 
 CREATE TABLE IF NOT EXISTS quizzes (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   title      VARCHAR(200) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- ── FLASHCARD DECKS ───────────────────────────────────────────────────
+--  FLASHCARD DECKS 
 CREATE TABLE IF NOT EXISTS flashcard_decks (
   id         INT AUTO_INCREMENT PRIMARY KEY,
   title      VARCHAR(200) NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS flashcard_attempts (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- ── SEED DATA ─────────────────────────────────────────────────────────
+--  SEED DATA 
 INSERT INTO users (id, name, email, initials) VALUES
   (1, 'Alex Chen', 'alex@school.edu', 'AC'),
   (2, 'Sam Lee',   'sam@school.edu',  'SL')
@@ -126,4 +126,88 @@ INSERT INTO flashcards (deck_id, question, answer, position) VALUES
   (2, 'Goodbye', 'Adiós', 1),
   (2, 'Thank you', 'Gracias', 2),
   (3, 'Derivative of x²?', '2x', 0),
-  (3, 'Integral of 2x?', 'x² + C', 1);
+  (3, 'Integral of 2x?', 'x² + C', 1)
+ON DUPLICATE KEY UPDATE question=VALUES(question);
+
+--  STUDY PLANNER & REMINDERS 
+CREATE TABLE IF NOT EXISTS study_plans (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT NOT NULL,
+  task       VARCHAR(255) NOT NULL,
+  deadline   DATE NOT NULL,
+  status     ENUM('Pending', 'In Progress', 'Completed', 'Scheduled') NOT NULL DEFAULT 'Pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reminders (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT NOT NULL,
+  title      VARCHAR(255) NOT NULL,
+  time       DATETIME NOT NULL,
+  status     ENUM('Active', 'Set', 'Dismissed') NOT NULL DEFAULT 'Set',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS study_materials (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  user_id     INT NOT NULL,
+  filename    VARCHAR(255) NOT NULL,
+  description VARCHAR(255) DEFAULT NULL,
+  created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ai_schedules (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  user_id       INT NOT NULL,
+  schedule_data JSON NOT NULL,
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+--  PROGRESS TRACKING & ANALYTICS 
+CREATE TABLE IF NOT EXISTS analytics_records (
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  user_id           INT NOT NULL,
+  subject           VARCHAR(100) NOT NULL,
+  date              DATE NOT NULL,
+  study_minutes     INT NOT NULL DEFAULT 0,
+  modules_completed INT NOT NULL DEFAULT 0,
+  mastery           INT NOT NULL DEFAULT 0,
+  quiz_score        INT DEFAULT NULL,
+  skill_gap         BOOLEAN DEFAULT FALSE,
+  created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Seed study plans
+INSERT INTO study_plans (id, user_id, task, deadline, status) VALUES
+  (1, 1, 'Complete Mathematics Revision', '2026-06-05', 'Pending'),
+  (2, 1, 'Prepare Biology Quiz', '2026-06-07', 'In Progress'),
+  (3, 1, 'Review Chemistry Notes', '2026-06-09', 'Completed'),
+  (4, 1, 'Book Physics Tutor Session', '2026-06-10', 'Scheduled')
+ON DUPLICATE KEY UPDATE task=VALUES(task);
+
+-- Seed reminders
+INSERT INTO reminders (id, user_id, title, time, status) VALUES
+  (1, 1, 'Biology Review Reminder', '2026-06-23 20:00:00', 'Active'),
+  (2, 1, 'Math Practice Reminder', '2026-06-24 10:00:00', 'Set')
+ON DUPLICATE KEY UPDATE title=VALUES(title);
+
+-- Seed study materials
+INSERT INTO study_materials (id, user_id, filename, description) VALUES
+  (1, 1, 'Biology_Chapter_5.pdf', 'Used for quiz preparation and flashcard review'),
+  (2, 1, 'Math_Formula_Notes.docx', 'Attached to the mathematics revision goal')
+ON DUPLICATE KEY UPDATE filename=VALUES(filename);
+
+-- Seed analytics records
+INSERT INTO analytics_records (id, user_id, subject, date, study_minutes, modules_completed, mastery, quiz_score, skill_gap) VALUES
+  (1, 1, 'Biology', '2026-05-01', 420, 6, 88, 91, false),
+  (2, 1, 'Chemistry', '2026-05-02', 390, 5, 92, 94, false),
+  (3, 1, 'Physics', '2026-05-03', 240, 3, 63, 68, true),
+  (4, 1, 'History', '2026-05-04', 180, 2, 57, 61, true)
+ON DUPLICATE KEY UPDATE subject=VALUES(subject);
+

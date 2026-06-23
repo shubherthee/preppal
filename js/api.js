@@ -62,5 +62,29 @@ window.PrepPalAPI = (function () {
     // Users
     getMe: () => request('/users/me'),
     getUsers: () => request('/users'),
+
+    // Planner Tasks
+    getPlannerTasks: () => request('/planner'),
+    createPlannerTask: (data) => request('/planner', { method: 'POST', body: JSON.stringify(data) }),
+    updatePlannerTask: (id, data) => request(`/planner/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    deletePlannerTask: (id) => request(`/planner/${id}`, { method: 'DELETE' }),
+
+    // Reminders
+    getReminders: () => request('/planner/reminders'),
+    createReminder: (data) => request('/planner/reminders', { method: 'POST', body: JSON.stringify(data) }),
+    deleteReminder: (id) => request(`/planner/reminders/${id}`, { method: 'DELETE' }),
+
+    // Study Materials
+    getMaterials: () => request('/planner/materials'),
+    createMaterial: (data) => request('/planner/materials', { method: 'POST', body: JSON.stringify(data) }),
+
+    // AI Schedule
+    getAISchedule: () => request('/planner/schedule'),
+    generateAISchedule: () => request('/planner/generate-schedule', { method: 'POST' }),
+
+    // Analytics
+    getAnalyticsRecords: () => request('/analytics'),
+    createAnalyticsRecord: (data) => request('/analytics', { method: 'POST', body: JSON.stringify(data) }),
+    generateSkillGaps: () => request('/analytics/skill-gaps', { method: 'POST' }),
   };
 })();

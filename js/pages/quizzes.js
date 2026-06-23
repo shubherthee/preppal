@@ -51,13 +51,13 @@
           </div>
         </div>
         <div class="empty-state" v-if="quizzes.length===0">
-          <div style="font-size:3rem;margin-bottom:12px">✏️</div>
+          <div style="font-size:3rem;margin-bottom:12px"></div>
           <div>No quizzes found. Adjust your filters or create a new quiz.</div>
         </div>
       </template>
     </template>
 
-    <!-- ── HISTORY ────────────────────────────────────────────────── -->
+    <!--  HISTORY  -->
     <template v-if="tab==='history' && !quizResults">
       <div v-if="historyLoading" class="empty-state">Loading history…</div>
       <template v-else>
@@ -83,18 +83,18 @@
           </div>
         </div>
         <div class="empty-state" v-if="groupedAttempts.length===0">
-          <div style="font-size:3rem;margin-bottom:12px">📊</div>
+          <div style="font-size:3rem;margin-bottom:12px"></div>
           <div>No quiz attempts yet. Take a quiz to see your history here.</div>
         </div>
       </template>
     </template>
 
-    <!-- ── TAKING A QUIZ ──────────────────────────────────────────── -->
+    <!--  TAKING A QUIZ  -->
     <template v-if="tab==='take' && takingQuiz && !quizResults">
       <div class="quiz-take-wrap">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <span style="font-family:'Sora',sans-serif;font-size:1rem;font-weight:700">{{takingQuiz.title}}</span>
-          <button class="btn-sm" @click="exitQuiz">✕ Exit</button>
+          <button class="btn-sm" @click="exitQuiz"> Exit</button>
         </div>
         <div class="progress-bar-outer"><div class="progress-bar-inner" :style="{width:((currentQ+1)/takingQuiz.questions.length*100)+'%'}"></div></div>
         <div class="question-num">Question {{currentQ+1}} of {{takingQuiz.questions.length}}</div>
@@ -105,14 +105,14 @@
             @click="quizAnswers[currentQ]=ci">{{c}}</div>
         </div>
         <div class="quiz-nav">
-          <button class="btn-sm" @click="currentQ--" :disabled="currentQ===0">← Previous</button>
-          <button class="btn-sm primary" v-if="currentQ<takingQuiz.questions.length-1" @click="currentQ++" :disabled="quizAnswers[currentQ]===undefined">Next →</button>
+          <button class="btn-sm" @click="currentQ--" :disabled="currentQ===0"> Previous</button>
+          <button class="btn-sm primary" v-if="currentQ<takingQuiz.questions.length-1" @click="currentQ++" :disabled="quizAnswers[currentQ]===undefined">Next </button>
           <button class="btn-sm primary" v-else @click="submitQuiz" :disabled="quizAnswers[currentQ]===undefined">Submit Quiz</button>
         </div>
       </div>
     </template>
 
-    <!-- ── RESULTS ────────────────────────────────────────────────── -->
+    <!--  RESULTS  -->
     <template v-if="quizResults">
       <div class="quiz-take-wrap">
         <div class="score-circle">
@@ -133,7 +133,7 @@
             <div class="review-ans" style="color:#1D9E75;margin-top:2px">Correct: {{r.choices[r.correct]}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 All answers correct!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> All answers correct!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startQuiz(resultsQuizId)">Retake</button>
           <button class="btn-sm primary" @click="backFromResults">{{resultsContext==='history' ? 'Back to History' : 'Back to Browse'}}</button>
@@ -141,12 +141,12 @@
       </div>
     </template>
 
-    <!-- ── CREATE / EDIT MODAL ────────────────────────────────────── -->
+    <!--  CREATE / EDIT MODAL  -->
     <div class="modal-overlay" v-if="showQuizModal" @click.self="showQuizModal=false">
       <div class="modal">
         <div class="modal-header">
           <h3>{{editingQuizId?'Edit Quiz':'Create New Quiz'}}</h3>
-          <button class="btn-sm" @click="showQuizModal=false">✕</button>
+          <button class="btn-sm" @click="showQuizModal=false"></button>
         </div>
         <div class="modal-body">
           <div v-if="formError" class="error-msg">{{formError}}</div>
@@ -181,7 +181,7 @@
               <div class="choice-row" v-for="(c,ci) in q.choices" :key="ci">
                 <input type="radio" class="correct-radio" :name="'q'+qi" :value="ci" v-model="q.correct"/>
                 <input type="text" v-model="q.choices[ci]" :placeholder="'Choice '+(ci+1)" style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:DM Sans,sans-serif;font-size:.88rem;background:var(--surface);color:var(--text);outline:none"/>
-                <button class="btn-sm" style="padding:6px 10px" @click="q.choices.splice(ci,1)" v-if="q.choices.length>2">✕</button>
+                <button class="btn-sm" style="padding:6px 10px" @click="q.choices.splice(ci,1)" v-if="q.choices.length>2"></button>
               </div>
             </div>
             <button class="btn-sm" style="margin-top:8px" @click="q.choices.push('')" v-if="q.choices.length<6">+ Add choice</button>

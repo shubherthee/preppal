@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// ── GET /api/users/me ─────────────────────────────────────────────────
+//  GET /api/users/me 
 // Returns the "logged in" user based on x-user-id header (defaults to 1)
 router.get('/me', async (req, res) => {
   try {
@@ -15,7 +15,7 @@ router.get('/me', async (req, res) => {
   }
 });
 
-// ── GET /api/users ────────────────────────────────────────────────────
+//  GET /api/users 
 // List all users — handy for a login/profile-switcher dropdown in dev
 router.get('/', async (req, res) => {
   try {

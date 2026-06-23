@@ -12,14 +12,14 @@ window.PrepPalCore = (function () {
   const rootRel = atViews ? '../../' : '';
 
   const navItems = [
-    { id: 'dashboard',  icon: '🏠',   label: 'Dashboard',    route: rootRel + 'dashboard.html' },
-    { id: 'ai',         icon: '🤖',   label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html' },
-    { id: 'content',    icon: '📚',   label: 'Content Hub',  route: rootRel + 'views/content/content_index.html' },
-    { id: 'flashcards', icon: '🧠',   label: 'Flashcards',   route: rootRel + 'views/flashcards/flashcards_index.html' },
-    { id: 'quizzes',    icon: '✏️',   label: 'Quizzes',      route: rootRel + 'views/quizzes/quizzes_index.html' },
-    { id: 'planner',    icon: '🗓️',   label: 'Planner',      route: rootRel + 'views/planner/planner_index.html' },
-    { id: 'analytics',  icon: '📊',   label: 'Analytics',    route: rootRel + 'views/analytics/analytics_index.html' },
-    { id: 'tutors',     icon: '🧑‍🏫',  label: 'Tutors',       route: rootRel + 'views/tutors/tutors_index.html' },
+    { id: 'dashboard',  icon: '',   label: 'Dashboard',    route: rootRel + 'dashboard.html' },
+    { id: 'ai',         icon: '',   label: 'AI Assistant', route: rootRel + 'views/ai/ai_index.html' },
+    { id: 'content',    icon: '',   label: 'Content Hub',  route: rootRel + 'views/content/content_index.html' },
+    { id: 'flashcards', icon: '',   label: 'Flashcards',   route: rootRel + 'views/flashcards/flashcards_index.html' },
+    { id: 'quizzes',    icon: '',   label: 'Quizzes',      route: rootRel + 'views/quizzes/quizzes_index.html' },
+    { id: 'planner',    icon: '',   label: 'Planner',      route: rootRel + 'views/planner/planner_index.html' },
+    { id: 'analytics',  icon: '',   label: 'Analytics',    route: rootRel + 'views/analytics/analytics_index.html' },
+    { id: 'tutors',     icon: '',  label: 'Tutors',       route: rootRel + 'views/tutors/tutors_index.html' },
   ];
 
   const SidebarComponent = {
@@ -28,7 +28,7 @@ window.PrepPalCore = (function () {
     template: `
       <aside class="sidebar">
         <div class="sidebar-brand">
-          <div class="sidebar-brand-icon">📚</div>
+          <div class="sidebar-brand-icon"></div>
           <div>
             <div class="sidebar-brand-name">PrepPal</div>
             <div class="sidebar-brand-sub">AI Study Assistant</div>
@@ -40,13 +40,13 @@ window.PrepPalCore = (function () {
           </a>
         </nav>
         <div class="tip-box">
-          <div class="tip-title">💡 Study Tip</div>
+          <div class="tip-title"> Study Tip</div>
           <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
         </div>
         <div class="sidebar-user">
           <div class="avatar">{{initials}}</div>
           <div><div class="user-name">{{userName}}</div><div class="user-role">Student</div></div>
-          <button class="logout-btn" @click="$emit('logout')" title="Sign out">⏻</button>
+          <button class="logout-btn" @click="$emit('logout')" title="Sign out"></button>
         </div>
       </aside>`,
   };

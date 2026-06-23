@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db');
 
-// ── GET /api/quizzes ──────────────────────────────────────────────────
+//  GET /api/quizzes 
 // Query params: subject, topic, search, mine=true
 router.get('/', async (req, res) => {
   try {
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ── GET /api/quizzes/attempts/mine ────────────────────────────────────
+//  GET /api/quizzes/attempts/mine 
 // All past attempts by the current user, across all quizzes
 router.get('/attempts/mine', async (req, res) => {
   try {
@@ -67,7 +67,7 @@ router.get('/attempts/mine', async (req, res) => {
   }
 });
 
-// ── GET /api/quizzes/attempts/:attemptId ──────────────────────────────
+//  GET /api/quizzes/attempts/:attemptId 
 // Full review (question-by-question) for one past attempt
 router.get('/attempts/:attemptId', async (req, res) => {
   try {
@@ -116,7 +116,7 @@ router.get('/attempts/:attemptId', async (req, res) => {
   }
 });
 
-// ── GET /api/quizzes/subjects-topics ─────────────────────────────────
+//  GET /api/quizzes/subjects-topics 
 // Returns distinct subjects/topics for filter dropdowns
 router.get('/meta/filters', async (req, res) => {
   try {
@@ -139,7 +139,7 @@ router.get('/meta/filters', async (req, res) => {
   }
 });
 
-// ── GET /api/quizzes/:id ──────────────────────────────────────────────
+//  GET /api/quizzes/:id 
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -173,7 +173,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ── POST /api/quizzes ─────────────────────────────────────────────────
+//  POST /api/quizzes 
 // Body: { title, subject, topic, difficulty, visibility, questions:[{text,choices,correct}] }
 router.post('/', async (req, res) => {
   const conn = await pool.getConnection();
@@ -214,7 +214,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ── PUT /api/quizzes/:id ───────────────────────────────────────────────
+//  PUT /api/quizzes/:id 
 router.put('/:id', async (req, res) => {
   const conn = await pool.getConnection();
   try {
@@ -259,7 +259,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ── DELETE /api/quizzes/:id ────────────────────────────────────────────
+//  DELETE /api/quizzes/:id 
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -277,7 +277,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// ── POST /api/quizzes/:id/attempts ────────────────────────────────────
+//  POST /api/quizzes/:id/attempts 
 // Body: { answers: { "0": 1, "1": 2, ... } }  (questionIndex -> chosenChoiceIndex)
 // Returns: { score, total, results: [...] }
 router.post('/:id/attempts', async (req, res) => {

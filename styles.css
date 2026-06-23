@@ -27,7 +27,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── LOGIN ─────────────────────────────────────── */
+/*  LOGIN  */
 .login-page {
   min-height: 100vh;
   display: grid;
@@ -229,7 +229,7 @@ body {
   padding: 10px 14px; margin-bottom: 16px;
 }
 
-/* ── APP SHELL ─────────────────────────────────── */
+/*  APP SHELL  */
 .app-shell {
   display: flex;
   min-height: 100vh;
@@ -334,7 +334,7 @@ body {
 .fade-enter-from { opacity: 0; transform: translateY(10px); }
 .fade-leave-to   { opacity: 0; }
 
-/* ── GENERAL CARD ───────────────────────────────── */
+/*  GENERAL CARD  */
 .card {
   background: var(--surface);
   border: 1.5px solid var(--border);
@@ -342,7 +342,7 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* ── TUTORS PAGE ────────────────────────────────── */
+/*  TUTORS PAGE  */
 .tutors-search-section {
   padding: 16px 24px;
   margin-bottom: 20px;
@@ -863,7 +863,7 @@ body {
   .bottom-grid { grid-template-columns: 1fr; }
 }
 
-/* ── TOP BAR ───────────────────────────────────── */
+/*  TOP BAR  */
 .topbar {
   display: flex; align-items: center; gap: 16px;
   margin-bottom: 28px;
@@ -905,7 +905,7 @@ body {
   color: #fff; font-weight: 700; font-size: .85rem; flex-shrink: 0;
 }
 
-/* ── GREETING ──────────────────────────────────── */
+/*  GREETING  */
 .greeting { margin-bottom: 28px; }
 .greeting h1 {
   font-family: 'Sora', sans-serif;
@@ -913,14 +913,14 @@ body {
 }
 .greeting p { color: var(--muted); font-size: .92rem; margin-top: 4px; }
 
-/* ── SECTION TITLE ─────────────────────────────── */
+/*  SECTION TITLE  */
 .section-title {
   font-family: 'Sora', sans-serif;
   font-size: 1rem; font-weight: 700;
   color: var(--text); margin-bottom: 14px;
 }
 
-/* ── STATS ROW ─────────────────────────────────── */
+/*  STATS ROW  */
 .stats-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -947,7 +947,7 @@ body {
 .stat-val { font-family: 'Sora', sans-serif; font-size: 1.7rem; font-weight: 700; color: var(--text); }
 .stat-label { font-size: .78rem; color: var(--muted); font-weight: 500; }
 
-/* ── QUICK ACTIONS ─────────────────────────────── */
+/*  QUICK ACTIONS  */
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -972,7 +972,7 @@ body {
 .qa-name { font-weight: 600; font-size: .88rem; color: var(--text); margin-bottom: 3px; }
 .qa-desc { font-size: .77rem; color: var(--muted); }
 
-/* ── BOTTOM GRID ───────────────────────────────── */
+/*  BOTTOM GRID  */
 .bottom-grid {
   display: grid;
   grid-template-columns: 1fr 320px;
@@ -986,7 +986,7 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* ── ACTIVITY ──────────────────────────────────── */
+/*  ACTIVITY  */
 .activity-list { display: flex; flex-direction: column; gap: 4px; }
 .activity-item {
   display: flex; align-items: center; gap: 14px;
@@ -1004,7 +1004,7 @@ body {
 .act-sub   { font-size: .77rem; color: var(--muted); }
 .act-time  { margin-left: auto; font-size: .75rem; color: var(--muted); white-space: nowrap; }
 
-/* ── UPCOMING ──────────────────────────────────── */
+/*  UPCOMING  */
 .upcoming-list { display: flex; flex-direction: column; gap: 10px; }
 .upcoming-item {
   display: flex; align-items: center; gap: 12px;
@@ -1025,7 +1025,7 @@ body {
   letter-spacing: .04em;
 }
 
-/* ── ADMIN DASHBOARD ─────────────────────────────── */
+/*  ADMIN DASHBOARD  */
 .admin-controls-card {
   padding: 24px;
   margin-bottom: 24px;
@@ -1295,7 +1295,7 @@ body {
   font-weight: 700;
   color: var(--indigo);
 }
-/* ── EDUCATIONAL CONTENT HUB ───────────────────── */
+/*  EDUCATIONAL CONTENT HUB  */
 .content-actions-row {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
 }
@@ -1329,7 +1329,7 @@ body {
 .content-meta { font-size: .78rem; color: var(--muted); margin-top: 6px; }
 .content-actions { display: flex; gap: 8px; margin-top: 16px; }
 
-/* ── EXAM & ASSIGNMENT TRACKER ────────── */
+/*  EXAM & ASSIGNMENT TRACKER  */
 .parser-banner {
   background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
   border: 1px solid var(--border); border-radius: var(--radius);
@@ -1379,7 +1379,7 @@ body {
 .badge-orange { background: #FEECDC; color: #8A2C0D; }
 .badge-purple { background: #E0E7FF; color: #3730A3; }
 
-/* ── QUIZ & FLASHCARD PAGES ────────────────────── */
+/*  QUIZ & FLASHCARD PAGES  */
 .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
 .filter-bar { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
 .filter-bar input, .filter-bar select {
@@ -1479,7 +1479,7 @@ body {
 .review-ans { font-size:.82rem; }
 .empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
 
-/* ── PROFILE PAGE ──────────────────────────────── */
+/*  PROFILE PAGE  */
 .profile-grid {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -1529,7 +1529,7 @@ body {
   box-shadow: 0 0 0 2px #fff, var(--shadow-lg);
 }
 .avatar-preset-bubble.active::after {
-  content: '✓';
+  content: '';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1557,7 +1557,7 @@ body {
   transform: rotate(30deg);
 }
 
-/* ── HISTORY (grouped attempts) ────────────────── */
+/*  HISTORY (grouped attempts)  */
 .history-group { margin-bottom: 16px; }
 .attempt-list { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
 .attempt-row {
