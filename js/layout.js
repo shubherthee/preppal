@@ -1361,6 +1361,8 @@ const pageTemplates = {
         <div class="stat-top">
           <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">🧑‍🎓</div>
           <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">Total</span>
+          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;"></div>
+          <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">+12%</span>
         </div>
         <div class="stat-val">{{ adminStudentCount }}</div>
         <div class="stat-label">Total Students</div>
