@@ -4,346 +4,349 @@
 (function () {
   const api = PrepPalAPI;
 
+  // Inject custom stylesheet dynamically to prevent style loss/stripping issues by Vue template compiler
+  const styles = `
+    /* Spacious UI Inspiration Style Overrides */
+    .app-shell {
+      background: linear-gradient(135deg, #fff1f2 0%, #e0f2fe 100%) !important;
+    }
+    
+    .main {
+      padding: 36px !important;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Clean, Rounded Typography */
+    h1 {
+      font-family: 'Sora', sans-serif !important;
+      font-weight: 700 !important;
+      color: #1e3a8a !important;
+      letter-spacing: -0.7px;
+      font-size: 2.2rem;
+    }
+    h2, .section-title {
+      font-family: 'Sora', sans-serif !important;
+      font-weight: 700 !important;
+      color: #1e3a8a !important;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+    p {
+      font-family: 'DM Sans', sans-serif !important;
+      color: #574e7d !important;
+      font-size: 0.9rem;
+    }
+
+    /* Premium Rounded Cards (Inspiration-Spec) */
+    .card {
+      background: #ffffff !important;
+      border: 1px solid rgba(219, 39, 119, 0.15) !important;
+      border-radius: 28px !important;
+      box-shadow: 0 10px 40px rgba(37, 99, 235, 0.02), 0 10px 40px rgba(219, 39, 119, 0.02) !important;
+      padding: 28px !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 45px rgba(219, 39, 119, 0.08) !important;
+    }
+
+    /* Topbar Search and Notification Bubble buttons */
+    .circle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      border: 1px solid rgba(219, 39, 119, 0.15) !important;
+      box-shadow: 0 4px 14px rgba(219, 39, 119, 0.04) !important;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .circle-btn:hover {
+      background: #fdf2f8 !important;
+      border-color: #fbcfe8 !important;
+      transform: scale(1.05);
+    }
+
+    /* Custom Form Inputs */
+    input, select, textarea {
+      border: 1px solid #dbeafe !important;
+      background: #fdfcff !important;
+      border-radius: 14px !important;
+      outline: none !important;
+      color: #1e3a8a !important;
+      padding: 10px 14px !important;
+      font-family: inherit !important;
+      font-size: 0.9rem !important;
+      transition: all 0.2s ease !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12) !important;
+      background: #ffffff !important;
+    }
+
+    /* Premium Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #f472b6 0%, #db2777 100%) !important;
+      border: none !important;
+      color: white !important;
+      border-radius: 50px !important;
+      font-weight: 700 !important;
+      padding: 12px 28px !important;
+      box-shadow: 0 6px 18px rgba(219, 39, 119, 0.2) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      cursor: pointer !important;
+      width: auto !important;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05) translateY(-2px) !important;
+      box-shadow: 0 10px 24px rgba(219, 39, 119, 0.35) !important;
+    }
+    .btn-secondary {
+      background: #eff6ff !important;
+      border: 2px solid #dbeafe !important;
+      color: #2563eb !important;
+      border-radius: 50px !important;
+      font-weight: 700 !important;
+      padding: 10px 26px !important;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.04) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      cursor: pointer !important;
+    }
+    .btn-secondary:hover {
+      background: #dbeafe !important;
+      border-color: #bfdbfe !important;
+      transform: scale(1.05) translateY(-2px) !important;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08) !important;
+    }
+
+    /* Inspiration-style Rounded List Rows (Pills) */
+    .pill-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+    
+    /* Alternating pastel theme card row styles */
+    .pill-row-mint {
+      background: #e8f7f4 !important;
+      color: #1f5e52 !important;
+      border-color: rgba(170, 227, 215, 0.3) !important;
+    }
+    .pill-row-mint:hover {
+      transform: translateX(3px);
+      box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
+      border-color: #aae3d7 !important;
+    }
+    .pill-row-lavender {
+      background: #f4f0ff !important;
+      color: #4f3b8c !important;
+      border-color: rgba(216, 200, 255, 0.3) !important;
+    }
+    .pill-row-lavender:hover {
+      transform: translateX(3px);
+      box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
+      border-color: #d8c8ff !important;
+    }
+
+    /* Timer Mode Tabs */
+    .timer-tabs-wrap {
+      display: flex !important;
+      gap: 6px !important;
+      margin-bottom: 30px !important;
+      padding: 6px !important;
+      background: #f1f5f9 !important;
+      border: 1px solid rgba(37, 99, 235, 0.15) !important;
+      border-radius: 30px !important;
+    }
+    .timer-mode-btn {
+      padding: 10px 24px !important;
+      border-radius: 30px !important;
+      border: none !important;
+      background: transparent !important;
+      font-size: 0.85rem !important;
+      font-weight: 700 !important;
+      color: #64748b !important;
+      cursor: pointer !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .timer-mode-btn:hover {
+      transform: scale(1.05) !important;
+    }
+    .timer-mode-btn.active {
+      color: #ffffff !important;
+      transform: scale(1.05) !important;
+    }
+    /* Shades of blue for active and hover states of focus mode buttons */
+    .timer-mode-btn.mode-pomodoro:hover {
+      color: #2563eb !important;
+    }
+    .timer-mode-btn.mode-pomodoro.active {
+      background: #2563eb !important;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25) !important;
+    }
+    .timer-mode-btn.mode-stopwatch:hover {
+      color: #3b82f6 !important;
+    }
+    .timer-mode-btn.mode-stopwatch.active {
+      background: #3b82f6 !important;
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25) !important;
+    }
+    .timer-mode-btn.mode-tracking:hover {
+      color: #1d4ed8 !important;
+    }
+    .timer-mode-btn.mode-tracking.active {
+      background: #1d4ed8 !important;
+      box-shadow: 0 6px 16px rgba(29, 78, 216, 0.25) !important;
+    }
+
+    /* Round Arrow/Action Buttons */
+    .arrow-btn {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      border: none !important;
+      color: #db2777 !important;
+      cursor: pointer !important;
+      box-shadow: 0 2px 8px rgba(219, 39, 119, 0.1) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      padding: 0 !important;
+    }
+    .arrow-btn:hover {
+      transform: scale(1.15) translateY(-1px) !important;
+      background: #db2777 !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 14px rgba(219, 39, 119, 0.2) !important;
+    }
+    .pastel-color-dot {
+      width: 24px !important;
+      height: 24px !important;
+      border-radius: 50% !important;
+      border: 2px solid transparent !important;
+      cursor: pointer !important;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      padding: 0 !important;
+    }
+    .pastel-color-dot.active {
+      border-color: #db2777 !important;
+      transform: scale(1.25) !important;
+      box-shadow: 0 0 12px rgba(219, 39, 119, 0.4) !important;
+    }
+    .pastel-color-dot:hover {
+      transform: scale(1.2) !important;
+    }
+    .badge-status {
+      display: inline-block !important;
+      padding: 4px 10px !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      text-align: center !important;
+      line-height: 1.2 !important;
+    }
+    .status-completed {
+      background: #e8f7f4 !important;
+      color: #1f5e52 !important;
+      border: 1px solid rgba(170, 227, 215, 0.4) !important;
+    }
+    .status-pending {
+      background: #fffbeb !important;
+      color: #b45309 !important;
+      border: 1px solid rgba(253, 230, 138, 0.4) !important;
+    }
+    .status-inprogress {
+      background: #eff6ff !important;
+      color: #1d4ed8 !important;
+      border: 1px solid rgba(191, 219, 254, 0.4) !important;
+    }
+    .status-scheduled {
+      background: #faf5ff !important;
+      color: #6b21a8 !important;
+      border: 1px solid rgba(233, 213, 255, 0.4) !important;
+    }
+    
+    /* Premium Activity Blocks for list items */
+    .activity-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff !important;
+      border: 1px solid rgba(219, 39, 119, 0.1) !important;
+      border-radius: 18px !important;
+      padding: 16px 20px !important;
+      margin-bottom: 12px !important;
+      box-shadow: 0 4px 12px rgba(219, 39, 119, 0.01) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    }
+    .activity-block:hover {
+      transform: translateY(-2px) scale(1.01) !important;
+      box-shadow: 0 8px 20px rgba(219, 39, 119, 0.04) !important;
+    }
+    
+    /* Left accent color coding per block theme */
+    .activity-block-pink {
+      border-left: 5px solid #db2777 !important;
+      border-top-left-radius: 6px !important;
+      border-bottom-left-radius: 6px !important;
+    }
+    .activity-block-pink:hover {
+      border-color: rgba(219, 39, 119, 0.5) !important;
+      border-left-color: #db2777 !important;
+    }
+    
+    .activity-block-blue {
+      border-left: 5px solid #3b82f6 !important;
+      border-top-left-radius: 6px !important;
+      border-bottom-left-radius: 6px !important;
+    }
+    .activity-block-blue:hover {
+      border-color: rgba(59, 130, 246, 0.5) !important;
+      border-left-color: #3b82f6 !important;
+    }
+
+    .activity-block-amber {
+      border-left: 5px solid #f59e0b !important;
+      border-top-left-radius: 6px !important;
+      border-bottom-left-radius: 6px !important;
+    }
+    .activity-block-amber:hover {
+      border-color: rgba(245, 158, 11, 0.5) !important;
+      border-left-color: #f59e0b !important;
+    }
+
+    .activity-block-purple {
+      border-left: 5px solid #8b5cf6 !important;
+      border-top-left-radius: 6px !important;
+      border-bottom-left-radius: 6px !important;
+    }
+    .activity-block-purple:hover {
+      border-color: rgba(139, 92, 246, 0.5) !important;
+      border-left-color: #8b5cf6 !important;
+    }
+  `;
+  const styleEl = document.createElement('style');
+  styleEl.textContent = styles;
+  document.head.appendChild(styleEl);
+
   const template = `
-    <style>
-      /* Spacious UI Inspiration Style Overrides */
-      .app-shell {
-        background: linear-gradient(135deg, #f8f7fd 0%, #f1edf9 100%) !important;
-      }
-      
-      .main {
-        padding: 36px !important;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      /* Clean, Rounded Typography */
-      h1 {
-        font-family: 'Sora', sans-serif !important;
-        font-weight: 700 !important;
-        color: #2e265c !important;
-        letter-spacing: -0.7px;
-        font-size: 2.2rem;
-      }
-      h2, .section-title {
-        font-family: 'Sora', sans-serif !important;
-        font-weight: 700 !important;
-        color: #2e265c !important;
-        font-size: 1.25rem;
-        margin-bottom: 4px;
-      }
-      p {
-        font-family: 'DM Sans', sans-serif !important;
-        color: #7b7597 !important;
-        font-size: 0.9rem;
-      }
-
-      /* Premium Rounded Cards (Inspiration-Spec) */
-      .card {
-        background: #ffffff !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        border-radius: 28px !important;
-        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important;
-        padding: 28px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      }
-      .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 45px rgba(124, 58, 237, 0.06) !important;
-      }
-
-      /* Topbar Search and Notification Bubble buttons */
-      .circle-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border-radius: 50% !important;
-        background: #ffffff !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.04) !important;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      .circle-btn:hover {
-        background: #f4efff !important;
-        border-color: #d8c8ff !important;
-        transform: scale(1.05);
-      }
-
-      /* Custom Form Inputs */
-      input, select, textarea {
-        border: 1px solid #e5e0f9 !important;
-        background: #fdfcff !important;
-        border-radius: 14px !important;
-        outline: none !important;
-        color: #2e265c !important;
-        padding: 10px 14px !important;
-        font-family: inherit !important;
-        font-size: 0.9rem !important;
-        transition: all 0.2s ease !important;
-      }
-      input:focus, select:focus, textarea:focus {
-        border-color: #7c3aed !important;
-        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12) !important;
-        background: #ffffff !important;
-      }
-
-      /* Premium Buttons */
-      .btn-primary {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-        border: none !important;
-        color: white !important;
-        border-radius: 50px !important;
-        font-weight: 700 !important;
-        padding: 12px 28px !important;
-        box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer !important;
-        width: auto !important;
-      }
-      .btn-primary:hover {
-        transform: scale(1.05) translateY(-2px) !important;
-        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.3) !important;
-      }
-      .btn-secondary {
-        background: #f3f0ff !important;
-        border: 2px solid #e9e3ff !important;
-        color: #7c3aed !important;
-        border-radius: 50px !important;
-        font-weight: 700 !important;
-        padding: 10px 26px !important;
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer !important;
-      }
-      .btn-secondary:hover {
-        background: #eae5ff !important;
-        border-color: #d8cdff !important;
-        transform: scale(1.05) translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08) !important;
-      }
-
-      /* Inspiration-style Rounded List Rows (Pills) */
-      .pill-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
-        border-radius: 20px;
-        margin-bottom: 12px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid transparent;
-      }
-      
-      /* Alternating pastel theme card row styles */
-      .pill-row-mint {
-        background: #e8f7f4 !important;
-        color: #1f5e52 !important;
-        border-color: rgba(170, 227, 215, 0.3) !important;
-      }
-      .pill-row-mint:hover {
-        transform: translateX(3px);
-        box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
-        border-color: #aae3d7 !important;
-      }
-      .pill-row-lavender {
-        background: #f4f0ff !important;
-        color: #4f3b8c !important;
-        border-color: rgba(216, 200, 255, 0.3) !important;
-      }
-      .pill-row-lavender:hover {
-        transform: translateX(3px);
-        box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
-        border-color: #d8c8ff !important;
-      }
-
-      /* Timer Mode Tabs */
-      .timer-tabs-wrap {
-        display: flex !important;
-        gap: 6px !important;
-        margin-bottom: 30px !important;
-        padding: 6px !important;
-        background: #f4f2fa !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        border-radius: 30px !important;
-      }
-      .timer-mode-btn {
-        padding: 10px 24px !important;
-        border-radius: 30px !important;
-        border: none !important;
-        background: transparent !important;
-        font-size: 0.85rem !important;
-        font-weight: 700 !important;
-        color: #7b7597 !important;
-        cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-      }
-      .timer-mode-btn:hover {
-        transform: scale(1.05) !important;
-      }
-      .timer-mode-btn.active {
-        color: #ffffff !important;
-        transform: scale(1.05) !important;
-      }
-      /* Distinct shades of purple for the active and hover states of the focus mode buttons */
-      .timer-mode-btn.mode-pomodoro:hover {
-        color: #7c3aed !important;
-      }
-      .timer-mode-btn.mode-pomodoro.active {
-        background: #7c3aed !important;
-        box-shadow: 0 6px 16px rgba(124, 58, 237, 0.25) !important;
-      }
-      .timer-mode-btn.mode-stopwatch:hover {
-        color: #9333ea !important;
-      }
-      .timer-mode-btn.mode-stopwatch.active {
-        background: #9333ea !important;
-        box-shadow: 0 6px 16px rgba(147, 51, 234, 0.25) !important;
-      }
-      .timer-mode-btn.mode-tracking:hover {
-        color: #a855f7 !important;
-      }
-      .timer-mode-btn.mode-tracking.active {
-        background: #a855f7 !important;
-        box-shadow: 0 6px 16px rgba(168, 85, 247, 0.25) !important;
-      }
-
-      /* Round Arrow/Action Buttons */
-      .arrow-btn {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 36px !important;
-        height: 36px !important;
-        border-radius: 50% !important;
-        background: #ffffff !important;
-        border: none !important;
-        color: #7c3aed !important;
-        cursor: pointer !important;
-        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        padding: 0 !important;
-      }
-      .arrow-btn:hover {
-        transform: scale(1.15) translateY(-1px) !important;
-        background: #7c3aed !important;
-        color: #ffffff !important;
-        box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2) !important;
-      }
-      .pastel-color-dot {
-        width: 24px !important;
-        height: 24px !important;
-        border-radius: 50% !important;
-        border: 2px solid transparent !important;
-        cursor: pointer !important;
-        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        padding: 0 !important;
-      }
-      .pastel-color-dot.active {
-        border-color: #7c3aed !important;
-        transform: scale(1.25) !important;
-        box-shadow: 0 0 12px rgba(124, 58, 237, 0.4) !important;
-      }
-      .pastel-color-dot:hover {
-        transform: scale(1.2) !important;
-      }
-      .badge-status {
-        display: inline-block !important;
-        padding: 4px 10px !important;
-        font-size: 0.75rem !important;
-        font-weight: 700 !important;
-        border-radius: 12px !important;
-        text-align: center !important;
-        line-height: 1.2 !important;
-      }
-      .status-completed {
-        background: #e8f7f4 !important;
-        color: #1f5e52 !important;
-        border: 1px solid rgba(170, 227, 215, 0.4) !important;
-      }
-      .status-pending {
-        background: #fffbeb !important;
-        color: #b45309 !important;
-        border: 1px solid rgba(253, 230, 138, 0.4) !important;
-      }
-      .status-inprogress {
-        background: #eff6ff !important;
-        color: #1d4ed8 !important;
-        border: 1px solid rgba(191, 219, 254, 0.4) !important;
-      }
-      .status-scheduled {
-        background: #faf5ff !important;
-        color: #6b21a8 !important;
-        border: 1px solid rgba(233, 213, 255, 0.4) !important;
-      }
-      
-      /* Premium Activity Blocks for list items */
-      .activity-block {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: #ffffff !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        border-radius: 18px !important;
-        padding: 16px 20px !important;
-        margin-bottom: 12px !important;
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.02) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-      }
-      .activity-block:hover {
-        transform: translateY(-2px) scale(1.01) !important;
-        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.06) !important;
-      }
-      
-      /* Left accent color coding per block theme */
-      .activity-block-mint {
-        border-left: 5px solid #10b981 !important;
-        border-top-left-radius: 6px !important;
-        border-bottom-left-radius: 6px !important;
-      }
-      .activity-block-mint:hover {
-        border-color: rgba(16, 185, 129, 0.5) !important;
-        border-left-color: #10b981 !important;
-      }
-      
-      .activity-block-blue {
-        border-left: 5px solid #3b82f6 !important;
-        border-top-left-radius: 6px !important;
-        border-bottom-left-radius: 6px !important;
-      }
-      .activity-block-blue:hover {
-        border-color: rgba(59, 130, 246, 0.5) !important;
-        border-left-color: #3b82f6 !important;
-      }
-
-      .activity-block-amber {
-        border-left: 5px solid #f59e0b !important;
-        border-top-left-radius: 6px !important;
-        border-bottom-left-radius: 6px !important;
-      }
-      .activity-block-amber:hover {
-        border-color: rgba(245, 158, 11, 0.5) !important;
-        border-left-color: #f59e0b !important;
-      }
-
-      .activity-block-purple {
-        border-left: 5px solid #8b5cf6 !important;
-        border-top-left-radius: 6px !important;
-        border-bottom-left-radius: 6px !important;
-      }
-      .activity-block-purple:hover {
-        border-color: rgba(139, 92, 246, 0.5) !important;
-        border-left-color: #8b5cf6 !important;
-      }
-    </style>
-
-    <!-- Topbar Navigation Header -->
     <div class="topbar" style="margin-bottom: 28px;">
-      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius:24px; box-shadow:0 4px 16px rgba(124,58,237,0.02);">
+      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(219, 39, 119, 0.15); border-radius:24px; box-shadow:0 4px 16px rgba(219,39,119,0.02);">
         <span class="search-icon">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#db2777" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </span>
         <input
           type="text"
@@ -353,11 +356,11 @@
         />
       </div>
       <div style="display:flex; gap:12px; align-items:center;">
-        <div class="circle-btn" style="position:relative;" title="Reminders Alert">
-          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="circle-btn" style="position:relative; border-color: rgba(219, 39, 119, 0.15);" title="Reminders Alert">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="#db2777" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
           <span class="notif-dot" v-if="reminders.length" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #ff6b7a; border: 1.5px solid #ffffff;"></span>
         </div>
-        <div class="topbar-avatar" style="background: linear-gradient(135deg, #7c3aed, #c084fc); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, #db2777, #3b82f6); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15);">{{ initials }}</div>
       </div>
     </div>
 
@@ -370,47 +373,47 @@
     <!-- Statistics Overview Row -->
     <div class="stats-row" style="margin-bottom: 28px;">
       <!-- Goals Card -->
-      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02);">
-        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);">
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #fff1f2; border: 1px solid rgba(251, 207, 232, 0.6); box-shadow: 0 8px 30px rgba(219, 39, 119, 0.02);">
+        <div style="background:#ffffff; color:#db2777; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.05);">
           <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
         <div>
-          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1;">{{ plannerTasks.length }}</div>
-          <div class="stat-label" style="font-size: 0.8rem; color: #1f5e52; opacity: 0.8; margin-top: 2px; font-weight: 600;">Active Tasks</div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #db2777; line-height: 1.1;">{{ plannerTasks.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #db2777; opacity: 0.8; margin-top: 2px; font-weight: 600;">Active Tasks</div>
         </div>
       </div>
 
       <!-- Reminders Card -->
-      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02);">
-        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #eff6ff; border: 1px solid rgba(191, 219, 254, 0.6); box-shadow: 0 8px 30px rgba(37, 99, 235, 0.02);">
+        <div style="background:#ffffff; color:#1d4ed8; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);">
           <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </div>
         <div>
-          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1;">{{ reminders.filter(r => r.status === 'Active' || r.status === 'Set').length }}</div>
-          <div class="stat-label" style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Reminders Set</div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1d4ed8; line-height: 1.1;">{{ reminders.filter(r => r.status === 'Active' || r.status === 'Set').length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #1d4ed8; opacity: 0.8; margin-top: 2px; font-weight: 600;">Reminders Set</div>
         </div>
       </div>
 
       <!-- Materials Card -->
-      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #ffffff; border: 1px solid rgba(225, 220, 245, 0.6); box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02);">
-        <div style="background:#f4f0ff; color:#7c3aed; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.03);">
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #faf5ff; border: 1px solid rgba(233, 213, 255, 0.6); box-shadow: 0 8px 30px rgba(139, 92, 246, 0.02);">
+        <div style="background:#ffffff; color:#8b5cf6; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.05);">
           <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
         </div>
         <div>
-          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #2e265c; line-height: 1.1;">{{ materials.length }}</div>
-          <div class="stat-label" style="font-size: 0.8rem; color: #7b7597; margin-top: 2px; font-weight: 600;">Syllabus Files</div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #8b5cf6; line-height: 1.1;">{{ materials.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #8b5cf6; opacity: 0.8; margin-top: 2px; font-weight: 600;">Syllabus Files</div>
         </div>
       </div>
     </div>
 
     <!-- Centered Glass Focus & Study Timer Card -->
-    <div class="card" style="margin-bottom: 32px; padding: 40px; display: flex; flex-direction: column; align-items: center; text-align: center; background: linear-gradient(135deg, rgba(244, 240, 255, 0.7) 0%, rgba(255, 255, 255, 0.9) 100%) !important;">
+    <div class="card" style="margin-bottom: 32px; padding: 40px; display: flex; flex-direction: column; align-items: center; text-align: center; background: linear-gradient(135deg, rgba(253, 242, 248, 0.8) 0%, rgba(239, 246, 255, 0.8) 100%) !important; border: 1px solid rgba(219, 39, 119, 0.15) !important;">
       <div style="display:flex; flex-direction:column; align-items:center; margin-bottom: 24px;">
         <div style="display:flex; align-items:center; gap:10px; justify-content:center;">
-          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#7c3aed" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <h2 style="margin:0; font-size:1.4rem; color:#2e265c;">Study Focus Timer</h2>
+          <svg viewBox="0 0 24 24" width="24" height="24" stroke="#db2777" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <h2 style="margin:0; font-size:1.4rem; color:#1e3a8a;">Study Focus Timer</h2>
         </div>
-        <p style="margin:8px 0 0 0; font-size:0.88rem; max-width: 500px;">Boost focus using the Pomodoro technique or manual tracking sessions.</p>
+        <p style="margin:8px 0 0 0; font-size:0.88rem; max-width: 500px; color:#574e7d;">Boost focus using the Pomodoro technique or manual tracking sessions.</p>
       </div>
 
       <!-- Mode Selector Tabs -->
@@ -422,14 +425,15 @@
 
       <!-- Glassmorphic Clock Circle with Pastel Tint -->
       <div 
-        :style="{ 
-          background: activeColorOption.pastelBg, 
-          borderColor: activeColorOption.pastelBorder,
-          boxShadow: timerState === 'running' ? '0 0 35px ' + timerColor + '55, inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
-        }" 
+        :style="timerCircleStyle" 
         style="width: 220px; height: 220px; border-radius: 50%; border: 4px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);"
       >
-        <div style="font-size: 2.8rem; font-weight: 700; font-family:'Sora',sans-serif; color:#2e265c; letter-spacing: -1.2px;">
+        <!-- Dynamic Session Type Label for Pomodoro Mode -->
+        <div v-if="timerMode === 'pomodoro'" style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px;" :style="{ color: pomodoroSessionType === 'work' ? '#db2777' : '#2563eb' }">
+          {{ pomodoroSessionType === 'work' ? 'Study Block' : 'Break Block' }}
+        </div>
+        
+        <div style="font-size: 2.8rem; font-weight: 700; font-family:'Sora',sans-serif; color:#1e3a8a; letter-spacing: -1.2px; line-height: 1;">
           {{ formattedTime }}
         </div>
         <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: #574e7d; font-weight: 700; margin-top: 4px;">
@@ -438,10 +442,10 @@
         
         <!-- Floating badge showing subject -->
         <div 
-          :style="{ background: timerColor }" 
-          style="position: absolute; bottom: -10px; color: white; padding: 6px 18px; border-radius: 24px; font-size: 0.78rem; font-weight: 600; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.12); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+          :style="{ background: timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? '#db2777' : '#2563eb') : timerColor }" 
+          style="position: absolute; bottom: -10px; color: white; padding: 6px 18px; border-radius: 24px; font-size: 0.78rem; font-weight: 600; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.12); max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
         >
-          {{ activeSubjectDisplay }}
+          {{ timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? 'Study: ' + activeSubjectDisplay : 'Break Block') : activeSubjectDisplay }}
         </div>
       </div>
 
@@ -450,16 +454,36 @@
         <!-- Subject Selection -->
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Subject:</span>
-          <select v-model="timerSubject" style="width:170px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important; cursor:pointer;">
+          <select v-model="timerSubject" style="width:170px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important; cursor:pointer;">
             <option v-for="sub in subjectsList" :key="sub" :value="sub">{{ sub }}</option>
           </select>
-          <input v-if="timerSubject === 'Other'" type="text" v-model="customSubjectName" placeholder="Subject Name" style="width:130px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important;" />
+          <input v-if="timerSubject === 'Other'" type="text" v-model="customSubjectName" placeholder="Subject Name" style="width:130px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important;" />
+        </div>
+
+        <!-- Pomodoro Work & Break Duration Customization -->
+        <div v-if="timerMode === 'pomodoro'" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Study (min):</span>
+            <input type="number" v-model.number="pomodoroWorkDuration" min="1" max="180" style="width:75px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important;" @change="resetTimer" />
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Break (min):</span>
+            <input type="number" v-model.number="pomodoroBreakDuration" min="1" max="180" style="width:75px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important;" @change="resetTimer" />
+          </div>
+          <!-- Manual session toggle -->
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Session:</span>
+            <select v-model="pomodoroSessionType" style="padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important; cursor:pointer;" @change="resetTimer">
+              <option value="work">Study Block</option>
+              <option value="break">Break Block</option>
+            </select>
+          </div>
         </div>
 
         <!-- Custom Duration Input if mode is custom tracking -->
         <div v-if="timerMode === 'tracking'" style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:0.85rem; font-weight:600; color:#574e7d;">Duration (min):</span>
-          <input type="number" v-model.number="timerCustomDuration" min="1" max="180" style="width:85px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #e5e0f9 !important; background:#fdfcff !important; color:#2e265c !important; outline:none !important;" @change="resetTimer" />
+          <input type="number" v-model.number="timerCustomDuration" min="1" max="180" style="width:85px; padding:10px 14px !important; border-radius:14px !important; border:1px solid #dbeafe !important; background:#fdfcff !important; color:#1e3a8a !important; outline:none !important;" @change="resetTimer" />
         </div>
       </div>
 
@@ -481,8 +505,8 @@
 
       <!-- Controls Buttons -->
       <div style="display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
-        <button v-if="timerState === 'idle' || timerState === 'paused'" class="btn-primary" :style="{ background: 'linear-gradient(135deg, ' + timerColor + ', ' + timerColor + 'dd) !important', boxShadow: '0 6px 18px ' + timerColor + '40 !important' }" style="min-width: 150px;" @click="startTimer">
-          Start Focus
+        <button v-if="timerState === 'idle' || timerState === 'paused'" class="btn-primary" :style="{ background: 'linear-gradient(135deg, ' + (timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? '#db2777' : '#2563eb') : timerColor) + ', ' + (timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? '#be185d' : '#1d4ed8') : timerColor + 'dd') + ') !important', boxShadow: '0 6px 18px ' + (timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? '#db2777' : '#2563eb') : timerColor) + '40 !important' }" style="min-width: 150px;" @click="startTimer">
+          {{ timerMode === 'pomodoro' ? (pomodoroSessionType === 'work' ? 'Start Study' : 'Start Break') : 'Start Focus' }}
         </button>
         <button v-if="timerState === 'running'" class="btn-primary" style="min-width: 150px; background: linear-gradient(135deg, #fbbf24, #d97706) !important; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.25) !important;" @click="pauseTimer">
           Pause Focus
@@ -495,23 +519,23 @@
         </button>
       </div>
       
-      <div style="margin-top:20px; height: 16px; font-size:0.85rem; color:#7c3aed; font-weight: 500; font-style:italic;">
+      <div style="margin-top:20px; height: 16px; font-size:0.85rem; color:#db2777; font-weight: 500; font-style:italic;">
         <span v-if="timerState === 'running'">Your focus block is ticking. Remain concentrated...</span>
       </div>
     </div>
 
     <!-- Tutor Consultations Banner -->
-    <div class="card" style="margin-bottom: 32px; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #eae5ff 0%, #f4f0ff 100%) !important; border: 1px solid rgba(216, 200, 255, 0.4) !important; border-radius: 24px !important; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.04) !important; gap: 20px; flex-wrap: wrap;">
+    <div class="card" style="margin-bottom: 32px; padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #fce7f3 0%, #eff6ff 100%) !important; border: 1px solid rgba(219, 39, 119, 0.15) !important; border-radius: 24px !important; box-shadow: 0 8px 30px rgba(219, 39, 119, 0.04) !important; gap: 20px; flex-wrap: wrap;">
       <div style="display: flex; align-items: center; gap: 20px; min-width: 280px; flex: 1;">
-        <div style="background: #ffffff; color: #7c3aed; display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.12); flex-shrink: 0;">
+        <div style="background: #ffffff; color: #db2777; display: flex; align-items: center; justify-content: center; width: 54px; height: 54px; border-radius: 50%; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.12); flex-shrink: 0;">
           <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <div style="text-align: left;">
-          <h3 style="margin: 0; font-family: 'Sora', sans-serif; font-size: 1.1rem; color: #2e265c; font-weight: 700;">Tutor Consultations</h3>
+          <h3 style="margin: 0; font-family: 'Sora', sans-serif; font-size: 1.1rem; color: #1e3a8a; font-weight: 700;">Tutor Consultations</h3>
           <p style="margin: 4px 0 0 0; color: #574e7d; font-size: 0.88rem; font-weight: 500;">Struggling with a topic? Book a live 1-on-1 session with an expert tutor now.</p>
         </div>
       </div>
-      <button class="btn-primary" style="padding: 12px 28px; font-size: 0.9rem; border-radius: 50px; background: #7c3aed !important; color: #ffffff !important; box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25) !important;" @click="goToTutors">
+      <button class="btn-primary" style="padding: 12px 28px; font-size: 0.9rem; border-radius: 50px; background: linear-gradient(135deg, #f472b6, #db2777) !important; color: #ffffff !important; box-shadow: 0 6px 18px rgba(219, 39, 119, 0.25) !important;" @click="goToTutors">
         Explore Tutors & Book Session
       </button>
     </div>
@@ -523,14 +547,14 @@
       <div style="display:flex; flex-direction:column; gap:32px;">
         
         <!-- Study Plan Tasks Card -->
-        <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.25) !important; box-shadow: 0 10px 40px rgba(16, 185, 129, 0.03) !important;">
+        <div class="card" style="border: 1px solid rgba(219, 39, 119, 0.25) !important; box-shadow: 0 10px 40px rgba(219, 39, 119, 0.03) !important;">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:24px; flex-wrap:wrap;">
             <div>
               <h2 style="margin:0;">Active Study Tasks</h2>
               <p style="margin:2px 0 0 0;">Manage tasks, deadlines, and tracking states.</p>
             </div>
             <div style="display:flex; gap:8px;">
-              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="showAddPlanForm = !showAddPlanForm">
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #f472b6 0%, #db2777 100%) !important; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.2) !important; border: none !important; color: white !important;" @click="showAddPlanForm = !showAddPlanForm">
                 {{ showAddPlanForm ? 'Close' : '+ Add Task' }}
               </button>
               <button class="btn-secondary" style="padding:8px 20px; font-size:0.85rem; border-radius:12px;" @click="loadPlannerData">
@@ -541,20 +565,20 @@
 
           <!-- Add Task Form inside Card -->
           <div v-if="showAddPlanForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
-            <h3 style="margin-top:0; margin-bottom:14px; font-size:1rem; color:#2e265c; font-family:'Sora',sans-serif; font-weight:700;">New Study Goal</h3>
+            <h3 style="margin-top:0; margin-bottom:14px; font-size:1rem; color:#1e3a8a; font-family:'Sora',sans-serif; font-weight:700;">New Study Goal</h3>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:14px;">
               <div>
-                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Task Name</label>
+                <label style="display:block; font-size:0.75rem; color:#574e7d; margin-bottom:4px; font-weight: 600;">Task Name</label>
                 <input type="text" v-model="newPlan.task" placeholder="e.g. Mathematics HW" style="width:100%;" />
               </div>
               <div>
-                <label style="display:block; font-size:0.75rem; color:#6c6684; margin-bottom:4px; font-weight: 600;">Deadline</label>
+                <label style="display:block; font-size:0.75rem; color:#574e7d; margin-bottom:4px; font-weight: 600;">Deadline</label>
                 <input type="date" v-model="newPlan.deadline" style="width:100%;" />
               </div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
               <div style="display: flex; align-items: center; gap: 8px;">
-                <label style="font-size:0.75rem; color:#6c6684; font-weight: 600;">Status:</label>
+                <label style="font-size:0.75rem; color:#574e7d; font-weight: 600;">Status:</label>
                 <select v-model="newPlan.status" style="padding:6px 12px; border-radius:10px;">
                   <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
@@ -562,12 +586,12 @@
                   <option value="Scheduled">Scheduled</option>
                 </select>
               </div>
-              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2) !important; border: none !important; color: white !important;" @click="createPlan">Save Goal</button>
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #f472b6 0%, #db2777 100%) !important; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.2) !important; border: none !important; color: white !important;" @click="createPlan">Save Goal</button>
             </div>
           </div>
 
           <!-- Tasks list -->
-          <div v-if="plannerLoading" style="text-align:center; padding:20px; color:#6c6684;">
+          <div v-if="plannerLoading" style="text-align:center; padding:20px; color:#574e7d;">
             Loading active tasks...
           </div>
           <div v-if="errorMsg" class="error-msg" style="margin-bottom:12px;">
@@ -578,12 +602,12 @@
             <div 
               v-for="(task, index) in filteredPlannerTasks" 
               :key="task.plan_id"
-              class="activity-block activity-block-mint" 
+              class="activity-block activity-block-pink" 
             >
               <div style="flex-grow:1; padding-right:16px;">
                 <div style="font-weight:700; font-size:0.95rem; display:flex; align-items:center; gap:8px;" :style="task.status === 'Completed' ? 'text-decoration: line-through; opacity: 0.55;' : ''">
-                  <svg v-if="task.status === 'Completed'" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#10b981; flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
-                  <svg v-else viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#7c3aed; flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>
+                  <svg v-if="task.status === 'Completed'" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#db2777; flex-shrink:0;"><polyline points="20 6 9 17 4 12"/></svg>
+                  <svg v-else viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color:#db2777; flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>
                   <span>{{ task.task }}</span>
                 </div>
                 <div style="font-size:0.75rem; opacity: 0.8; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px;">
@@ -599,38 +623,38 @@
                   'status-scheduled': task.status === 'Scheduled'
                 }">{{ task.status }}</span>
                 
-                <select v-model="task.status" @change="updatePlanStatus(task)" style="padding:6px 12px !important; font-size:0.78rem !important; border-radius:10px !important; border:1px solid rgba(124, 58, 237, 0.2) !important; cursor:pointer !important; background: #ffffff !important; color:#2e265c !important; outline:none !important;">
+                <select v-model="task.status" @change="updatePlanStatus(task)" style="padding:6px 12px !important; font-size:0.78rem !important; border-radius:10px !important; border:1px solid rgba(219, 39, 119, 0.2) !important; cursor:pointer !important; background: #ffffff !important; color:#1e3a8a !important; outline:none !important;">
                   <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Completed">Completed</option>
                   <option value="Scheduled">Scheduled</option>
                 </select>
-                <button class="arrow-btn" @click="deletePlan(task.plan_id)" title="Delete Task" style="background:#ffffff; color:#ff6b7a;">
+                <button class="arrow-btn" @click="deletePlan(task.plan_id)" title="Delete Task" style="background:#ffffff; color:#db2777;">
                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
             </div>
           </div>
           
-          <div v-if="!plannerLoading && !errorMsg && !filteredPlannerTasks.length" style="text-align:center; color:#7b7597; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(225,220,245,0.8);">
+          <div v-if="!plannerLoading && !errorMsg && !filteredPlannerTasks.length" style="text-align:center; color:#574e7d; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(219, 39, 119, 0.2);">
             No study goals registered yet.
           </div>
         </div>
 
         <!-- Reminders Card -->
-        <div class="card" style="border: 1px solid rgba(59, 130, 246, 0.25) !important; box-shadow: 0 10px 40px rgba(59, 130, 246, 0.03) !important;">
+        <div class="card" style="border: 1px solid rgba(37, 99, 235, 0.25) !important; box-shadow: 0 10px 40px rgba(37, 99, 235, 0.03) !important;">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
             <div>
               <h2 style="margin:0;">Reminders</h2>
               <p style="margin:2px 0 0 0;">Manage upcoming sessions and reviews.</p>
             </div>
-            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important; border: none !important; color: white !important;" @click="showAddReminderForm = !showAddReminderForm">
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%) !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important; border: none !important; color: white !important;" @click="showAddReminderForm = !showAddReminderForm">
               {{ showAddReminderForm ? 'Cancel' : '+ Add Reminder' }}
             </button>
           </div>
 
           <!-- Add Reminder Form inside Card -->
-          <div v-if="showAddReminderForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #e1dbf3 !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
+          <div v-if="showAddReminderForm" class="card" style="box-shadow:none; background:#fbfaff !important; border:1px solid #dbeafe !important; margin-bottom:20px; padding:20px; border-radius: 20px;">
             <div style="margin-bottom:12px;">
               <input type="text" v-model="newReminder.title" placeholder="e.g. Biology Quiz Review" style="width:100%;" />
             </div>
@@ -638,7 +662,7 @@
               <input type="datetime-local" v-model="newReminder.time" style="width:100%;" />
             </div>
             <div style="text-align:right;">
-              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important; border: none !important; color: white !important;" @click="createReminder">Set Reminder</button>
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%) !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important; border: none !important; color: white !important;" @click="createReminder">Set Reminder</button>
             </div>
           </div>
 
@@ -650,7 +674,7 @@
             >
               <div style="flex-grow:1; padding-right:12px;">
                 <div style="font-weight:700; font-size:0.9rem; display:flex; align-items:center; gap:8px;">
-                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: #7c3aed; flex-shrink: 0;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: #2563eb; flex-shrink: 0;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                   <span>{{ rem.title }}</span>
                 </div>
                 <div style="font-size:0.75rem; opacity:0.8; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px;">
@@ -660,13 +684,13 @@
               </div>
               <div style="display:flex; align-items:center; gap:12px; flex-shrink:0;">
                 <span class="badge-status status-scheduled" style="font-size:0.75rem; font-weight:700; padding:4px 10px; border-radius:12px; background:#ffffff;">{{ rem.status }}</span>
-                <button class="arrow-btn" @click="deleteReminder(rem.id)" title="Delete Reminder" style="background:#ffffff; color:#ff6b7a;">
+                <button class="arrow-btn" @click="deleteReminder(rem.id)" title="Delete Reminder" style="background:#ffffff; color:#db2777;">
                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
             </div>
           </div>
-          <div v-else style="text-align:center; color:#7b7597; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(225,220,245,0.8);">
+          <div v-else style="text-align:center; color:#574e7d; padding:30px; background:rgba(255,255,255,0.4); border-radius:20px; font-size: 0.88rem; border: 1px dashed rgba(37, 99, 235, 0.2);">
             No reminders scheduled.
           </div>
         </div>
@@ -677,10 +701,10 @@
       <div style="display:flex; flex-direction:column; gap:32px;">
         
         <!-- AI Recommendations Card -->
-        <div class="card" style="border: 1px solid rgba(245, 158, 11, 0.25) !important; box-shadow: 0 10px 40px rgba(245, 158, 11, 0.03) !important;">
+        <div class="card" style="border: 1px solid rgba(37, 99, 235, 0.25) !important; box-shadow: 0 10px 40px rgba(37, 99, 235, 0.03) !important;">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; flex-wrap:wrap;">
             <h2 style="margin:0;">AI Planner</h2>
-            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15) !important; border: none !important; color: white !important;" @click="generateSchedule" :disabled="generatingSchedule">
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%) !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15) !important; border: none !important; color: white !important;" @click="generateSchedule" :disabled="generatingSchedule">
               {{ generatingSchedule ? 'Analyzing...' : 'Generate' }}
             </button>
           </div>
@@ -694,26 +718,26 @@
             <div 
               v-for="(item, idx) in aiSchedule" 
               :key="idx" 
-              class="activity-block activity-block-amber"
+              class="activity-block activity-block-blue"
               style="align-items: flex-start; flex-direction: column; gap: 6px; padding: 16px;"
             >
               <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
-                <span style="font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px;">{{ item.day }}</span>
-                <span style="font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:8px; background:#ffffff;">{{ item.hours }}</span>
+                <span style="font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color: #1d4ed8;">{{ item.day }}</span>
+                <span style="font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:8px; background:#ffffff; color: #1d4ed8;">{{ item.hours }}</span>
               </div>
-              <div style="font-size:0.85rem; line-height:1.4; font-weight: 500;">{{ item.task }}</div>
+              <div style="font-size:0.85rem; line-height:1.4; font-weight: 500; color: #1e3a8a;">{{ item.task }}</div>
             </div>
           </div>
-          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+          <div v-else style="text-align:center; color:#574e7d; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(37, 99, 235, 0.2);">
             Click Generate to query the AI scheduler.
           </div>
         </div>
 
         <!-- Reference Materials Card -->
-        <div class="card" style="border: 1px solid rgba(139, 92, 246, 0.25) !important; box-shadow: 0 10px 40px rgba(139, 92, 246, 0.03) !important;">
+        <div class="card" style="border: 1px solid rgba(219, 39, 119, 0.25) !important; box-shadow: 0 10px 40px rgba(219, 39, 119, 0.03) !important;">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
             <h2 style="margin:0;">Syllabus Materials</h2>
-            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15) !important; border: none !important; color: white !important;" @click="showAddMaterialForm = !showAddMaterialForm">
+            <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #f472b6 0%, #db2777 100%) !important; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important; border: none !important; color: white !important;" @click="showAddMaterialForm = !showAddMaterialForm">
               {{ showAddMaterialForm ? 'Cancel' : '+ File' }}
             </button>
           </div>
@@ -728,7 +752,7 @@
               <input type="text" v-model="newMaterial.description" placeholder="Short description" style="width:100%;" />
             </div>
             <div style="text-align:right;">
-              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%) !important; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15) !important; border: none !important; color: white !important;" @click="createMaterial">Save File</button>
+              <button class="btn-primary" style="padding:10px 24px; font-size:0.85rem; border-radius:50px !important; background: linear-gradient(135deg, #f472b6 0%, #db2777 100%) !important; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important; border: none !important; color: white !important;" @click="createMaterial">Save File</button>
             </div>
           </div>
 
@@ -736,20 +760,20 @@
             <div 
               v-for="mat in materials" 
               :key="mat.id" 
-              class="activity-block activity-block-purple" 
+              class="activity-block activity-block-pink" 
               style="flex-direction: column; align-items: flex-start; padding: 16px;"
             >
               <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; width: 100%;">
-                <div style="font-weight:700; font-size:0.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display: flex; align-items: center; gap: 8px;">
+                <div style="font-weight:700; font-size:0.9rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display: flex; align-items: center; gap: 8px; color: #db2777;">
                   <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   <span>{{ mat.filename }}</span>
                 </div>
-                <span style="font-size:0.7rem; opacity:0.8; white-space:nowrap; font-weight: 600;">{{ formatDate(mat.created_at) }}</span>
+                <span style="font-size:0.7rem; opacity:0.8; white-space:nowrap; font-weight: 600; color: #db2777;">{{ formatDate(mat.created_at) }}</span>
               </div>
-              <div style="font-size:0.78rem; opacity:0.8; margin-top:6px; padding-left:24px; font-weight: 500;">{{ mat.description }}</div>
+              <div style="font-size:0.78rem; opacity:0.8; margin-top:6px; padding-left:24px; font-weight: 500; color: #574e7d;">{{ mat.description }}</div>
             </div>
           </div>
-          <div v-else style="text-align:center; color:#7b7597; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(225,220,245,0.8);">
+          <div v-else style="text-align:center; color:#574e7d; padding:24px; background:rgba(255,255,255,0.4); border-radius:20px; font-size:0.85rem; border: 1px dashed rgba(219, 39, 119, 0.2);">
             No syllabus materials uploaded.
           </div>
         </div>
@@ -790,16 +814,20 @@
         timerInterval: null,
         timerSubject: 'General Study',
         customSubjectName: '',
-        timerColor: '#c084fc', // pastel purple default
+        timerColor: '#db2777', // pastel pink default
         timerCustomDuration: 25,
         timerSecondsStudied: 0,
+        // customizable pomodoro work and break
+        pomodoroWorkDuration: 25,
+        pomodoroBreakDuration: 5,
+        pomodoroSessionType: 'work', // 'work' | 'break'
         subjectsList: ['Mathematics', 'Biology', 'Chemistry', 'Physics', 'History', 'General Study', 'Other'],
         timerColorOptions: [
-          { value: '#c084fc', pastelBg: 'rgba(192, 132, 252, 0.1)', pastelBorder: 'rgba(192, 132, 252, 0.45)', label: 'Pastel Purple' },
-          { value: '#60a5fa', pastelBg: 'rgba(96, 165, 250, 0.1)', pastelBorder: 'rgba(96, 165, 250, 0.45)', label: 'Pastel Blue' },
+          { value: '#db2777', pastelBg: 'rgba(219, 39, 119, 0.1)', pastelBorder: 'rgba(219, 39, 119, 0.45)', label: 'Pastel Pink' },
+          { value: '#2563eb', pastelBg: 'rgba(37, 99, 235, 0.1)', pastelBorder: 'rgba(37, 99, 235, 0.45)', label: 'Pastel Blue' },
+          { value: '#8b5cf6', pastelBg: 'rgba(139, 92, 246, 0.1)', pastelBorder: 'rgba(139, 92, 246, 0.45)', label: 'Pastel Purple' },
           { value: '#34d399', pastelBg: 'rgba(52, 211, 153, 0.1)', pastelBorder: 'rgba(52, 211, 153, 0.45)', label: 'Pastel Mint' },
-          { value: '#fbbf24', pastelBg: 'rgba(251, 191, 36, 0.1)', pastelBorder: 'rgba(251, 191, 36, 0.45)', label: 'Pastel Amber' },
-          { value: '#f87171', pastelBg: 'rgba(248, 113, 113, 0.1)', pastelBorder: 'rgba(248, 113, 113, 0.45)', label: 'Pastel Rose' }
+          { value: '#fbbf24', pastelBg: 'rgba(251, 191, 36, 0.1)', pastelBorder: 'rgba(251, 191, 36, 0.45)', label: 'Pastel Amber' }
         ]
       };
     },
@@ -828,10 +856,34 @@
         return this.timerSubject;
       },
       shouldShowSave() {
-        return (this.timerState === 'idle' || this.timerState === 'paused') && this.timerSecondsStudied >= 10;
+        return (this.timerState === 'idle' || this.timerState === 'paused') && 
+               this.timerSecondsStudied >= 10 && 
+               !(this.timerMode === 'pomodoro' && this.pomodoroSessionType === 'break');
       },
       activeColorOption() {
         return this.timerColorOptions.find(o => o.value === this.timerColor) || this.timerColorOptions[0];
+      },
+      timerCircleStyle() {
+        if (this.timerMode === 'pomodoro') {
+          if (this.pomodoroSessionType === 'work') {
+            return {
+              background: 'rgba(219, 39, 119, 0.12)',
+              borderColor: 'rgba(219, 39, 119, 0.5)',
+              boxShadow: this.timerState === 'running' ? '0 0 35px rgba(219, 39, 119, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
+            };
+          } else {
+            return {
+              background: 'rgba(37, 99, 235, 0.12)',
+              borderColor: 'rgba(37, 99, 235, 0.5)',
+              boxShadow: this.timerState === 'running' ? '0 0 35px rgba(37, 99, 235, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
+            };
+          }
+        }
+        return {
+          background: this.activeColorOption.pastelBg,
+          borderColor: this.activeColorOption.pastelBorder,
+          boxShadow: this.timerState === 'running' ? '0 0 35px ' + this.timerColor + '55, inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
+        };
       }
     },
     methods: {
@@ -954,6 +1006,9 @@
           if (!confirm('This will stop and reset the active focus timer. Proceed?')) return;
         }
         this.timerMode = mode;
+        if (mode === 'pomodoro') {
+          this.pomodoroSessionType = 'work';
+        }
         this.resetTimer();
       },
       startTimer() {
@@ -962,8 +1017,13 @@
         if (this.timerState === 'idle') {
           this.timerSecondsStudied = 0;
           if (this.timerMode === 'pomodoro') {
-            this.timerSeconds = 25 * 60;
-            this.timerTotalDuration = 25 * 60;
+            if (this.pomodoroSessionType === 'work') {
+              this.timerSeconds = this.pomodoroWorkDuration * 60;
+              this.timerTotalDuration = this.pomodoroWorkDuration * 60;
+            } else {
+              this.timerSeconds = this.pomodoroBreakDuration * 60;
+              this.timerTotalDuration = this.pomodoroBreakDuration * 60;
+            }
           } else if (this.timerMode === 'tracking') {
             this.timerSeconds = (this.timerCustomDuration || 25) * 60;
             this.timerTotalDuration = (this.timerCustomDuration || 25) * 60;
@@ -985,7 +1045,23 @@
               this.timerSeconds = 0;
               this.pauseTimer();
               this.timerState = 'idle';
-              alert(`Focus session for ${this.activeSubjectDisplay} completed!`);
+              
+              if (this.timerMode === 'pomodoro') {
+                if (this.pomodoroSessionType === 'work') {
+                  alert(`Focus session for ${this.activeSubjectDisplay} completed! Starting break.`);
+                  this.pomodoroSessionType = 'break';
+                  this.timerSeconds = this.pomodoroBreakDuration * 60;
+                  this.timerTotalDuration = this.pomodoroBreakDuration * 60;
+                  this.startTimer(); // Auto-start the break block timer
+                } else {
+                  alert(`Break session completed! Back to study.`);
+                  this.pomodoroSessionType = 'work';
+                  this.timerSeconds = this.pomodoroWorkDuration * 60;
+                  this.timerTotalDuration = this.pomodoroWorkDuration * 60;
+                }
+              } else {
+                alert(`Focus session for ${this.activeSubjectDisplay} completed!`);
+              }
             }
           }
         }, 1000);
@@ -1005,8 +1081,13 @@
           this.timerInterval = null;
         }
         if (this.timerMode === 'pomodoro') {
-          this.timerSeconds = 25 * 60;
-          this.timerTotalDuration = 25 * 60;
+          if (this.pomodoroSessionType === 'work') {
+            this.timerSeconds = this.pomodoroWorkDuration * 60;
+            this.timerTotalDuration = this.pomodoroWorkDuration * 60;
+          } else {
+            this.timerSeconds = this.pomodoroBreakDuration * 60;
+            this.timerTotalDuration = this.pomodoroBreakDuration * 60;
+          }
         } else if (this.timerMode === 'tracking') {
           this.timerSeconds = (this.timerCustomDuration || 25) * 60;
           this.timerTotalDuration = (this.timerCustomDuration || 25) * 60;

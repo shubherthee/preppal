@@ -2530,7 +2530,7 @@ window.PrepPalCore = {
 };
 
 // Automatic mount for monolithic pages, skipping modular pages
-const modularPages = ['quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings'];
+const modularPages = ['planner', 'analytics', 'quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings'];
 if (!modularPages.includes(pageId)) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountViewApp);

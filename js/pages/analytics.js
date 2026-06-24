@@ -4,228 +4,232 @@
 (function () {
   const api = PrepPalAPI;
 
+  // Inject custom stylesheet dynamically to prevent style loss/stripping issues by Vue template compiler
+  const styles = `
+    /* Spacious UI Inspiration Style Overrides */
+    .app-shell {
+      background: linear-gradient(135deg, #f8f7fd 0%, #f1edf9 100%) !important;
+    }
+    
+    .main {
+      padding: 36px !important;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Clean, Rounded Typography */
+    h1 {
+      font-family: 'Sora', sans-serif !important;
+      font-weight: 700 !important;
+      color: #2e265c !important;
+      letter-spacing: -0.7px;
+      font-size: 2.2rem;
+    }
+    h2, .section-title {
+      font-family: 'Sora', sans-serif !important;
+      font-weight: 700 !important;
+      color: #2e265c !important;
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+    }
+    p {
+      font-family: 'DM Sans', sans-serif !important;
+      color: #7b7597 !important;
+      font-size: 0.9rem;
+    }
+
+    /* Premium Rounded Cards (Inspiration-Spec) */
+    .card {
+      background: #ffffff !important;
+      border: 1px solid rgba(225, 220, 245, 0.6) !important;
+      border-radius: 28px !important;
+      box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important;
+      padding: 28px !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 45px rgba(124, 58, 237, 0.06) !important;
+    }
+
+    /* Topbar Search and Notification Bubble buttons */
+    .circle-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      border: 1px solid rgba(225, 220, 245, 0.6) !important;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.04) !important;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .circle-btn:hover {
+      background: #f4efff !important;
+      border-color: #d8c8ff !important;
+      transform: scale(1.05);
+    }
+
+    /* Custom Form Inputs */
+    input, select, textarea {
+      border: 1px solid #e5e0f9 !important;
+      background: #fdfcff !important;
+      border-radius: 14px !important;
+      outline: none !important;
+      color: #2e265c !important;
+      padding: 10px 14px !important;
+      font-family: inherit !important;
+      font-size: 0.9rem !important;
+      transition: all 0.2s ease !important;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #7c3aed !important;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12) !important;
+      background: #ffffff !important;
+    }
+
+    /* Premium Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+      border: none !important;
+      color: white !important;
+      border-radius: 50px !important;
+      font-weight: 700 !important;
+      padding: 12px 28px !important;
+      box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      cursor: pointer !important;
+      width: auto !important;
+    }
+    .btn-primary:hover {
+      transform: scale(1.05) translateY(-2px) !important;
+      box-shadow: 0 10px 24px rgba(124, 58, 237, 0.3) !important;
+    }
+    .btn-secondary {
+      background: #f3f0ff !important;
+      border: 2px solid #e9e3ff !important;
+      color: #7c3aed !important;
+      border-radius: 50px !important;
+      font-weight: 700 !important;
+      padding: 10px 26px !important;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      cursor: pointer !important;
+    }
+    .btn-secondary:hover {
+      background: #eae5ff !important;
+      border-color: #d8cdff !important;
+      transform: scale(1.05) translateY(-2px) !important;
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08) !important;
+    }
+
+    /* Inspiration-style Rounded List Rows (Pills) */
+    .pill-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
+    }
+    
+    /* Alternating pastel theme card row styles */
+    .pill-row-mint {
+      background: #e8f7f4 !important;
+      color: #1f5e52 !important;
+      border-color: rgba(170, 227, 215, 0.3) !important;
+    }
+    .pill-row-mint:hover {
+      transform: translateX(3px);
+      box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
+      border-color: #aae3d7 !important;
+    }
+    .pill-row-lavender {
+      background: #f4f0ff !important;
+      color: #4f3b8c !important;
+      border-color: rgba(216, 200, 255, 0.3) !important;
+    }
+    .pill-row-lavender:hover {
+      transform: translateX(3px);
+      box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
+      border-color: #d8c8ff !important;
+    }
+
+    /* Round Arrow Buttons */
+    .arrow-btn {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: 50% !important;
+      background: #ffffff !important;
+      border: none !important;
+      color: #7c3aed !important;
+      cursor: pointer !important;
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1) !important;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+      padding: 0 !important;
+    }
+    .arrow-btn:hover {
+      transform: scale(1.15) translateY(-1px) !important;
+      background: #7c3aed !important;
+      color: #ffffff !important;
+      box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2) !important;
+    }
+
+    /* Growing plant mastery bars */
+    .mastery-grow-bar {
+      background: #efeefc;
+      height: 8px;
+      border-radius: 4px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .mastery-fill {
+      height: 100%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .badge-status {
+      display: inline-block !important;
+      padding: 4px 10px !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      border-radius: 12px !important;
+      text-align: center !important;
+      line-height: 1.2 !important;
+    }
+    .status-completed {
+      background: #e8f7f4 !important;
+      color: #1f5e52 !important;
+      border: 1px solid rgba(170, 227, 215, 0.4) !important;
+    }
+    .status-pending {
+      background: #fffbeb !important;
+      color: #b45309 !important;
+      border: 1px solid rgba(253, 230, 138, 0.4) !important;
+    }
+    .status-inprogress {
+      background: #eff6ff !important;
+      color: #1d4ed8 !important;
+      border: 1px solid rgba(191, 219, 254, 0.4) !important;
+    }
+    .status-scheduled {
+      background: #faf5ff !important;
+      color: #6b21a8 !important;
+      border: 1px solid rgba(233, 213, 255, 0.4) !important;
+    }
+  `;
+  const styleEl = document.createElement('style');
+  styleEl.textContent = styles;
+  document.head.appendChild(styleEl);
+
   const template = `
-    <style>
-      /* Spacious UI Inspiration Style Overrides */
-      .app-shell {
-        background: linear-gradient(135deg, #f8f7fd 0%, #f1edf9 100%) !important;
-      }
-      
-      .main {
-        padding: 36px !important;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-
-      /* Clean, Rounded Typography */
-      h1 {
-        font-family: 'Sora', sans-serif !important;
-        font-weight: 700 !important;
-        color: #2e265c !important;
-        letter-spacing: -0.7px;
-        font-size: 2.2rem;
-      }
-      h2, .section-title {
-        font-family: 'Sora', sans-serif !important;
-        font-weight: 700 !important;
-        color: #2e265c !important;
-        font-size: 1.25rem;
-        margin-bottom: 4px;
-      }
-      p {
-        font-family: 'DM Sans', sans-serif !important;
-        color: #7b7597 !important;
-        font-size: 0.9rem;
-      }
-
-      /* Premium Rounded Cards (Inspiration-Spec) */
-      .card {
-        background: #ffffff !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        border-radius: 28px !important;
-        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.03) !important;
-        padding: 28px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-      }
-      .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 16px 45px rgba(124, 58, 237, 0.06) !important;
-      }
-
-      /* Topbar Search and Notification Bubble buttons */
-      .circle-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
-        border-radius: 50% !important;
-        background: #ffffff !important;
-        border: 1px solid rgba(225, 220, 245, 0.6) !important;
-        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.04) !important;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-      .circle-btn:hover {
-        background: #f4efff !important;
-        border-color: #d8c8ff !important;
-        transform: scale(1.05);
-      }
-
-      /* Custom Form Inputs */
-      input, select, textarea {
-        border: 1px solid #e5e0f9 !important;
-        background: #fdfcff !important;
-        border-radius: 14px !important;
-        outline: none !important;
-        color: #2e265c !important;
-        padding: 10px 14px !important;
-        font-family: inherit !important;
-        font-size: 0.9rem !important;
-        transition: all 0.2s ease !important;
-      }
-      input:focus, select:focus, textarea:focus {
-        border-color: #7c3aed !important;
-        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12) !important;
-        background: #ffffff !important;
-      }
-
-      /* Premium Buttons */
-      .btn-primary {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-        border: none !important;
-        color: white !important;
-        border-radius: 50px !important;
-        font-weight: 700 !important;
-        padding: 12px 28px !important;
-        box-shadow: 0 6px 18px rgba(124, 58, 237, 0.2) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer !important;
-        width: auto !important;
-      }
-      .btn-primary:hover {
-        transform: scale(1.05) translateY(-2px) !important;
-        box-shadow: 0 10px 24px rgba(124, 58, 237, 0.3) !important;
-      }
-      .btn-secondary {
-        background: #f3f0ff !important;
-        border: 2px solid #e9e3ff !important;
-        color: #7c3aed !important;
-        border-radius: 50px !important;
-        font-weight: 700 !important;
-        padding: 10px 26px !important;
-        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        cursor: pointer !important;
-      }
-      .btn-secondary:hover {
-        background: #eae5ff !important;
-        border-color: #d8cdff !important;
-        transform: scale(1.05) translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.08) !important;
-      }
-
-      /* Inspiration-style Rounded List Rows (Pills) */
-      .pill-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
-        border-radius: 20px;
-        margin-bottom: 12px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border: 1px solid transparent;
-      }
-      
-      /* Alternating pastel theme card row styles */
-      .pill-row-mint {
-        background: #e8f7f4 !important;
-        color: #1f5e52 !important;
-        border-color: rgba(170, 227, 215, 0.3) !important;
-      }
-      .pill-row-mint:hover {
-        transform: translateX(3px);
-        box-shadow: 0 6px 20px rgba(31, 94, 82, 0.05) !important;
-        border-color: #aae3d7 !important;
-      }
-      .pill-row-lavender {
-        background: #f4f0ff !important;
-        color: #4f3b8c !important;
-        border-color: rgba(216, 200, 255, 0.3) !important;
-      }
-      .pill-row-lavender:hover {
-        transform: translateX(3px);
-        box-shadow: 0 6px 20px rgba(79, 59, 140, 0.05) !important;
-        border-color: #d8c8ff !important;
-      }
-
-      /* Round Arrow Buttons */
-      .arrow-btn {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 36px !important;
-        height: 36px !important;
-        border-radius: 50% !important;
-        background: #ffffff !important;
-        border: none !important;
-        color: #7c3aed !important;
-        cursor: pointer !important;
-        box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1) !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-        padding: 0 !important;
-      }
-      .arrow-btn:hover {
-        transform: scale(1.15) translateY(-1px) !important;
-        background: #7c3aed !important;
-        color: #ffffff !important;
-        box-shadow: 0 6px 14px rgba(124, 58, 237, 0.2) !important;
-      }
-
-      /* Growing plant mastery bars */
-      .mastery-grow-bar {
-        background: #efeefc;
-        height: 8px;
-        border-radius: 4px;
-        width: 100%;
-        overflow: hidden;
-        margin-top: 6px;
-      }
-      .mastery-fill {
-        height: 100%;
-        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .badge-status {
-        display: inline-block !important;
-        padding: 4px 10px !important;
-        font-size: 0.75rem !important;
-        font-weight: 700 !important;
-        border-radius: 12px !important;
-        text-align: center !important;
-        line-height: 1.2 !important;
-      }
-      .status-completed {
-        background: #e8f7f4 !important;
-        color: #1f5e52 !important;
-        border: 1px solid rgba(170, 227, 215, 0.4) !important;
-      }
-      .status-pending {
-        background: #fffbeb !important;
-        color: #b45309 !important;
-        border: 1px solid rgba(253, 230, 138, 0.4) !important;
-      }
-      .status-inprogress {
-        background: #eff6ff !important;
-        color: #1d4ed8 !important;
-        border: 1px solid rgba(191, 219, 254, 0.4) !important;
-      }
-      .status-scheduled {
-        background: #faf5ff !important;
-        color: #6b21a8 !important;
-        border: 1px solid rgba(233, 213, 255, 0.4) !important;
-      }
-    </style>
-
     <!-- Topbar Navigation Header -->
     <div class="topbar" style="margin-bottom: 28px;">
       <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius:24px; box-shadow:0 4px 16px rgba(124,58,237,0.02);">
