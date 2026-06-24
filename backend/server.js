@@ -9,6 +9,8 @@ const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
 const plannerRouter = require('./routes/planner');
 const analyticsRouter = require('./routes/analytics');
+const contentRouter = require('./routes/content');
+const trackerRouter = require('./routes/tracker');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -25,6 +27,8 @@ app.use('/api/users', usersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/planner', plannerRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/content', contentRouter);
+app.use('/api/tracker', trackerRouter);
 
 app.use((req, res) => res.status(404).json({ error: 'Not found' }));
 

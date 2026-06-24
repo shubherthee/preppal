@@ -166,6 +166,46 @@ async function run() {
       console.log(`Created ${createdProfilesCount} missing tutor profiles.`);
     }
 
+    // Tracker columns 
+    console.log('Adding tracker columns to study_plans if missing...');
+    const trackerCols = [
+      ["exam_type", "ALTER TABLE study_plans ADD COLUMN exam_type VARCHAR(50) DEFAULT 'Task'"],
+      ["priority",  "ALTER TABLE study_plans ADD COLUMN priority  VARCHAR(20) DEFAULT 'medium'"],
+      ["exam_time", "ALTER TABLE study_plans ADD COLUMN exam_time TIME DEFAULT NULL"],
+      ["subject",   "ALTER TABLE study_plans ADD COLUMN subject   VARCHAR(100) DEFAULT NULL"],
+      ["completed", "ALTER TABLE study_plans ADD COLUMN completed TINYINT(1) DEFAULT 0"],
+    ];
+    for (const [colName, sql] of trackerCols) {
+      const [cols] = await connection.query(`SHOW COLUMNS FROM study_plans LIKE '${colName}'`);
+      if (cols.length === 0) {
+        await connection.query(sql);
+        console.log(`  Added: ${colName}`);
+      } else {
+        console.log(`  Already exists: ${colName}`);
+      }
+    }
+    
+    // ── Content Hub extra columns ─────────────────────────────────────
+    console.log('Adding content hub columns to study_materials if missing...');
+    const contentCols = [
+      ["original_name", "ALTER TABLE study_materials ADD COLUMN original_name VARCHAR(255) DEFAULT NULL"],
+      ["subject",       "ALTER TABLE study_materials ADD COLUMN subject       VARCHAR(100) DEFAULT NULL"],
+      ["topic",         "ALTER TABLE study_materials ADD COLUMN topic         VARCHAR(100) DEFAULT NULL"],
+      ["type",          "ALTER TABLE study_materials ADD COLUMN type          VARCHAR(50)  DEFAULT 'file'"],
+      ["file_size",     "ALTER TABLE study_materials ADD COLUMN file_size     INT          DEFAULT NULL"],
+      ["mime_type",     "ALTER TABLE study_materials ADD COLUMN mime_type     VARCHAR(100) DEFAULT NULL"],
+    ];
+    for (const [colName, sql] of contentCols) {
+      const [cols] = await connection.query(`SHOW COLUMNS FROM study_materials LIKE '${colName}'`);
+      if (cols.length === 0) {
+        await connection.query(sql);
+        console.log(`  ✓ Added: ${colName}`);
+      } else {
+        console.log(`  – Already exists: ${colName}`);
+      }
+    }
+    console.log('Content hub columns done.');
+
   } catch (err) {
     console.error('Migration failed:', err);
   } finally {

@@ -121,5 +121,22 @@ window.PrepPalAPI = (function () {
     getAnalyticsRecords: () => request('/analytics'),
     createAnalyticsRecord: (data) => request('/analytics', { method: 'POST', body: JSON.stringify(data) }),
     generateSkillGaps: () => request('/analytics/skill-gaps', { method: 'POST' }),
+
+    // Content Hub
+    getMaterials:    ()        => request('/content'),
+    createMaterial:  (data)    => request('/content',       { method: 'POST',   body: JSON.stringify(data) }),
+    updateMaterial:  (id, data)=> request(`/content/${id}`, { method: 'PUT',    body: JSON.stringify(data) }),
+    deleteMaterial:  (id)      => request(`/content/${id}`, { method: 'DELETE'                             }),
+
+    // Exam & Assignment Tracker
+    getTrackerItems:    ()        => request('/tracker'),
+    getTrackerStats:    ()        => request('/tracker/stats'),
+    createTrackerItem:  (data)    => request('/tracker',              { method: 'POST',  body: JSON.stringify(data) }),
+    updateTrackerItem:  (id, data)=> request(`/tracker/${id}`,        { method: 'PUT',   body: JSON.stringify(data) }),
+    toggleTrackerDone:  (id)      => request(`/tracker/${id}/complete`,{ method: 'PATCH'                           }),
+    deleteTrackerItem:  (id)      => request(`/tracker/${id}`,        { method: 'DELETE'                           }),
+
+    // Expose raw request for advanced use
+    request,
   };
 })();
