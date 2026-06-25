@@ -207,6 +207,28 @@ async function run() {
     }
     console.log('Content hub columns done.');
 
+    // ── Tutor Profile extra columns ───────────────────────────────────
+    console.log('Adding availability column to tutor_profiles if missing...');
+    const [availCols] = await connection.query("SHOW COLUMNS FROM tutor_profiles LIKE 'availability'");
+    if (availCols.length === 0) {
+      await connection.query("ALTER TABLE tutor_profiles ADD COLUMN availability JSON DEFAULT NULL");
+      console.log("  ✓ Added: availability");
+    } else {
+      console.log("  – Already exists: availability");
+    }
+
+    // ── study_materials student sharing column ────────────────────────
+    console.log('Adding student sharing column to study_materials if missing...');
+    const [studCols] = await connection.query("SHOW COLUMNS FROM study_materials LIKE 'student_id'");
+    if (studCols.length === 0) {
+      await connection.query("ALTER TABLE study_materials ADD COLUMN student_id INT DEFAULT NULL");
+      await connection.query("ALTER TABLE study_materials ADD CONSTRAINT fk_study_materials_student FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE");
+      console.log("  ✓ Added: student_id and constraint");
+    } else {
+      console.log("  – Already exists: student_id");
+    }
+
+
   } catch (err) {
     console.error('Migration failed:', err);
   } finally {

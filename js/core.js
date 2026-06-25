@@ -16,49 +16,64 @@ window.PrepPalCore = (function () {
       id: 'dashboard',  
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,   
       label: 'Dashboard',    
-      route: rootRel + 'dashboard.html' 
+      route: rootRel + 'dashboard.html',
+      role: 'Student'
+    },
+    { 
+      id: 'tutor-dashboard', 
+      icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`, 
+      label: 'Tutor Dashboard', 
+      route: rootRel + 'views/tutors/tutor_dashboard.html', 
+      role: 'Tutor' 
     },
     { 
       id: 'ai',         
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,   
       label: 'AI Assistant', 
-      route: rootRel + 'views/ai/ai_index.html' 
+      route: rootRel + 'views/ai/ai_index.html',
+      role: 'Student'
     },
     { 
       id: 'content',    
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,   
       label: 'Content Hub',  
-      route: rootRel + 'views/content/content_index.html' 
+      route: rootRel + 'views/content/content_index.html',
+      role: 'Student'
     },
     { 
       id: 'flashcards', 
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>`,   
       label: 'Flashcards',   
-      route: rootRel + 'views/flashcards/flashcards_index.html' 
+      route: rootRel + 'views/flashcards/flashcards_index.html',
+      role: 'Student'
     },
     { 
       id: 'quizzes',    
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,   
       label: 'Quizzes',      
-      route: rootRel + 'views/quizzes/quizzes_index.html' 
+      route: rootRel + 'views/quizzes/quizzes_index.html',
+      role: 'Student'
     },
     { 
       id: 'planner',    
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,   
       label: 'Planner',      
-      route: rootRel + 'views/planner/planner_index.html' 
+      route: rootRel + 'views/planner/planner_index.html',
+      role: 'Student'
     },
     { 
       id: 'analytics',  
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,   
       label: 'Analytics',    
-      route: rootRel + 'views/analytics/analytics_index.html' 
+      route: rootRel + 'views/analytics/analytics_index.html',
+      role: 'Student'
     },
     { 
       id: 'tutors',     
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,  
       label: 'Tutors',       
-      route: rootRel + 'views/tutors/tutors_index.html' 
+      route: rootRel + 'views/tutors/tutors_index.html',
+      role: 'Student'
     },
   ];
 
@@ -140,10 +155,17 @@ window.PrepPalCore = (function () {
     const app = createApp({
       components: { SidebarComponent, ...(pageOptions.components || {}) },
       data() {
+        const filteredNav = navItems.filter(item => {
+          if (item.role) {
+            if (Array.isArray(item.role)) return item.role.includes(user.role);
+            return item.role === user.role;
+          }
+          return true;
+        });
         const base = {
           pageTitle, pageSubtitle,
           activeNav: pageId,
-          navItems,
+          navItems: filteredNav,
           userName: user.name,
           initials: user.initials,
           userRole: user.role,

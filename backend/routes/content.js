@@ -101,12 +101,12 @@ async function resolveFolderPath(userId, relativePath, inherited = {}, rootParen
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id,
+      `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id, student_id,
               DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
        FROM study_materials
-       WHERE user_id = ?
+       WHERE user_id = ? OR student_id = ?
        ORDER BY id DESC`,
-      [req.userId]
+      [req.userId, req.userId]
     );
     res.json(rows);
   } catch (err) {
@@ -119,10 +119,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const [[row]] = await pool.query(
-      'SELECT * FROM study_materials WHERE id = ? AND user_id = ?',
-      [req.params.id, req.userId]
+      'SELECT * FROM study_materials WHERE id = ? AND (user_id = ? OR student_id = ?)',
+      [req.params.id, req.userId, req.userId]
     );
-    if (!row) return res.status(404).json({ error: 'Material not found' });
+    if (!row) return res.status(404).json({ error: 'Material not found or access denied' });
     res.json(row);
   } catch (err) {
     console.error(err);
@@ -134,10 +134,10 @@ router.get('/:id', async (req, res) => {
 router.get('/:id/download', async (req, res) => {
   try {
     const [[row]] = await pool.query(
-      'SELECT * FROM study_materials WHERE id = ? AND user_id = ?',
-      [req.params.id, req.userId]
+      'SELECT * FROM study_materials WHERE id = ? AND (user_id = ? OR student_id = ?)',
+      [req.params.id, req.userId, req.userId]
     );
-    if (!row) return res.status(404).json({ error: 'Material not found' });
+    if (!row) return res.status(404).json({ error: 'Material not found or access denied' });
     if (!row.filename) return res.status(404).json({ error: 'No file attached' });
 
     const filePath = path.join(UPLOADS_DIR, row.filename);
@@ -158,8 +158,9 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
     return res.status(400).json({ error: 'No files uploaded' });
   }
 
-  const { description, subject, topic, parent_id } = req.body;
+  const { description, subject, topic, parent_id, student_id } = req.body;
   const rootParentId = parent_id ? Number(parent_id) : null;
+  const studentId = student_id ? Number(student_id) : null;
   let relativePaths = [];
   try {
     relativePaths = req.body.relativePaths ? JSON.parse(req.body.relativePaths) : [];
@@ -188,8 +189,8 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
 
       const [result] = await pool.query(
         `INSERT INTO study_materials
-           (user_id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           (user_id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id, student_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           req.userId,
           file.filename,                        // stored name (timestamped)
@@ -201,6 +202,7 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
           file.size,
           file.mimetype,
           folderInfo.parentId,
+          studentId || null,
         ]
       );
       created.push({
@@ -214,6 +216,7 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
         file_size:     file.size,
         mime_type:     file.mimetype,
         parent_id:     folderInfo.parentId,
+        student_id:    studentId || null,
       });
     }
     res.status(201).json({ uploaded: created.length, files: created, folders: Array.from(touchedFolders.values()) });

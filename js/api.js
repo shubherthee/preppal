@@ -98,6 +98,15 @@ window.PrepPalAPI = (function () {
     createStudentBooking: (data) => request('/users/bookings', { method: 'POST', body: JSON.stringify(data) }),
     getStudentBookings: () => request('/users/bookings/mine'),
 
+    // Tutor Role Functions
+    getTutorDashboard: () => request('/tutors/dashboard'),
+    getTutorBookings: () => request('/tutors/bookings'),
+    updateTutorStatus: (status) => request('/tutors/status', { method: 'PUT', body: JSON.stringify({ status }) }),
+    updateTutorRate: (rate) => request('/tutors/rate', { method: 'PUT', body: JSON.stringify({ rate }) }),
+    updateTutorAvailability: (availability) => request('/tutors/availability', { method: 'PUT', body: JSON.stringify({ availability }) }),
+    getTutorStudents: () => request('/tutors/students'),
+    completeTutorBooking: (id) => request(`/tutors/bookings/${id}/complete`, { method: 'PUT' }),
+
     // Planner Tasks
     getPlannerTasks: () => request('/planner'),
     createPlannerTask: (data) => request('/planner', { method: 'POST', body: JSON.stringify(data) }),

@@ -14,102 +14,109 @@ const navItems = [
     role: 'Student' 
   },
   { 
-    id: 'admins', 
+    id: 'tutor-dashboard', 
     icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`, 
-    label: 'Admin Dashboard', 
-    route: rootRel + 'views/admins/admins_index.html', 
-    role: 'Admin' 
+    label: 'Tutor Dashboard', 
+    route: rootRel + 'views/tutors/tutor_dashboard.html', 
+    role: 'Tutor' 
   },
-  { 
-    id: 'users', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`, 
-    label: 'User Management', 
-    route: rootRel + 'views/admins/user_management_index.html', 
-    role: 'Admin' 
+  {
+    id: 'admins',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>`,
+    label: 'Admin Dashboard',
+    route: rootRel + 'views/admins/admins_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'moderation', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`, 
-    label: 'Content Moderation', 
-    route: rootRel + 'views/admins/moderation_index.html', 
-    role: 'Admin' 
+  {
+    id: 'users',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    label: 'User Management',
+    route: rootRel + 'views/admins/user_management_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'bookings', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`, 
-    label: 'Bookings & Payments', 
-    route: rootRel + 'views/admins/bookings_index.html', 
-    role: 'Admin' 
+  {
+    id: 'moderation',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+    label: 'Content Moderation',
+    route: rootRel + 'views/admins/moderation_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'announcements', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`, 
-    label: 'Announcements', 
-    route: rootRel + 'views/admins/announcements_index.html', 
-    role: 'Admin' 
+  {
+    id: 'bookings',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`,
+    label: 'Bookings & Payments',
+    route: rootRel + 'views/admins/bookings_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'settings', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`, 
-    label: 'System Settings', 
-    route: rootRel + 'views/admins/settings_index.html', 
-    role: 'Admin' 
+  {
+    id: 'announcements',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`,
+    label: 'Announcements',
+    route: rootRel + 'views/admins/announcements_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'ai', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`, 
-    label: 'AI Assistant', 
-    route: rootRel + 'views/ai/ai_index.html', 
-    role: 'Student' 
+  {
+    id: 'settings',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`,
+    label: 'System Settings',
+    route: rootRel + 'views/admins/settings_index.html',
+    role: 'Admin'
   },
-  { 
-    id: 'content', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`, 
-    label: 'Content Hub', 
-    route: rootRel + 'views/content/content_index.html', 
-    role: 'Student' 
+  {
+    id: 'ai',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,
+    label: 'AI Assistant',
+    route: rootRel + 'views/ai/ai_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'flashcards', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>`, 
-    label: 'Flashcards', 
-    route: rootRel + 'views/flashcards/flashcards_index.html', 
-    role: 'Student' 
+  {
+    id: 'content',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
+    label: 'Content Hub',
+    route: rootRel + 'views/content/content_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'quizzes', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`, 
-    label: 'Quizzes', 
-    route: rootRel + 'views/quizzes/quizzes_index.html', 
-    role: 'Student' 
+  {
+    id: 'flashcards',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>`,
+    label: 'Flashcards',
+    route: rootRel + 'views/flashcards/flashcards_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'planner', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`, 
-    label: 'Planner', 
-    route: rootRel + 'views/planner/planner_index.html', 
-    role: 'Student' 
+  {
+    id: 'quizzes',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+    label: 'Quizzes',
+    route: rootRel + 'views/quizzes/quizzes_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'analytics', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`, 
-    label: 'Analytics', 
-    route: rootRel + 'views/analytics/analytics_index.html', 
-    role: 'Student' 
+  {
+    id: 'planner',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+    label: 'Planner',
+    route: rootRel + 'views/planner/planner_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'tutors', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`, 
-    label: 'Tutors', 
-    route: rootRel + 'views/tutors/tutors_index.html', 
-    role: 'Student' 
+  {
+    id: 'analytics',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>`,
+    label: 'Analytics',
+    route: rootRel + 'views/analytics/analytics_index.html',
+    role: 'Student'
   },
-  { 
-    id: 'tracker', 
-    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`, 
-    label: 'Exam Tracker', 
-    route: rootRel + 'views/tracker/tracker_index.html', 
-    role: 'Student' 
+  {
+    id: 'tutors',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+    label: 'Tutors',
+    route: rootRel + 'views/tutors/tutors_index.html',
+    role: 'Student'
+  },
+  {
+    id: 'tracker',
+    icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+    label: 'Exam Tracker',
+    route: rootRel + 'views/tracker/tracker_index.html',
+    role: 'Student'
   },
 ];
 
@@ -419,20 +426,6 @@ const pageTemplates = {
     <div class="greeting">
       <h1>{{ pageTitle }}</h1>
       <p>{{ pageSubtitle }}</p>
-    </div>
-    <div class="stats-row">
-      <div class="stat-card" v-for="s in stats" :key="s.label">
-        <div class="stat-top">
-          <div class="stat-icon" :style="{ background: s.bg }">{{ s.icon }}</div>
-          <span class="stat-badge" :style="{ background: s.bg, color: s.color }">{{ s.change }}</span>
-        </div>
-        <div class="topbar-avatar" :style="{ background: userAvatarBg }" style="border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
-      </div>
-    </div>
-    
-    <div class="greeting" style="margin-bottom: 28px;">
-      <h1 style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; letter-spacing: -0.7px; font-size: 2.2rem;">{{ pageTitle }}</h1>
-      <p style="font-family: 'DM Sans', sans-serif !important; color: #7b7597 !important; font-size: 0.9rem;">{{ pageSubtitle }}</p>
     </div>
 
     <!-- Stats row -->
@@ -906,7 +899,14 @@ const pageTemplates = {
               <span v-for="sub in session.tutor.subjects" class="subject-tag-xs">{{ sub }}</span>
             </div>
           </div>
-          <span class="session-status-badge">Confirmed</span>
+          <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+            <span v-if="session.status === 'completed'" class="session-status-badge" style="background: #edfcf7; color: #1d9e75; font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: inline-flex; height: 32px; align-items: center;">Completed</span>
+            <span v-else-if="session.status === 'cancelled'" class="session-status-badge" style="background: #fff0f0; color: #e14f4f; font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: inline-flex; height: 32px; align-items: center;">Cancelled</span>
+            <template v-else>
+              <span class="session-status-badge" style="font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; background: #eef7ff; color: #1c5db6; display: inline-flex; height: 32px; align-items: center;">Confirmed</span>
+              <a :href="" class="btn-primary" style="width: auto; height: 32px; padding: 0 12px; font-size: 0.78rem; display: inline-flex; align-items: center; border-radius: 8px; font-weight: 600; text-decoration: none; color: white; margin: 0; line-height: 1;">Join Class</a>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -2530,7 +2530,7 @@ window.PrepPalCore = {
 };
 
 // Automatic mount for monolithic pages, skipping modular pages
-const modularPages = ['planner', 'analytics', 'quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings'];
+const modularPages = ['planner', 'analytics', 'quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings', 'tutor-dashboard'];
 if (!modularPages.includes(pageId)) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountViewApp);

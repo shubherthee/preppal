@@ -212,8 +212,7 @@ ON DUPLICATE KEY UPDATE reason=VALUES(reason);
 INSERT INTO announcements (id, author_id, title, message, type, expires_at) VALUES
   (1, 3, 'Welcome to PrepPal!', 'We are excited to launch our new dashboard built on express and database-backed services.', 'success', '2026-07-01 00:00:00')
 ON DUPLICATE KEY UPDATE message=VALUES(message);
-  (3, 'Integral of 2x?', 'x² + C', 1)
-ON DUPLICATE KEY UPDATE question=VALUES(question);
+
 
 --  STUDY PLANNER & REMINDERS 
 CREATE TABLE IF NOT EXISTS study_plans (
