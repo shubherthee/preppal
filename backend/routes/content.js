@@ -4,6 +4,7 @@ const pool     = require('../db');
 const multer   = require('multer');
 const path     = require('path');
 const fs       = require('fs');
+const { summarizeFileContent } = require('../services/openrouter');
 
 // ── Multer storage config ─────────────────────────────────────────────
 const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
@@ -35,11 +36,72 @@ const upload = multer({
   },
 });
 
+const TEXT_EXTENSIONS = new Set(['.txt', '.md', '.csv', '.json', '.js', '.css', '.html', '.xml', '.sql']);
+const TEXT_MIME_PREFIXES = ['text/'];
+
+function isReadableTextFile(material) {
+  const ext = path.extname(material.original_name || material.filename || '').toLowerCase();
+  const mime = material.mime_type || '';
+  return TEXT_EXTENSIONS.has(ext) || TEXT_MIME_PREFIXES.some(prefix => mime.startsWith(prefix));
+}
+
+async function findOrCreateFolder(userId, name, parentId, inherited = {}) {
+  const [[existing]] = await pool.query(
+    `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id,
+            DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
+     FROM study_materials
+     WHERE user_id = ? AND type = 'folder' AND original_name = ? AND ${parentId ? 'parent_id = ?' : 'parent_id IS NULL'}
+     LIMIT 1`,
+    parentId ? [userId, name, parentId] : [userId, name]
+  );
+  if (existing) return existing;
+
+  const [result] = await pool.query(
+    `INSERT INTO study_materials
+       (user_id, filename, original_name, description, subject, topic, type, parent_id)
+     VALUES (?, ?, ?, ?, ?, ?, 'folder', ?)`,
+    [userId, name, name, inherited.description || '', inherited.subject || '', inherited.topic || '', parentId || null]
+  );
+
+  return {
+    id: result.insertId,
+    filename: name,
+    original_name: name,
+    description: inherited.description || '',
+    subject: inherited.subject || '',
+    topic: inherited.topic || '',
+    type: 'folder',
+    parent_id: parentId || null,
+    created_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
+  };
+}
+
+async function resolveFolderPath(userId, relativePath, inherited = {}, rootParentId = null) {
+  const parts = String(relativePath || '')
+    .replace(/\\/g, '/')
+    .split('/')
+    .map(part => part.trim())
+    .filter(Boolean);
+
+  if (parts.length <= 1) return { parentId: rootParentId || null, folders: [] };
+
+  const folderNames = parts.slice(0, -1);
+  const folders = [];
+  let parentId = rootParentId || null;
+  for (const folderName of folderNames) {
+    const folder = await findOrCreateFolder(userId, folderName, parentId, inherited);
+    folders.push(folder);
+    parentId = folder.id;
+  }
+
+  return { parentId, folders };
+}
+
 // ── GET all materials for the logged-in user ─────────────────────────
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type,
+      `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id,
               DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
        FROM study_materials
        WHERE user_id = ?
@@ -91,20 +153,43 @@ router.get('/:id/download', async (req, res) => {
 // ── POST upload one or more files ────────────────────────────────────
 // Accepts multipart/form-data with field name "files" (multiple allowed)
 // Also accepts optional fields: description, subject, topic
-router.post('/upload', upload.array('files', 20), async (req, res) => {
+router.post('/upload', upload.array('files', 100), async (req, res) => {
   if (!req.files || req.files.length === 0) {
     return res.status(400).json({ error: 'No files uploaded' });
   }
 
-  const { description, subject, topic } = req.body;
+  const { description, subject, topic, parent_id } = req.body;
+  const rootParentId = parent_id ? Number(parent_id) : null;
+  let relativePaths = [];
+  try {
+    relativePaths = req.body.relativePaths ? JSON.parse(req.body.relativePaths) : [];
+  } catch (_) {
+    relativePaths = [];
+  }
   const created = [];
+  const touchedFolders = new Map();
 
   try {
-    for (const file of req.files) {
+    if (rootParentId) {
+      const [[folder]] = await pool.query(
+        'SELECT id FROM study_materials WHERE id = ? AND user_id = ? AND type = "folder"',
+        [rootParentId, req.userId]
+      );
+      if (!folder) return res.status(400).json({ error: 'Target folder not found' });
+    }
+
+    for (const [index, file] of req.files.entries()) {
+      const folderInfo = await resolveFolderPath(req.userId, relativePaths[index] || file.originalname, {
+        description,
+        subject,
+        topic,
+      }, rootParentId);
+      folderInfo.folders.forEach(folder => touchedFolders.set(folder.id, folder));
+
       const [result] = await pool.query(
         `INSERT INTO study_materials
-           (user_id, filename, original_name, description, subject, topic, type, file_size, mime_type)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           (user_id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           req.userId,
           file.filename,                        // stored name (timestamped)
@@ -115,6 +200,7 @@ router.post('/upload', upload.array('files', 20), async (req, res) => {
           'file',
           file.size,
           file.mimetype,
+          folderInfo.parentId,
         ]
       );
       created.push({
@@ -127,9 +213,10 @@ router.post('/upload', upload.array('files', 20), async (req, res) => {
         type:          'file',
         file_size:     file.size,
         mime_type:     file.mimetype,
+        parent_id:     folderInfo.parentId,
       });
     }
-    res.status(201).json({ uploaded: created.length, files: created });
+    res.status(201).json({ uploaded: created.length, files: created, folders: Array.from(touchedFolders.values()) });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to save file records' });
@@ -138,15 +225,15 @@ router.post('/upload', upload.array('files', 20), async (req, res) => {
 
 // ── POST create a folder (metadata only, no actual file) ─────────────
 router.post('/folder', async (req, res) => {
-  const { filename, description, subject, topic } = req.body;
+  const { filename, description, subject, topic, parent_id } = req.body;
   if (!filename) return res.status(400).json({ error: 'Folder name is required' });
 
   try {
     const [result] = await pool.query(
       `INSERT INTO study_materials
-         (user_id, filename, original_name, description, subject, topic, type)
-       VALUES (?, ?, ?, ?, ?, ?, 'folder')`,
-      [req.userId, filename, filename, description || '', subject || '', topic || '']
+         (user_id, filename, original_name, description, subject, topic, type, parent_id)
+       VALUES (?, ?, ?, ?, ?, ?, 'folder', ?)`,
+      [req.userId, filename, filename, description || '', subject || '', topic || '', parent_id || null]
     );
     res.status(201).json({
       id:            result.insertId,
@@ -156,6 +243,7 @@ router.post('/folder', async (req, res) => {
       subject:       subject || '',
       topic:         topic   || '',
       type:          'folder',
+      parent_id:     parent_id || null,
     });
   } catch (err) {
     console.error(err);
@@ -165,15 +253,15 @@ router.post('/folder', async (req, res) => {
 
 // ── POST create a manual record (link / AI summary / etc.) ───────────
 router.post('/', async (req, res) => {
-  const { filename, description, subject, topic, type } = req.body;
+  const { filename, description, subject, topic, type, parent_id } = req.body;
   if (!filename) return res.status(400).json({ error: 'filename is required' });
 
   try {
     const [result] = await pool.query(
       `INSERT INTO study_materials
-         (user_id, filename, original_name, description, subject, topic, type)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [req.userId, filename, filename, description || '', subject || '', topic || '', type || 'file']
+         (user_id, filename, original_name, description, subject, topic, type, parent_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [req.userId, filename, filename, description || '', subject || '', topic || '', type || 'file', parent_id || null]
     );
     res.status(201).json({
       id: result.insertId,
@@ -181,10 +269,80 @@ router.post('/', async (req, res) => {
       description: description || '',
       subject: subject || '', topic: topic || '',
       type: type || 'file',
+      parent_id: parent_id || null,
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to create material' });
+  }
+});
+
+router.post('/:id/move', async (req, res) => {
+  const targetParentId = req.body.parent_id || null;
+
+  try {
+    const [[mat]] = await pool.query(
+      'SELECT id, type FROM study_materials WHERE id = ? AND user_id = ?',
+      [req.params.id, req.userId]
+    );
+    if (!mat) return res.status(404).json({ error: 'Material not found or access denied' });
+
+    if (targetParentId) {
+      if (Number(targetParentId) === Number(req.params.id)) {
+        return res.status(400).json({ error: 'Cannot move an item into itself' });
+      }
+      const [[folder]] = await pool.query(
+        'SELECT id FROM study_materials WHERE id = ? AND user_id = ? AND type = "folder"',
+        [targetParentId, req.userId]
+      );
+      if (!folder) return res.status(400).json({ error: 'Target folder not found' });
+
+      if (mat.type === 'folder') {
+        let currentParent = Number(targetParentId);
+        while (currentParent) {
+          if (currentParent === Number(req.params.id)) {
+            return res.status(400).json({ error: 'Cannot move a folder into one of its own folders' });
+          }
+          const [[parent]] = await pool.query(
+            'SELECT parent_id FROM study_materials WHERE id = ? AND user_id = ?',
+            [currentParent, req.userId]
+          );
+          currentParent = parent ? Number(parent.parent_id) : null;
+        }
+      }
+    }
+
+    await pool.query(
+      'UPDATE study_materials SET parent_id = ? WHERE id = ? AND user_id = ?',
+      [targetParentId, req.params.id, req.userId]
+    );
+    res.json({ message: 'Material moved', parent_id: targetParentId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to move material' });
+  }
+});
+
+router.post('/:id/summary', async (req, res) => {
+  try {
+    const [[mat]] = await pool.query(
+      'SELECT * FROM study_materials WHERE id = ? AND user_id = ?',
+      [req.params.id, req.userId]
+    );
+    if (!mat) return res.status(404).json({ error: 'Material not found or access denied' });
+    if (mat.type !== 'file' || !isReadableTextFile(mat)) {
+      return res.json({ summary: 'file not supported for ai summary' });
+    }
+
+    const filePath = path.join(UPLOADS_DIR, mat.filename);
+    if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found on disk' });
+
+    const text = fs.readFileSync(filePath, 'utf8');
+    const summary = await summarizeFileContent(mat.original_name || mat.filename, text);
+    res.json({ summary });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to generate summary' });
   }
 });
 
@@ -230,6 +388,10 @@ router.delete('/:id', async (req, res) => {
     if (mat.type === 'file' && mat.filename) {
       const filePath = path.join(UPLOADS_DIR, mat.filename);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+
+    if (mat.type === 'folder') {
+      await pool.query('UPDATE study_materials SET parent_id = NULL WHERE parent_id = ? AND user_id = ?', [req.params.id, req.userId]);
     }
 
     await pool.query('DELETE FROM study_materials WHERE id = ?', [req.params.id]);

@@ -241,7 +241,14 @@ CREATE TABLE IF NOT EXISTS study_materials (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   user_id     INT NOT NULL,
   filename    VARCHAR(255) NOT NULL,
+  original_name VARCHAR(255) DEFAULT NULL,
   description VARCHAR(255) DEFAULT NULL,
+  subject     VARCHAR(100) DEFAULT NULL,
+  topic       VARCHAR(100) DEFAULT NULL,
+  type        VARCHAR(50) DEFAULT 'file',
+  file_size   INT DEFAULT NULL,
+  mime_type   VARCHAR(100) DEFAULT NULL,
+  parent_id   INT DEFAULT NULL,
   created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

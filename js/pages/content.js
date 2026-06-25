@@ -11,7 +11,8 @@ window.addEventListener('DOMContentLoaded', () => {
         loading:      false,
         error:        '',
         searchQuery:  '',
-        filterType:   'all',   // all | file | folder | summary
+        filterType:   'all',   // all | file | folder
+        currentFolderId: null,
 
         // Upload modal
         showUploadModal:  false,
@@ -30,11 +31,8 @@ window.addEventListener('DOMContentLoaded', () => {
         editError:     '',
         editSaving:    false,
 
-        // AI Summary modal
-        showSummaryModal: false,
-        summaryItem:      null,
-        summaryLoading:   false,
-        summaryText:      '',
+        draggedItemId:    null,
+        activeMenuId:     null,
       };
     },
 
@@ -42,20 +40,25 @@ window.addEventListener('DOMContentLoaded', () => {
       filtered() {
         const q = this.searchQuery.toLowerCase().trim();
         return this.materials.filter(m => {
+          if (m.type === 'summary') return false;
           const name    = (m.original_name || m.filename || '').toLowerCase();
           const desc    = (m.description   || '').toLowerCase();
           const subject = (m.subject       || '').toLowerCase();
+          const matchFolder = (m.parent_id || null) === (this.currentFolderId || null);
           const matchSearch = !q || name.includes(q) || desc.includes(q) || subject.includes(q);
           const matchType   = this.filterType === 'all' || (m.type || 'file') === this.filterType;
-          return matchSearch && matchType;
+          return matchFolder && matchSearch && matchType;
         });
+      },
+      currentFolder() {
+        return this.materials.find(m => m.id === this.currentFolderId) || null;
       },
       fileCount()    { return this.materials.filter(m => (m.type || 'file') === 'file').length; },
       folderCount()  { return this.materials.filter(m => m.type === 'folder').length; },
-      summaryCount() { return this.materials.filter(m => m.type === 'summary').length; },
+      folders()      { return this.materials.filter(m => m.type === 'folder'); },
 
       selectedFileNames() {
-        return Array.from(this.selectedFiles).map(f => f.name).join(', ') || 'No files selected';
+        return Array.from(this.selectedFiles).map(f => f.relativePath || f.webkitRelativePath || f.name).join(', ') || 'No files selected';
       },
     },
 
@@ -66,6 +69,9 @@ window.addEventListener('DOMContentLoaded', () => {
         this.error   = '';
         try {
           this.materials = await PrepPalAPI.request('/content');
+          if (this.currentFolderId && !this.materials.some(m => m.id === this.currentFolderId)) {
+            this.currentFolderId = null;
+          }
         } catch (e) {
           this.error = e.message || 'Failed to load materials';
         } finally {
@@ -87,29 +93,51 @@ window.addEventListener('DOMContentLoaded', () => {
         this.selectedFiles = Array.from(e.target.files);
       },
 
-      onDrop(e) {
-        this.dragOver = false;
-        const items = e.dataTransfer.items;
+      async collectDroppedFiles(items) {
         const files = [];
-        // Collect all files (including from folders dropped)
-        for (const item of items) {
-          if (item.kind === 'file') {
-            const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
-            if (entry && entry.isDirectory) {
-              // Flatten folder contents (1 level deep for simplicity)
-              const reader = entry.createReader();
-              reader.readEntries(entries => {
-                entries.forEach(ent => {
-                  if (ent.isFile) {
-                    ent.file(f => { this.selectedFiles = [...this.selectedFiles, f]; });
-                  }
-                });
+        const readDirectory = entry => new Promise(resolve => {
+          const reader = entry.createReader();
+          const entries = [];
+          const readBatch = () => {
+            reader.readEntries(batch => {
+              if (!batch.length) return resolve(entries);
+              entries.push(...batch);
+              readBatch();
+            });
+          };
+          readBatch();
+        });
+        const walkEntry = async (entry, prefix = '') => {
+          if (entry.isFile) {
+            await new Promise(resolve => {
+              entry.file(file => {
+                file.relativePath = `${prefix}${file.name}`;
+                files.push(file);
+                resolve();
               });
-            } else {
-              files.push(item.getAsFile());
-            }
+            });
+          } else if (entry.isDirectory) {
+            const entries = await readDirectory(entry);
+            await Promise.all(entries.map(child => walkEntry(child, `${prefix}${entry.name}/`)));
+          }
+        };
+
+        for (const item of items) {
+          if (item.kind !== 'file') continue;
+          const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
+          if (entry) await walkEntry(entry);
+          else {
+            const file = item.getAsFile();
+            if (file) files.push(file);
           }
         }
+        return files;
+      },
+
+      async onDrop(e) {
+        this.dragOver = false;
+        const items = e.dataTransfer.items || [];
+        const files = await this.collectDroppedFiles(items);
         if (files.length) this.selectedFiles = [...this.selectedFiles, ...files];
       },
 
@@ -130,9 +158,11 @@ window.addEventListener('DOMContentLoaded', () => {
         try {
           const formData = new FormData();
           for (const file of this.selectedFiles) formData.append('files', file);
+          formData.append('relativePaths', JSON.stringify(this.selectedFiles.map(file => file.relativePath || file.webkitRelativePath || file.name)));
           if (this.uploadForm.description) formData.append('description', this.uploadForm.description);
           if (this.uploadForm.subject)     formData.append('subject',     this.uploadForm.subject);
           if (this.uploadForm.topic)       formData.append('topic',       this.uploadForm.topic);
+          if (this.currentFolderId)         formData.append('parent_id',   this.currentFolderId);
 
           const token = localStorage.getItem('preppal_token');
           const res   = await fetch('http://localhost:4000/api/content/upload', {
@@ -148,7 +178,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
           const data = await res.json();
           // Prepend newly uploaded files to list
-          this.materials.unshift(...data.files.reverse());
+          const newFolders = (data.folders || []).filter(folder => !this.materials.some(m => m.id === folder.id));
+          this.materials.unshift(...newFolders, ...data.files.reverse());
           this.showUploadModal = false;
         } catch (e) {
           this.uploadError = e.message || 'Upload failed.';
@@ -172,6 +203,7 @@ window.addEventListener('DOMContentLoaded', () => {
               description: this.uploadForm.description,
               subject:     this.uploadForm.subject,
               topic:       this.uploadForm.topic,
+              parent_id:    this.currentFolderId,
             }),
           });
           this.materials.unshift(created);
@@ -185,6 +217,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       // ── Edit ─────────────────────────────────────────────────────────
       openEdit(m) {
+        this.activeMenuId = null;
         this.editingItem = m;
         this.editForm    = {
           filename:    m.original_name || m.filename,
@@ -223,6 +256,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       // ── Delete ───────────────────────────────────────────────────────
       async deleteMaterial(id) {
+        this.activeMenuId = null;
         if (!confirm('Delete this material?')) return;
         try {
           await PrepPalAPI.request(`/content/${id}`, { method: 'DELETE' });
@@ -233,8 +267,62 @@ window.addEventListener('DOMContentLoaded', () => {
       },
 
       // ── Download ─────────────────────────────────────────────────────
+      async moveMaterial(item, parentId) {
+        if (!item || item.id === parentId) return;
+        try {
+          await PrepPalAPI.request(`/content/${item.id}/move`, {
+            method: 'POST',
+            body: JSON.stringify({ parent_id: parentId || null }),
+          });
+          const target = this.materials.find(m => m.id === item.id);
+          if (target) target.parent_id = parentId || null;
+        } catch (e) {
+          alert('Move failed: ' + e.message);
+        } finally {
+          this.draggedItemId = null;
+          this.activeMenuId = null;
+        }
+      },
+
+      onCardDrop(targetFolder) {
+        const item = this.materials.find(m => m.id === this.draggedItemId);
+        if (item && targetFolder?.type === 'folder') this.moveMaterial(item, targetFolder.id);
+      },
+
+      folderName(parentId) {
+        const folder = this.materials.find(m => m.id === parentId);
+        return folder ? (folder.original_name || folder.filename) : '';
+      },
+
+      openFolder(folder) {
+        if (folder?.type === 'folder') {
+          this.activeMenuId = null;
+          this.currentFolderId = folder.id;
+          this.filterType = 'all';
+        }
+      },
+
+      openMaterial(item) {
+        if (item?.type === 'folder') {
+          this.openFolder(item);
+          return;
+        }
+        if (item?.type === 'file') this.openFileInNewTab(item);
+      },
+
+      goUpFolder() {
+        const parentId = this.currentFolder?.parent_id || null;
+        this.currentFolderId = parentId;
+        this.filterType = 'all';
+      },
+
+      toggleActionMenu(itemId) {
+        this.activeMenuId = this.activeMenuId === itemId ? null : itemId;
+      },
+
       downloadFile(m) {
-        if (m.type === 'folder' || m.type === 'summary') return;
+        if (m.type === 'folder') return;
+        this.activeMenuId = null;
         const token = localStorage.getItem('preppal_token');
         // Open download URL directly
         const url = `http://localhost:4000/api/content/${m.id}/download`;
@@ -251,27 +339,44 @@ window.addEventListener('DOMContentLoaded', () => {
           .catch(() => alert('Download failed.'));
       },
 
-      // ── AI Summary ───────────────────────────────────────────────────
-      async openSummary(m) {
-        this.summaryItem    = m;
-        this.summaryText    = '';
-        this.summaryLoading = true;
-        this.showSummaryModal = true;
-        await new Promise(r => setTimeout(r, 1200));
-        const name = m.original_name || m.filename;
-        this.summaryText =
-          `AI-generated summary for "${name}":\n\n` +
-          `This material covers key concepts related to ${m.description || m.subject || 'the topic'}. ` +
-          `Key areas include definitions, core processes, and practical examples. ` +
-          `Recommended study time: 30–45 minutes. ` +
-          `Focus on bolded terms and diagrams where available.`;
-        this.summaryLoading = false;
+      async openFileInNewTab(m) {
+        if (!m || m.type !== 'file') return;
+        this.activeMenuId = null;
+
+        const previewTab = window.open('about:blank', '_blank');
+        if (!previewTab) {
+          alert('Please allow pop-ups to open this file in a new tab.');
+          return;
+        }
+
+        try {
+          previewTab.document.title = m.original_name || m.filename || 'Material';
+          previewTab.document.body.innerHTML = '<p style="font-family:sans-serif;padding:24px;">Opening file...</p>';
+
+          const token = localStorage.getItem('preppal_token');
+          const res = await fetch(`http://localhost:4000/api/content/${m.id}/download`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
+
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body.error || res.statusText);
+          }
+
+          const blob = await res.blob();
+          const fileBlob = blob.type ? blob : new Blob([blob], { type: m.mime_type || 'application/octet-stream' });
+          const fileUrl = URL.createObjectURL(fileBlob);
+          previewTab.location.href = fileUrl;
+          setTimeout(() => URL.revokeObjectURL(fileUrl), 60 * 1000);
+        } catch (e) {
+          previewTab.close();
+          alert('Open failed: ' + (e.message || 'Unable to open file.'));
+        }
       },
 
       // ── Helpers ──────────────────────────────────────────────────────
       iconFor(m) {
         if (m.type === 'folder')  return '📁';
-        if (m.type === 'summary') return '🤖';
         const name = (m.original_name || m.filename || '').toLowerCase();
         if (name.endsWith('.pdf'))               return '📄';
         if (name.match(/\.docx?$/))              return '📝';
@@ -285,7 +390,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
       badgeFor(m) {
         if (m.type === 'folder')  return 'FOLDER';
-        if (m.type === 'summary') return 'AI';
         const ext = (m.original_name || m.filename || '').split('.').pop().toUpperCase();
         return ext || 'FILE';
       },
@@ -312,7 +416,7 @@ window.addEventListener('DOMContentLoaded', () => {
           <span class="search-icon">
             <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           </span>
-          <input type="text" v-model="searchQuery" placeholder="Search materials, subjects, AI summaries…" />
+          <input type="text" v-model="searchQuery" placeholder="Search materials and subjects…" />
         </div>
         <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
       </div>
@@ -353,14 +457,6 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="stat-card">
           <div class="stat-top">
-            <div class="stat-icon" style="background:#edf7f0;color:#1f7a4c;">🤖</div>
-            <span class="stat-badge" style="background:#edf7f0;color:#1f7a4c;">AI</span>
-          </div>
-          <div class="stat-val">{{ summaryCount }}</div>
-          <div class="stat-label">AI Summaries</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-top">
             <div class="stat-icon" style="background:#f4f0ff;color:#7c3aed;">📦</div>
             <span class="stat-badge" style="background:#f4f0ff;color:#7c3aed;">Total</span>
           </div>
@@ -385,12 +481,17 @@ window.addEventListener('DOMContentLoaded', () => {
 
       <!-- Filter bar -->
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap;">
-        <div class="section-title" style="margin:0;flex-shrink:0;">Materials</div>
+        <button v-if="currentFolder" class="btn-sm" @click="goUpFolder" title="Back to parent folder">
+          ← Back
+        </button>
+        <div class="section-title" style="margin:0;flex-shrink:0;">
+          {{ currentFolder ? (currentFolder.original_name || currentFolder.filename) : 'Materials' }}
+        </div>
         <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
-          <button v-for="ft in ['all','file','folder','summary']" :key="ft"
+          <button v-for="ft in ['all','file','folder']" :key="ft"
             class="filter-tab" :class="{ active: filterType === ft }"
             @click="filterType = ft">
-            {{ ft === 'all' ? 'All' : ft === 'summary' ? 'AI Summaries' : ft.charAt(0).toUpperCase()+ft.slice(1)+'s' }}
+            {{ ft === 'all' ? 'All' : ft.charAt(0).toUpperCase()+ft.slice(1)+'s' }}
           </button>
         </div>
         <button class="btn-sm" @click="fetchMaterials" title="Refresh">
@@ -404,14 +505,44 @@ window.addEventListener('DOMContentLoaded', () => {
 
       <!-- Content Grid -->
       <div v-if="!loading" class="content-grid">
-        <div class="content-card" v-for="item in filtered" :key="item.id">
+        <div class="content-card" v-for="item in filtered" :key="item.id"
+             draggable="true"
+             :style="item.type === 'folder' && draggedItemId && draggedItemId !== item.id ? 'outline:2px dashed var(--indigo);outline-offset:3px;' : ''"
+             @dragstart="draggedItemId = item.id"
+             @dragend="draggedItemId = null"
+             @dragover.prevent="item.type === 'folder' && draggedItemId !== item.id"
+             @drop.prevent="onCardDrop(item)"
+             @dblclick="openMaterial(item)">
           <div class="content-header">
             <span class="content-type-icon" style="font-size:1.6rem;">{{ iconFor(item) }}</span>
-            <span style="font-size:.68rem;padding:3px 8px;background:var(--indigo-lt);color:var(--indigo);border-radius:8px;font-weight:700;">
-              {{ badgeFor(item) }}
-            </span>
+            <div style="display:flex;align-items:center;gap:6px;position:relative;">
+              <span style="font-size:.68rem;padding:3px 8px;background:var(--indigo-lt);color:var(--indigo);border-radius:8px;font-weight:700;">
+                {{ badgeFor(item) }}
+              </span>
+              <button class="content-menu-btn" title="More actions" @click.stop="toggleActionMenu(item.id)">⋯</button>
+              <div v-if="activeMenuId === item.id" class="content-action-menu" @click.stop>
+                <button v-if="item.type === 'folder'" @click="openFolder(item)">Open</button>
+                <button v-if="item.type === 'file'" @click="openFileInNewTab(item)">Open</button>
+                <button v-if="item.type === 'file'" @click="downloadFile(item)">Download</button>
+                <label v-if="folders.filter(folder => folder.id !== item.id).length">
+                  Move to
+                  <select :value="item.parent_id || ''"
+                          @change="moveMaterial(item, $event.target.value ? Number($event.target.value) : null)">
+                    <option value="">No folder</option>
+                    <option v-for="folder in folders.filter(folder => folder.id !== item.id)" :key="folder.id" :value="folder.id">
+                      {{ folder.original_name || folder.filename }}
+                    </option>
+                  </select>
+                </label>
+                <button v-if="item.parent_id" @click="moveMaterial(item, null)">Exit Folder</button>
+                <button @click="openEdit(item)">Edit</button>
+                <button class="danger" @click="deleteMaterial(item.id)">Delete</button>
+              </div>
+            </div>
           </div>
-          <div class="content-title" style="margin-top:8px;">{{ item.original_name || item.filename }}</div>
+          <div class="content-title" style="margin-top:8px;cursor:pointer;" @click="openFolder(item)">
+            {{ item.original_name || item.filename }}
+          </div>
           <div class="content-meta">{{ item.description || 'No description' }}</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
             <span v-if="item.subject" style="font-size:.7rem;background:#f4f0ff;color:#7c3aed;padding:2px 8px;border-radius:8px;font-weight:600;">{{ item.subject }}</span>
@@ -421,19 +552,8 @@ window.addEventListener('DOMContentLoaded', () => {
           <div class="content-meta" style="margin-top:4px;font-size:.72rem;color:var(--muted);">
             {{ formatDate(item.created_at) }}
           </div>
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-            <button v-if="item.type === 'file'" class="btn-secondary" style="padding:5px 10px;font-size:.75rem;" @click="downloadFile(item)">
-              ⬇ Download
-            </button>
-            <button class="btn-secondary" style="padding:5px 10px;font-size:.75rem;" @click="openSummary(item)">
-              🤖 Summary
-            </button>
-            <button class="btn-secondary" style="padding:5px 10px;font-size:.75rem;" @click="openEdit(item)">
-              ✏️ Edit
-            </button>
-            <button class="btn-secondary" style="padding:5px 10px;font-size:.75rem;color:var(--rose);" @click="deleteMaterial(item.id)">
-              🗑️
-            </button>
+          <div v-if="item.type === 'folder'" class="content-meta" style="margin-top:4px;font-size:.72rem;color:var(--indigo);">
+            Click to open folder
           </div>
         </div>
 
@@ -542,29 +662,6 @@ window.addEventListener('DOMContentLoaded', () => {
               <button class="btn-sm primary" @click="saveEdit" :disabled="editSaving">
                 {{ editSaving ? 'Saving…' : 'Save Changes' }}
               </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── AI Summary Modal ───────────────────────────────────────── -->
-      <div v-if="showSummaryModal" class="modal-overlay" @click.self="showSummaryModal=false">
-        <div class="modal">
-          <div class="modal-header">
-            <h3>🤖 AI Summary</h3>
-            <button class="btn-sm" @click="showSummaryModal=false">✕</button>
-          </div>
-          <div class="modal-body">
-            <div style="font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:12px;">
-              {{ summaryItem?.original_name || summaryItem?.filename }}
-            </div>
-            <div v-if="summaryLoading" style="text-align:center;padding:32px;color:var(--muted);">
-              <div style="font-size:2rem;margin-bottom:8px;">⏳</div>
-              Generating summary…
-            </div>
-            <div v-else style="white-space:pre-line;font-size:.9rem;line-height:1.7;">{{ summaryText }}</div>
-            <div class="modal-footer" style="margin-top:20px;">
-              <button class="btn-sm primary" @click="showSummaryModal=false">Close</button>
             </div>
           </div>
         </div>

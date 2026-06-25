@@ -194,6 +194,7 @@ async function run() {
       ["type",          "ALTER TABLE study_materials ADD COLUMN type          VARCHAR(50)  DEFAULT 'file'"],
       ["file_size",     "ALTER TABLE study_materials ADD COLUMN file_size     INT          DEFAULT NULL"],
       ["mime_type",     "ALTER TABLE study_materials ADD COLUMN mime_type     VARCHAR(100) DEFAULT NULL"],
+      ["parent_id",     "ALTER TABLE study_materials ADD COLUMN parent_id     INT          DEFAULT NULL"],
     ];
     for (const [colName, sql] of contentCols) {
       const [cols] = await connection.query(`SHOW COLUMNS FROM study_materials LIKE '${colName}'`);

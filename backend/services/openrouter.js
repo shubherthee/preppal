@@ -7,7 +7,7 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
  * Helper to call OpenRouter API.
  * If the key is dummy/missing, or the request fails, it returns null.
  */
-async function callOpenRouter(systemPrompt, userPrompt) {
+async function callOpenRouter(systemPrompt, userPrompt, options = {}) {
   if (!OPENROUTER_API_KEY || OPENROUTER_API_KEY === 'your_openrouter_api_key' || OPENROUTER_API_KEY === 'fndsjkjsnbowwu24') {
     console.log('OpenRouter API key is a placeholder or missing. Using mock fallback.');
     return null;
@@ -28,7 +28,7 @@ async function callOpenRouter(systemPrompt, userPrompt) {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        response_format: { type: 'json_object' }
+        ...(options.responseFormat ? { response_format: options.responseFormat } : {})
       })
     });
 
@@ -59,7 +59,7 @@ Format your response as a valid JSON array of objects. Do not include markdown c
   const userPrompt = `Active Plans: ${JSON.stringify(plans)}
 Subject Performance: ${JSON.stringify(subjectPerformance)}`;
 
-  const aiResponse = await callOpenRouter(systemPrompt, userPrompt);
+  const aiResponse = await callOpenRouter(systemPrompt, userPrompt, { responseFormat: { type: 'json_object' } });
   if (aiResponse) {
     try {
       return JSON.parse(aiResponse);
@@ -125,7 +125,7 @@ Format your response as a valid JSON array of objects. Do not include markdown c
   const userPrompt = `Manual Logs: ${JSON.stringify(records)}
 Quiz/Deck Attempt History: ${JSON.stringify(attempts)}`;
 
-  const aiResponse = await callOpenRouter(systemPrompt, userPrompt);
+  const aiResponse = await callOpenRouter(systemPrompt, userPrompt, { responseFormat: { type: 'json_object' } });
   if (aiResponse) {
     try {
       return JSON.parse(aiResponse);
@@ -183,7 +183,24 @@ Quiz/Deck Attempt History: ${JSON.stringify(attempts)}`;
   return skillGaps;
 }
 
+async function summarizeFileContent(filename, text) {
+  const systemPrompt = `You summarize study files for students.
+Return plain text only. Keep the summary concise, useful, and focused on the file contents.`;
+
+  const clipped = String(text || '').slice(0, 24000);
+  const userPrompt = `File name: ${filename}
+
+File contents:
+${clipped}`;
+
+  const aiResponse = await callOpenRouter(systemPrompt, userPrompt);
+  if (aiResponse) return aiResponse.trim();
+
+  return `Summary unavailable right now. File content preview:\n\n${clipped.slice(0, 1200)}${clipped.length > 1200 ? '...' : ''}`;
+}
+
 module.exports = {
   generateStudySchedule,
-  analyzeSkillGaps
+  analyzeSkillGaps,
+  summarizeFileContent
 };
