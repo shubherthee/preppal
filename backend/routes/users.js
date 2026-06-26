@@ -489,7 +489,7 @@ router.get('/bookings/mine', async (req, res) => {
 
     if (userRole === 'tutor') {
       const [rows] = await pool.query(`
-        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
+        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status, b.meeting_link,
                u_student.name AS student_name, u_student.email AS student_email, u_student.initials AS student_initials
         FROM bookings b
         JOIN users u_student ON b.student_id = u_student.id
@@ -506,6 +506,7 @@ router.get('/bookings/mine', async (req, res) => {
         totalCost: Number(b.total_cost),
         status: b.status,
         paymentStatus: b.payment_status,
+        meetingLink: b.meeting_link,
         student: {
           id: b.student_id,
           name: b.student_name,
@@ -517,7 +518,7 @@ router.get('/bookings/mine', async (req, res) => {
     } else {
       // Default to student
       const [rows] = await pool.query(`
-        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
+        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status, b.meeting_link,
                u_tutor.name AS tutor_name, tp.rate AS tutor_rate, tp.subjects AS tutor_subjects, tp.status AS tutor_status, u_tutor.bio AS tutor_bio, tp.rating AS tutor_rating
         FROM bookings b
         JOIN users u_tutor ON b.tutor_id = u_tutor.id
@@ -542,6 +543,7 @@ router.get('/bookings/mine', async (req, res) => {
         totalCost: Number(b.total_cost),
         status: b.status,
         paymentStatus: b.payment_status,
+        meetingLink: b.meeting_link,
         tutor: {
           id: b.tutor_id,
           name: b.tutor_name,
@@ -558,6 +560,62 @@ router.get('/bookings/mine', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch bookings list' });
+  }
+});
+
+// GET /api/users/bookings/:id - Get specific booking details
+router.get('/bookings/:id', async (req, res) => {
+  try {
+    const userId = req.userId;
+    const userRole = req.userRole;
+    const bookingId = req.params.id;
+
+    // Fetch booking
+    const [[booking]] = await pool.query(
+      'SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status, b.meeting_link FROM bookings b WHERE b.id = ?',
+      [bookingId]
+    );
+
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Check authorization: must be either the student or the tutor for this booking
+    if (booking.student_id !== userId && booking.tutor_id !== userId && userRole !== 'admin') {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Fetch student details
+    const [[student]] = await pool.query(
+      'SELECT name, email, initials FROM users WHERE id = ?',
+      [booking.student_id]
+    );
+
+    // Fetch tutor details
+    const [[tutor]] = await pool.query(
+      'SELECT name, email, initials FROM users WHERE id = ?',
+      [booking.tutor_id]
+    );
+
+    res.json({
+      id: booking.id,
+      studentId: booking.student_id,
+      tutorId: booking.tutor_id,
+      date: booking.booking_date.toISOString().split('T')[0],
+      time: booking.booking_time.substring(0, 5),
+      duration: booking.duration,
+      totalCost: Number(booking.total_cost),
+      status: booking.status,
+      paymentStatus: booking.payment_status,
+      meetingLink: booking.meeting_link,
+      studentName: student ? student.name : 'Unknown',
+      studentEmail: student ? student.email : '',
+      tutorName: tutor ? tutor.name : 'Unknown',
+      tutorEmail: tutor ? tutor.email : ''
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch booking details' });
   }
 });
 

@@ -135,6 +135,7 @@ CREATE TABLE bookings (
   total_cost     DECIMAL(10, 2) NOT NULL,
   status         ENUM('pending', 'confirmed', 'cancelled', 'completed') DEFAULT 'confirmed',
   payment_status ENUM('unpaid', 'paid', 'refunded', 'payout_completed') DEFAULT 'paid',
+  meeting_link   VARCHAR(500) DEFAULT NULL,
   created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (tutor_id) REFERENCES users(id) ON DELETE CASCADE

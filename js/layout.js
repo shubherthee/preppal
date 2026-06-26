@@ -904,7 +904,7 @@ const pageTemplates = {
             <span v-else-if="session.status === 'cancelled'" class="session-status-badge" style="background: #fff0f0; color: #e14f4f; font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; display: inline-flex; height: 32px; align-items: center;">Cancelled</span>
             <template v-else>
               <span class="session-status-badge" style="font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; background: #eef7ff; color: #1c5db6; display: inline-flex; height: 32px; align-items: center;">Confirmed</span>
-              <a :href="" class="btn-primary" style="width: auto; height: 32px; padding: 0 12px; font-size: 0.78rem; display: inline-flex; align-items: center; border-radius: 8px; font-weight: 600; text-decoration: none; color: white; margin: 0; line-height: 1;">Join Class</a>
+              <a :href="rootRel + 'views/tutors/classroom.html?bookingId=' + session.id" class="btn-primary" style="width: auto; height: 32px; padding: 0 12px; font-size: 0.78rem; display: inline-flex; align-items: center; border-radius: 8px; font-weight: 600; text-decoration: none; color: white; margin: 0; line-height: 1;">Join Class</a>
             </template>
           </div>
         </div>
@@ -2530,7 +2530,7 @@ window.PrepPalCore = {
 };
 
 // Automatic mount for monolithic pages, skipping modular pages
-const modularPages = ['planner', 'analytics', 'quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings', 'tutor-dashboard'];
+const modularPages = ['planner', 'analytics', 'quizzes', 'flashcards', 'users', 'moderation', 'bookings', 'announcements', 'settings', 'tutor-dashboard', 'classroom'];
 if (!modularPages.includes(pageId)) {
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountViewApp);

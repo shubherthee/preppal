@@ -96,6 +96,7 @@ window.PrepPalAPI = (function () {
     getStudentTutors: () => request('/users/tutors'),
     createStudentBooking: (data) => request('/users/bookings', { method: 'POST', body: JSON.stringify(data) }),
     getStudentBookings: () => request('/users/bookings/mine'),
+    getBookingDetails: (id) => request('/users/bookings/' + id),
 
     // Tutor Role Functions
     getTutorDashboard: () => request('/tutors/dashboard'),
@@ -105,6 +106,7 @@ window.PrepPalAPI = (function () {
     updateTutorAvailability: (availability) => request('/tutors/availability', { method: 'PUT', body: JSON.stringify({ availability }) }),
     getTutorStudents: () => request('/tutors/students'),
     completeTutorBooking: (id) => request(`/tutors/bookings/${id}/complete`, { method: 'PUT' }),
+    updateMeetingLink: (id, meetingLink) => request(`/tutors/bookings/${id}/meeting-link`, { method: 'PUT', body: JSON.stringify({ meetingLink }) }),
 
     // Planner Tasks
     getPlannerTasks: () => request('/planner'),

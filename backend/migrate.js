@@ -228,6 +228,16 @@ async function run() {
       console.log("  – Already exists: student_id");
     }
 
+    // ── bookings meeting_link column ──────────────────────────────────
+    console.log('Adding meeting_link column to bookings if missing...');
+    const [meetCols] = await connection.query("SHOW COLUMNS FROM bookings LIKE 'meeting_link'");
+    if (meetCols.length === 0) {
+      await connection.query("ALTER TABLE bookings ADD COLUMN meeting_link VARCHAR(500) DEFAULT NULL");
+      console.log("  ✓ Added: meeting_link");
+    } else {
+      console.log("  – Already exists: meeting_link");
+    }
+
 
   } catch (err) {
     console.error('Migration failed:', err);

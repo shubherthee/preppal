@@ -89,7 +89,7 @@ router.get('/bookings', async (req, res) => {
   try {
     const tutorId = req.userId;
     const [rows] = await pool.query(`
-      SELECT b.id, b.student_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
+      SELECT b.id, b.student_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status, b.meeting_link,
              u.name AS student_name, u.initials AS student_initials, u.email AS student_email
       FROM bookings b
       JOIN users u ON b.student_id = u.id
@@ -108,7 +108,8 @@ router.get('/bookings', async (req, res) => {
       duration: b.duration,
       totalCost: Number(b.total_cost),
       status: b.status,
-      paymentStatus: b.payment_status
+      paymentStatus: b.payment_status,
+      meetingLink: b.meeting_link
     }));
 
     res.json(bookings);
@@ -235,6 +236,29 @@ router.put('/bookings/:id/complete', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to complete class booking' });
+  }
+});
+
+// PUT /api/tutors/bookings/:id/meeting-link - Update meeting link for a booking
+router.put('/bookings/:id/meeting-link', async (req, res) => {
+  try {
+    const tutorId = req.userId;
+    const bookingId = req.params.id;
+    const { meetingLink } = req.body;
+
+    const [result] = await pool.query(
+      'UPDATE bookings SET meeting_link = ? WHERE id = ? AND tutor_id = ?',
+      [meetingLink || null, bookingId, tutorId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Booking not found or access denied.' });
+    }
+
+    res.json({ status: 'success', message: 'Meeting link updated successfully', meetingLink });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update meeting link' });
   }
 });
 
