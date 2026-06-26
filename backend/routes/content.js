@@ -47,7 +47,7 @@ function isReadableTextFile(material) {
 
 async function findOrCreateFolder(userId, name, parentId, inherited = {}) {
   const [[existing]] = await pool.query(
-    `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id,
+    `SELECT id, user_id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id,
             DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
      FROM study_materials
      WHERE user_id = ? AND type = 'folder' AND original_name = ? AND ${parentId ? 'parent_id = ?' : 'parent_id IS NULL'}
@@ -58,13 +58,14 @@ async function findOrCreateFolder(userId, name, parentId, inherited = {}) {
 
   const [result] = await pool.query(
     `INSERT INTO study_materials
-       (user_id, filename, original_name, description, subject, topic, type, parent_id)
-     VALUES (?, ?, ?, ?, ?, ?, 'folder', ?)`,
-    [userId, name, name, inherited.description || '', inherited.subject || '', inherited.topic || '', parentId || null]
+       (user_id, filename, original_name, description, subject, topic, type, parent_id, student_id)
+     VALUES (?, ?, ?, ?, ?, ?, 'folder', ?, ?)`,
+    [userId, name, name, inherited.description || '', inherited.subject || '', inherited.topic || '', parentId || null, inherited.studentId || null]
   );
 
   return {
     id: result.insertId,
+    user_id: userId,
     filename: name,
     original_name: name,
     description: inherited.description || '',
@@ -72,8 +73,37 @@ async function findOrCreateFolder(userId, name, parentId, inherited = {}) {
     topic: inherited.topic || '',
     type: 'folder',
     parent_id: parentId || null,
+    student_id: inherited.studentId || null,
     created_at: new Date().toISOString().slice(0, 16).replace('T', ' '),
   };
+}
+
+async function resolveSharedStudent(req, identifier) {
+  const value = String(identifier || '').trim().toLowerCase();
+  if (!value) return null;
+
+  if (req.userRole !== 'tutor') {
+    const err = new Error('Only tutors can share content materials');
+    err.statusCode = 403;
+    throw err;
+  }
+
+  const isNumericId = /^\d+$/.test(value);
+  const [[student]] = await pool.query(
+    `SELECT id, email, name
+     FROM users
+     WHERE role = "student" AND ${isNumericId ? 'id = ?' : 'LOWER(email) = ?'}
+     LIMIT 1`,
+    [isNumericId ? Number(value) : value]
+  );
+
+  if (!student) {
+    const err = new Error('Student account not found');
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return student;
 }
 
 async function resolveFolderPath(userId, relativePath, inherited = {}, rootParentId = null) {
@@ -97,15 +127,39 @@ async function resolveFolderPath(userId, relativePath, inherited = {}, rootParen
   return { parentId, folders };
 }
 
+async function getDescendantMaterialIds(userId, rootId) {
+  const ids = [Number(rootId)];
+  const queue = [Number(rootId)];
+
+  while (queue.length) {
+    const parentId = queue.shift();
+    const [children] = await pool.query(
+      'SELECT id FROM study_materials WHERE user_id = ? AND parent_id = ?',
+      [userId, parentId]
+    );
+    for (const child of children) {
+      ids.push(child.id);
+      queue.push(child.id);
+    }
+  }
+
+  return ids;
+}
+
 // ── GET all materials for the logged-in user ─────────────────────────
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT id, filename, original_name, description, subject, topic, type, file_size, mime_type, parent_id, student_id,
-              DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') AS created_at
-       FROM study_materials
-       WHERE user_id = ? OR student_id = ?
-       ORDER BY id DESC`,
+      `SELECT sm.id, sm.user_id, sm.filename, sm.original_name, sm.description, sm.subject, sm.topic, sm.type,
+              sm.file_size, sm.mime_type, sm.parent_id, sm.student_id,
+              u.name AS owner_name, u.email AS owner_email,
+              shared_student.name AS shared_student_name, shared_student.email AS shared_student_email,
+              DATE_FORMAT(sm.created_at, '%Y-%m-%d %H:%i') AS created_at
+       FROM study_materials sm
+       JOIN users u ON sm.user_id = u.id
+       LEFT JOIN users shared_student ON sm.student_id = shared_student.id
+       WHERE sm.user_id = ? OR sm.student_id = ?
+       ORDER BY sm.id DESC`,
       [req.userId, req.userId]
     );
     res.json(rows);
@@ -158,9 +212,9 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
     return res.status(400).json({ error: 'No files uploaded' });
   }
 
-  const { description, subject, topic, parent_id, student_id } = req.body;
+  const { description, subject, topic, parent_id, student_id, student_email } = req.body;
   const rootParentId = parent_id ? Number(parent_id) : null;
-  const studentId = student_id ? Number(student_id) : null;
+  let student = null;
   let relativePaths = [];
   try {
     relativePaths = req.body.relativePaths ? JSON.parse(req.body.relativePaths) : [];
@@ -179,11 +233,14 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
       if (!folder) return res.status(400).json({ error: 'Target folder not found' });
     }
 
+    student = await resolveSharedStudent(req, student_email || student_id);
+
     for (const [index, file] of req.files.entries()) {
       const folderInfo = await resolveFolderPath(req.userId, relativePaths[index] || file.originalname, {
         description,
         subject,
         topic,
+        studentId: student?.id || null,
       }, rootParentId);
       folderInfo.folders.forEach(folder => touchedFolders.set(folder.id, folder));
 
@@ -202,11 +259,12 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
           file.size,
           file.mimetype,
           folderInfo.parentId,
-          studentId || null,
+          student?.id || null,
         ]
       );
       created.push({
         id:            result.insertId,
+        user_id:       req.userId,
         filename:      file.filename,
         original_name: file.originalname,
         description:   description || '',
@@ -216,30 +274,37 @@ router.post('/upload', upload.array('files', 100), async (req, res) => {
         file_size:     file.size,
         mime_type:     file.mimetype,
         parent_id:     folderInfo.parentId,
-        student_id:    studentId || null,
+        student_id:    student?.id || null,
       });
     }
-    res.status(201).json({ uploaded: created.length, files: created, folders: Array.from(touchedFolders.values()) });
+    res.status(201).json({
+      uploaded: created.length,
+      files: created,
+      folders: Array.from(touchedFolders.values()),
+      student: student ? { id: student.id, email: student.email, name: student.name } : null,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to save file records' });
+    res.status(err.statusCode || 500).json({ error: err.statusCode ? err.message : 'Failed to save file records' });
   }
 });
 
 // ── POST create a folder (metadata only, no actual file) ─────────────
 router.post('/folder', async (req, res) => {
-  const { filename, description, subject, topic, parent_id } = req.body;
+  const { filename, description, subject, topic, parent_id, student_id, student_email } = req.body;
   if (!filename) return res.status(400).json({ error: 'Folder name is required' });
 
   try {
+    const student = await resolveSharedStudent(req, student_email || student_id);
     const [result] = await pool.query(
       `INSERT INTO study_materials
-         (user_id, filename, original_name, description, subject, topic, type, parent_id)
-       VALUES (?, ?, ?, ?, ?, ?, 'folder', ?)`,
-      [req.userId, filename, filename, description || '', subject || '', topic || '', parent_id || null]
+         (user_id, filename, original_name, description, subject, topic, type, parent_id, student_id)
+       VALUES (?, ?, ?, ?, ?, ?, 'folder', ?, ?)`,
+      [req.userId, filename, filename, description || '', subject || '', topic || '', parent_id || null, student?.id || null]
     );
     res.status(201).json({
       id:            result.insertId,
+      user_id:       req.userId,
       filename,
       original_name: filename,
       description:   description || '',
@@ -247,10 +312,12 @@ router.post('/folder', async (req, res) => {
       topic:         topic   || '',
       type:          'folder',
       parent_id:     parent_id || null,
+      student_id:    student?.id || null,
+      shared_student_email: student?.email || null,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to create folder' });
+    res.status(err.statusCode || 500).json({ error: err.statusCode ? err.message : 'Failed to create folder' });
   }
 });
 
@@ -268,6 +335,7 @@ router.post('/', async (req, res) => {
     );
     res.status(201).json({
       id: result.insertId,
+      user_id: req.userId,
       filename, original_name: filename,
       description: description || '',
       subject: subject || '', topic: topic || '',
@@ -323,6 +391,50 @@ router.post('/:id/move', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to move material' });
+  }
+});
+
+router.post('/:id/share', async (req, res) => {
+  const { student_email } = req.body;
+  if (!student_email) return res.status(400).json({ error: 'Student email is required' });
+
+  try {
+    if (req.userRole !== 'tutor') {
+      return res.status(403).json({ error: 'Only tutors can share content materials' });
+    }
+
+    const [[student]] = await pool.query(
+      'SELECT id, email FROM users WHERE email = ? AND role = "student"',
+      [student_email.trim().toLowerCase()]
+    );
+    if (!student) return res.status(404).json({ error: 'Student account not found' });
+
+    const [[mat]] = await pool.query(
+      'SELECT id, type FROM study_materials WHERE id = ? AND user_id = ?',
+      [req.params.id, req.userId]
+    );
+    if (!mat) return res.status(404).json({ error: 'Material not found or access denied' });
+
+    const materialIds = mat.type === 'folder'
+      ? await getDescendantMaterialIds(req.userId, mat.id)
+      : [mat.id];
+
+    await pool.query(
+      `UPDATE study_materials
+       SET student_id = ?
+       WHERE user_id = ? AND id IN (${materialIds.map(() => '?').join(',')})`,
+      [student.id, req.userId, ...materialIds]
+    );
+
+    res.json({
+      message: 'Material shared successfully',
+      student_id: student.id,
+      student_email: student.email,
+      shared_ids: materialIds,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to share material' });
   }
 });
 

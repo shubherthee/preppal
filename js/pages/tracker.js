@@ -1,5 +1,5 @@
 // js/pages/tracker.js
-// Exam & Assignment Deadline Tracker — fully wired to /api/tracker
+// Deadline Tracker - fully wired to /api/tracker
 
 window.addEventListener('DOMContentLoaded', () => {
   if (typeof window.PrepPalCore === 'undefined') return;
@@ -48,6 +48,12 @@ window.addEventListener('DOMContentLoaded', () => {
           const matchType = this.filterType === 'all' || d.exam_type === this.filterType;
           return matchSearch && matchType;
         });
+      },
+      upcomingDeadlines() {
+        return this.filtered.filter(d => !d.completed);
+      },
+      doneDeadlines() {
+        return this.filtered.filter(d => d.completed);
       },
 
       // Calendar helpers
@@ -295,7 +301,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       <!-- ── LIST VIEW ────────────────────────────────────────────────── -->
       <div v-if="!loading && currentView === 'list'" class="tracker-list-card">
-        <div class="tracker-list-title">Upcoming Deadlines ({{ filtered.length }})</div>
+        <div class="tracker-list-title">Upcoming Deadlines ({{ upcomingDeadlines.length }})</div>
 
         <div v-if="filtered.length === 0" style="text-align:center;padding:48px;color:var(--muted);">
           <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
@@ -308,8 +314,11 @@ window.addEventListener('DOMContentLoaded', () => {
           <button class="btn-primary" style="width:auto;padding:10px 24px;" @click="openCreate">+ Add Deadline</button>
         </div>
 
-        <div class="tracker-item" v-for="item in filtered" :key="item.id"
-             :style="item.completed ? 'opacity:.6;' : ''">
+        <div v-if="filtered.length > 0 && upcomingDeadlines.length === 0" style="text-align:center;padding:24px;color:var(--muted);font-size:.9rem;">
+          No upcoming deadlines. Completed items are below.
+        </div>
+
+        <div class="tracker-item" v-for="item in upcomingDeadlines" :key="item.id">
           <div class="tracker-item-left" :class="item.colorClass">
             <div style="display:flex;gap:12px;align-items:center;">
               <input type="checkbox" class="task-checkbox" :checked="item.completed"
@@ -338,12 +347,46 @@ window.addEventListener('DOMContentLoaded', () => {
               </span>
             </div>
             <div class="tracker-item-actions" style="padding-left:58px;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
-              <button class="btn-pill-primary" @click="openEdit(item)">✏️ Edit</button>
-              <button class="btn-pill" @click="deleteDeadline(item.id)" style="color:var(--rose);">🗑️ Delete</button>
-              <button class="btn-pill" v-if="!item.completed" @click="toggleComplete(item)">✅ Mark Done</button>
+              <button class="btn-pill-primary" @click="openEdit(item)">Edit</button>
+              <button class="btn-pill" @click="deleteDeadline(item.id)" style="color:var(--rose);">Delete</button>
+              <button class="btn-pill" v-if="!item.completed" @click="toggleComplete(item)">Mark Done</button>
             </div>
           </div>
           <div class="time-badge" :class="item.cls || 'badge-blue'">{{ item.text }}</div>
+        </div>
+
+        <div v-if="doneDeadlines.length" class="tracker-list-title" style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
+          Done ({{ doneDeadlines.length }})
+        </div>
+
+        <div class="tracker-item" v-for="item in doneDeadlines" :key="'done-' + item.id" style="opacity:.68;">
+          <div class="tracker-item-left" :class="item.colorClass">
+            <div style="display:flex;gap:12px;align-items:center;">
+              <input type="checkbox" class="task-checkbox" :checked="item.completed"
+                     @change="toggleComplete(item)" />
+              <span style="font-size:1.1rem;">{{ typeIcon(item.exam_type) }}</span>
+              <div class="tracker-item-title" style="text-decoration:line-through;color:var(--muted);">
+                {{ item.title }}
+              </div>
+            </div>
+            <div class="tracker-item-meta" style="padding-left:58px;display:flex;gap:16px;flex-wrap:wrap;margin-top:4px;">
+              <span>{{ formatDate(item.deadline) }}</span>
+              <span v-if="item.exam_time">{{ item.exam_time }}</span>
+              <span v-if="item.subject"
+                    style="background:var(--indigo-lt);color:var(--indigo);padding:1px 8px;border-radius:8px;font-size:.72rem;font-weight:600;">
+                {{ item.subject }}
+              </span>
+              <span style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:capitalize;">
+                {{ item.exam_type }} Â· {{ item.priority }} priority
+              </span>
+            </div>
+            <div class="tracker-item-actions" style="padding-left:58px;margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button class="btn-pill-primary" @click="openEdit(item)">âœï¸ Edit</button>
+              <button class="btn-pill" @click="deleteDeadline(item.id)" style="color:var(--rose);">ðŸ—‘ï¸ Delete</button>
+              <button class="btn-pill" @click="toggleComplete(item)">Move to Upcoming</button>
+            </div>
+          </div>
+          <div class="time-badge badge-green">Done</div>
         </div>
       </div>
 

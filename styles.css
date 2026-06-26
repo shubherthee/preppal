@@ -1491,6 +1491,10 @@ body {
 
 .time-badge { padding: 4px 12px; border-radius: 20px; font-size: .8rem; font-weight: 600; height: fit-content; }
 .badge-red { background: #FDE8E8; color: #9B1C1C; }
+.badge-orange { background: #FFF4E6; color: #B25F11; }
+.badge-purple { background: #F4F0FF; color: #6D3FD8; }
+.badge-blue { background: #EEF7FF; color: #1C5DB6; }
+.badge-green { background: #EDF7F0; color: #1F7A4C; }
 .badge-orange { background: #FEECDC; color: #8A2C0D; }
 .badge-purple { background: #E0E7FF; color: #3730A3; }
 
