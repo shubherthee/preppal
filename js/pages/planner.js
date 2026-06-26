@@ -817,21 +817,21 @@
       <!-- Stats Row -->
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 8px;">
         <div class="card" style="padding: 24px; border-radius: 24px; background: #eff6ff !important; border: 1px solid rgba(59, 130, 246, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
-          <div style="background:#ffffff; color:#2563eb; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(37,99,235,0.05); font-size: 24px;">📅</div>
+          <div style="background:#ffffff; color:#2563eb; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(37,99,235,0.05); font-size: 1rem; font-weight: bold;">Bk</div>
           <div>
             <div style="font-size: 1.8rem; font-weight:700; color:#1e3a8a; line-height:1.1; font-family:'Sora',sans-serif;">{{ tutorBookings.length }}</div>
             <div style="font-size:0.8rem; color:#2563eb; font-weight:600; margin-top:2px;">Total Bookings</div>
           </div>
         </div>
         <div class="card" style="padding: 24px; border-radius: 24px; background: #e8f7f4 !important; border: 1px solid rgba(16, 185, 129, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
-          <div style="background:#ffffff; color:#10b981; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(16,185,129,0.05); font-size: 24px;">💰</div>
+          <div style="background:#ffffff; color:#10b981; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(16,185,129,0.05); font-size: 1rem; font-weight: bold;">RM</div>
           <div>
             <div style="font-size: 1.8rem; font-weight:700; color:#115e59; line-height:1.1; font-family:'Sora',sans-serif;">RM{{ tutorEarnings }}</div>
             <div style="font-size:0.8rem; color:#10b981; font-weight:600; margin-top:2px;">Total Earnings</div>
           </div>
         </div>
         <div class="card" style="padding: 24px; border-radius: 24px; background: #fff4e6 !important; border: 1px solid rgba(245, 158, 11, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
-          <div style="background:#ffffff; color:#f59e0b; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(245,158,11,0.05); font-size: 24px;">✓</div>
+          <div style="background:#ffffff; color:#f59e0b; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(245,158,11,0.05); font-size: 1rem; font-weight: bold;">Pd</div>
           <div>
             <div style="font-size: 1.8rem; font-weight:700; color:#78350f; line-height:1.1; font-family:'Sora',sans-serif;">{{ tutorPaidSessionsCount }}</div>
             <div style="font-size:0.8rem; color:#d97706; font-weight:600; margin-top:2px;">Paid Sessions</div>
@@ -909,7 +909,7 @@
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px; font-size:0.78rem; font-weight:600;">
                   <div style="color:#2563eb; display:flex; align-items:center; gap:4px;">
-                    ⏱️ {{ b.time }} ({{ b.duration }} hr)
+                    Time: {{ b.time }} ({{ b.duration }} hr)
                   </div>
                   <div style="color:#10b981;">
                     Earnings: RM{{ b.totalCost }}

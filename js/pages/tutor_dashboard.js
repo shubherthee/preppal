@@ -234,19 +234,17 @@ PrepPalCore.mountApp({
       </div>
     </div>
 
-    <!-- Stats summary grid -->
     <div v-if="loading" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
-      <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;">⏳</span> Loading dashboard...
+      Loading dashboard...
     </div>
     <div v-else-if="error" class="error-msg" style="margin-bottom: 24px;">
-      ⚠️ {{ error }}
+      Error: {{ error }}
     </div>
 
     <div v-else>
-      <!-- Stats row -->
       <div class="stats-row" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
         <div class="stat-card" style="background: #edf7f0; border: 1px solid rgba(170, 227, 215, 0.4); padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02); transition: all 0.3s ease;">
-          <div style="background: #ffffff; color: #1f7a4c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1.25rem;">💰</div>
+          <div style="background: #ffffff; color: #1f7a4c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1rem; font-weight: bold;">RM</div>
           <div style="flex-grow: 1;">
             <div style="font-size: 1.8rem; font-weight: 700; color: #1f7a4c; font-family: 'Sora', sans-serif; line-height: 1.1;">RM{{ stats.earnings.net.toFixed(2) }}</div>
             <div style="font-size: 0.8rem; color: #1f7a4c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Net Balance (90%)</div>
@@ -254,7 +252,7 @@ PrepPalCore.mountApp({
         </div>
 
         <div class="stat-card" style="background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02); transition: all 0.3s ease;">
-          <div style="background: #ffffff; color: #4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1.25rem;">⏰</div>
+          <div style="background: #ffffff; color: #4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1rem; font-weight: bold;">Hr</div>
           <div style="flex-grow: 1;">
             <div style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; font-family: 'Sora', sans-serif; line-height: 1.1;">{{ stats.totalHours }}h</div>
             <div style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Hours Taught</div>
@@ -262,7 +260,7 @@ PrepPalCore.mountApp({
         </div>
 
         <div class="stat-card" style="background: #fff4e6; border: 1px solid rgba(254, 215, 170, 0.4); padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02); transition: all 0.3s ease;">
-          <div style="background: #ffffff; color: #b25f11; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1.25rem;">🎓</div>
+          <div style="background: #ffffff; color: #b25f11; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1rem; font-weight: bold;">St</div>
           <div style="flex-grow: 1;">
             <div style="font-size: 1.8rem; font-weight: 700; color: #b25f11; font-family: 'Sora', sans-serif; line-height: 1.1;">{{ stats.uniqueStudents }}</div>
             <div style="font-size: 0.8rem; color: #b25f11; opacity: 0.8; margin-top: 2px; font-weight: 600;">Unique Students</div>
@@ -270,7 +268,7 @@ PrepPalCore.mountApp({
         </div>
 
         <div class="stat-card" style="background: #fffdf0; border: 1px solid rgba(254, 240, 138, 0.4); padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 8px 30px rgba(124, 58, 237, 0.02); transition: all 0.3s ease;">
-          <div style="background: #ffffff; color: #854d0e; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1.25rem;">⭐</div>
+          <div style="background: #ffffff; color: #854d0e; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); font-size: 1.25rem;">★</div>
           <div style="flex-grow: 1;">
             <div style="font-size: 1.8rem; font-weight: 700; color: #854d0e; font-family: 'Sora', sans-serif; line-height: 1.1;">{{ stats.rating.toFixed(1) }}</div>
             <div style="font-size: 0.8rem; color: #854d0e; opacity: 0.8; margin-top: 2px; font-weight: 600;">Rating ({{ stats.reviewsCount }} reviews)</div>
@@ -289,7 +287,6 @@ PrepPalCore.mountApp({
           </div>
 
           <div v-if="upcomingBookings.length === 0" style="padding: 60px 20px; text-align: center; color: var(--muted);">
-            <div style="font-size: 2.5rem; margin-bottom: 12px;">📅</div>
             <h3 style="font-weight: 600; color: var(--text); font-size: 1.05rem; margin-bottom: 4px;">No Scheduled Bookings</h3>
             <p style="font-size: 0.85rem; max-width: 250px; margin: 0 auto;">When students book your available times, they'll show up right here.</p>
           </div>
@@ -307,9 +304,9 @@ PrepPalCore.mountApp({
               <div style="flex-grow: 1;">
                 <div style="font-weight: 700; color: var(--text); font-size: 0.98rem;">{{ booking.studentName }}</div>
                 <div style="display: flex; gap: 14px; font-size: 0.84rem; color: var(--muted); margin-top: 4px; flex-wrap: wrap;">
-                  <span>📅 {{ booking.date }}</span>
-                  <span>⏰ {{ booking.time }} ({{ booking.duration }}h)</span>
-                  <span>💰 RM{{ booking.totalCost.toFixed(2) }} (Gross)</span>
+                  <span>Date: {{ booking.date }}</span>
+                  <span>Duration: {{ booking.time }} ({{ booking.duration }}h)</span>
+                  <span>Cost: RM{{ booking.totalCost.toFixed(2) }} (Gross)</span>
                 </div>
               </div>
 
@@ -335,13 +332,13 @@ PrepPalCore.mountApp({
             <div class="section-title" style="margin-bottom: 16px; font-family: 'Sora', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text);">Quick Actions</div>
             <div style="display: flex; flex-direction: column; gap: 12px;">
               <button class="btn-secondary" style="text-align: left; padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; width: 100%; transition: all 0.2s;" @click="openScheduleModal">
-                📅 Adjust Calendar Schedule
+                Adjust Calendar Schedule
               </button>
               <button class="btn-secondary" style="text-align: left; padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; width: 100%; transition: all 0.2s;" @click="openUploadModal">
-                📚 Upload Student Materials
+                Upload Student Materials
               </button>
               <button class="btn-secondary" style="text-align: left; padding: 12px 16px; border-radius: 12px; font-weight: 600; font-size: 0.88rem; display: flex; align-items: center; gap: 8px; width: 100%; transition: all 0.2s;" @click="openRateModal">
-                💸 Update Hourly Rates (RM{{ stats.rate.toFixed(2) }})
+                Update Hourly Rates (RM{{ stats.rate.toFixed(2) }})
               </button>
             </div>
           </div>
@@ -351,7 +348,7 @@ PrepPalCore.mountApp({
             <h3 style="font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px;">Tutor Earnings Commission</h3>
             <p style="font-size: 0.84rem; color: var(--muted); line-height: 1.5; margin-bottom: 14px;">Tutors receive **90%** of total billings directly. The remaining **10%** commission is utilized for platform maintenance and AI services.</p>
             <div style="font-size: 0.76rem; font-weight: 700; color: var(--indigo); text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 6px;">
-              🛡️ verified preppal partner
+              verified preppal partner
             </div>
           </div>
         </div>

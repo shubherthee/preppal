@@ -584,12 +584,11 @@
       </div>
     </div>
 
-    <!-- Tutor Stats Row -->
     <div class="stats-row" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
       <!-- Total Bookings -->
       <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02); text-align: left;">
-        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
-          📅
+        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05); font-weight: bold; font-size: 1rem;">
+          Bk
         </div>
         <div>
           <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1; font-family:'Sora',sans-serif;">{{ tutorBookings.length }}</div>
@@ -599,8 +598,8 @@
 
       <!-- Active Students -->
       <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02); text-align: left;">
-        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);">
-          🧑‍🎓
+        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05); font-weight: bold; font-size: 1rem;">
+          St
         </div>
         <div>
           <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1; font-family:'Sora',sans-serif;">{{ uniqueStudentsCount }}</div>
@@ -610,8 +609,8 @@
 
       <!-- Hours Taught -->
       <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #eff6ff; border: 1px solid rgba(191, 219, 254, 0.4); box-shadow: 0 8px 30px rgba(37, 99, 235, 0.02); text-align: left;">
-        <div style="background:#ffffff; color:#2563eb; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);">
-          ⏱️
+        <div style="background:#ffffff; color:#2563eb; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05); font-weight: bold; font-size: 1rem;">
+          Hr
         </div>
         <div>
           <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #2563eb; line-height: 1.1; font-family:'Sora',sans-serif;">{{ totalHoursTaught }}h</div>
@@ -621,7 +620,7 @@
 
       <!-- Earnings -->
       <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #fff4e6; border: 1px solid rgba(253, 230, 138, 0.4); box-shadow: 0 8px 30px rgba(245, 158, 11, 0.02); text-align: left;">
-        <div style="background:#ffffff; color:#d97706; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05);">
+        <div style="background:#ffffff; color:#d97706; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05); font-weight: bold; font-size: 1rem;">
           RM
         </div>
         <div>
