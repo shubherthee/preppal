@@ -26,13 +26,7 @@ window.PrepPalCore = (function () {
       route: rootRel + 'views/tutors/tutor_dashboard.html', 
       role: 'Tutor' 
     },
-    { 
-      id: 'ai',         
-      icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>`,   
-      label: 'AI Assistant', 
-      route: rootRel + 'views/ai/ai_index.html',
-      role: 'Student'
-    },
+
     { 
       id: 'content',    
       icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,   
