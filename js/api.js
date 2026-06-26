@@ -3,8 +3,7 @@
 // Sends the JWT Bearer token in the Authorization header.
 
 window.PrepPalAPI = (function () {
-  // Change this if your backend runs elsewhere.
-  const BASE_URL = window.PREPPAL_API_BASE || 'http://localhost:4000/api';
+  const BASE_URL = window.PREPPAL_API_BASE || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:4000/api' : '/api');
 
   async function request(path, options = {}) {
     const token = localStorage.getItem('preppal_token');

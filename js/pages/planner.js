@@ -337,6 +337,13 @@
       border-color: rgba(139, 92, 246, 0.5) !important;
       border-left-color: #8b5cf6 !important;
     }
+
+    /* Tutor Calendar Styles */
+    .tutor-calendar-day:hover:not(.active) {
+      background: #eff6ff !important;
+      border-color: #bfdbfe !important;
+      transform: scale(1.05);
+    }
   `;
   const styleEl = document.createElement('style');
   styleEl.textContent = styles;
@@ -783,10 +790,181 @@
     </div>
   `;
 
+  const user = PrepPalCore.getCurrentUser();
+  const userRole = user.role;
+
+  const tutorTemplate = `
+    <!-- Topbar Navigation Header -->
+    <div class="topbar" style="margin-bottom: 28px;">
+      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(219, 39, 119, 0.15); border-radius:24px; box-shadow:0 4px 16px rgba(219,39,119,0.02);">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#db2777" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input
+          type="text"
+          v-model="plannerSearch"
+          placeholder="Search bookings or students..."
+          style="border:none !important; background:transparent !important; box-shadow:none !important; padding:4px 8px !important;"
+        />
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, #db2777, #f472b6); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15);">{{ initials }}</div>
+      </div>
+    </div>
+
+    <!-- Tutor View -->
+    <div class="tutor-planner-layout" style="display: flex; flex-direction: column; gap: 28px;">
+      <!-- Stats Row -->
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 8px;">
+        <div class="card" style="padding: 24px; border-radius: 24px; background: #eff6ff !important; border: 1px solid rgba(59, 130, 246, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
+          <div style="background:#ffffff; color:#2563eb; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(37,99,235,0.05); font-size: 24px;">📅</div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight:700; color:#1e3a8a; line-height:1.1; font-family:'Sora',sans-serif;">{{ tutorBookings.length }}</div>
+            <div style="font-size:0.8rem; color:#2563eb; font-weight:600; margin-top:2px;">Total Bookings</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 24px; border-radius: 24px; background: #e8f7f4 !important; border: 1px solid rgba(16, 185, 129, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
+          <div style="background:#ffffff; color:#10b981; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(16,185,129,0.05); font-size: 24px;">💰</div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight:700; color:#115e59; line-height:1.1; font-family:'Sora',sans-serif;">RM{{ tutorEarnings }}</div>
+            <div style="font-size:0.8rem; color:#10b981; font-weight:600; margin-top:2px;">Total Earnings</div>
+          </div>
+        </div>
+        <div class="card" style="padding: 24px; border-radius: 24px; background: #fff4e6 !important; border: 1px solid rgba(245, 158, 11, 0.15) !important; display: flex; align-items: center; gap: 16px; margin-bottom: 0 !important; text-align: left;">
+          <div style="background:#ffffff; color:#f59e0b; display:flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:50%; box-shadow:0 4px 12px rgba(245,158,11,0.05); font-size: 24px;">✓</div>
+          <div>
+            <div style="font-size: 1.8rem; font-weight:700; color:#78350f; line-height:1.1; font-family:'Sora',sans-serif;">{{ tutorPaidSessionsCount }}</div>
+            <div style="font-size:0.8rem; color:#d97706; font-weight:600; margin-top:2px;">Paid Sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Layout Grid -->
+      <div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 28px; align-items: start;">
+        <!-- Left: Calendar Card -->
+        <div class="card" style="padding: 28px; border-radius: 28px; text-align: left;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2 style="margin:0;">Schedule Calendar</h2>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <button class="circle-btn" @click="prevMonth" style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center;">&lt;</button>
+              <span style="font-family:'Sora',sans-serif; font-weight:700; color:#1e3a8a; min-width:120px; text-align:center; font-size: 0.95rem;">{{ currentMonthYearString }}</span>
+              <button class="circle-btn" @click="nextMonth" style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center;">&gt;</button>
+            </div>
+          </div>
+
+          <div class="tutor-calendar">
+            <div style="display:grid; grid-template-columns: repeat(7, 1fr); text-align:center; font-weight:700; font-size:0.8rem; color:#574e7d; margin-bottom:10px; border-bottom:1px solid #e0f2fe; padding-bottom:8px;">
+              <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px; text-align:center;">
+              <div 
+                v-for="day in calendarDays" 
+                :key="day.date.toISOString()"
+                @click="selectDate(day)"
+                style="aspect-ratio: 1.2; border-radius: 14px; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; cursor:pointer; border: 1px solid transparent; transition: all 0.2s;"
+                :style="[
+                  day.isCurrentMonth ? { color: '#1e3a8a' } : { color: '#bfdbfe', opacity: 0.5 },
+                  isSameDate(day.date, selectedDate) 
+                    ? { background: 'linear-gradient(135deg, #f472b6 0%, #db2777 100%)', color: 'white !important', border: 'none' } 
+                    : (day.bookings.length > 0 ? { background: '#eff6ff', borderColor: '#bfdbfe' } : {})
+                ]"
+                class="tutor-calendar-day"
+              >
+                <span style="font-size:0.95rem; font-weight:600;" :style="isSameDate(day.date, selectedDate) ? { color: 'white' } : {}">{{ day.date.getDate() }}</span>
+                <div v-if="day.bookings.length > 0" style="display:flex; gap:2px; margin-top:4px; justify-content:center; width: 100%;">
+                  <span 
+                    v-for="b in day.bookings" 
+                    :key="b.id" 
+                    style="width:5px; height:5px; border-radius:50%; display:inline-block;" 
+                    :style="isSameDate(day.date, selectedDate) ? { background: 'white' } : { background: '#2563eb' }"
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div style="display: flex; flex-direction: column; gap: 28px;">
+          <!-- Day Bookings Details -->
+          <div class="card" style="padding: 28px; border-radius: 28px; margin-bottom: 0 !important; text-align: left;">
+            <h3 style="margin-top:0; font-family:'Sora',sans-serif; color:#1e3a8a; font-size:1.1rem; margin-bottom:4px; font-weight: 700;">Sessions for:</h3>
+            <div style="font-size:0.82rem; color:#db2777; font-weight:600; margin-bottom:18px;">{{ formatSelectedDate() }}</div>
+
+            <div v-if="selectedDateBookings.length" style="display:flex; flex-direction:column; gap:12px;">
+              <div 
+                v-for="b in selectedDateBookings" 
+                :key="b.id" 
+                style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:10px; text-align: left;"
+              >
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg, #3b82f6, #60a5fa); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; flex-shrink: 0;">
+                    {{ b.student.initials }}
+                  </div>
+                  <div style="min-width: 0; flex-grow: 1;">
+                    <div style="font-weight:700; font-size:0.85rem; color:#1e293b; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ b.student.name }}</div>
+                    <div style="font-size:0.7rem; color:#64748b; text-overflow:ellipsis; overflow:hidden; white-space:nowrap;">{{ b.student.email }}</div>
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #f1f5f9; padding-top:10px; font-size:0.78rem; font-weight:600;">
+                  <div style="color:#2563eb; display:flex; align-items:center; gap:4px;">
+                    ⏱️ {{ b.time }} ({{ b.duration }} hr)
+                  </div>
+                  <div style="color:#10b981;">
+                    Earnings: RM{{ b.totalCost }}
+                  </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;">
+                  <span class="badge-status status-completed" style="text-transform: capitalize; padding: 2px 8px !important; border-radius: 12px; font-weight: 700;">{{ b.status }}</span>
+                  <span style="font-weight:700;" :style="b.paymentStatus === 'paid' ? {color:'#10b981'} : {color:'#ef4444'}">
+                    {{ b.paymentStatus === 'paid' ? 'Paid' : 'Unpaid' }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div v-else style="text-align:center; padding:24px; color:#574e7d; background:#fbfbfe; border-radius:18px; border:1px dashed #bfdbfe; font-size:0.82rem;">
+              No bookings scheduled for this day.
+            </div>
+          </div>
+
+          <!-- Upcoming Bookings Summary -->
+          <div class="card" style="padding: 28px; border-radius: 28px; margin-bottom: 0 !important; text-align: left;">
+            <h3 style="margin-top:0; font-family:'Sora',sans-serif; color:#1e3a8a; font-size:1.1rem; margin-bottom:14px; font-weight: 700;">Upcoming Schedule</h3>
+            
+            <div v-if="upcomingTutorBookings.length" style="display:flex; flex-direction:column; gap:10px;">
+              <div 
+                v-for="b in upcomingTutorBookings" 
+                :key="b.id" 
+                style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:#fdf2f8; border:1px solid #fbcfe8; border-radius:14px; font-size:0.8rem; text-align: left;"
+              >
+                <div>
+                  <div style="font-weight:700; color:#db2777;">{{ b.student.name }}</div>
+                  <div style="font-size:0.7rem; color:#574e7d; margin-top:2px;">{{ b.date }} @ {{ b.time }}</div>
+                </div>
+                <div style="text-align:right; font-weight:700; color:#db2777; flex-shrink: 0; margin-left: 8px;">
+                  RM{{ b.totalCost }}
+                </div>
+              </div>
+            </div>
+            <div v-else style="text-align:center; padding:18px; color:#574e7d; font-size:0.8rem;">
+              No upcoming bookings.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
   PrepPalCore.mountApp({
-    template,
+    template: userRole === 'Tutor' ? tutorTemplate : template,
     data() {
       return {
+        userRole,
+        tutorBookings: [],
+        currentDate: new Date(),
+        selectedDate: new Date(),
+
         plannerSearch: '',
         plannerTasks: [],
         reminders: [],
@@ -884,30 +1062,135 @@
           borderColor: this.activeColorOption.pastelBorder,
           boxShadow: this.timerState === 'running' ? '0 0 35px ' + this.timerColor + '55, inset 0 0 15px rgba(255, 255, 255, 0.7)' : 'inset 0 0 15px rgba(255, 255, 255, 0.7)'
         };
+      },
+
+      // Tutor Calendar Computed Properties
+      calendarDays() {
+        const year = this.currentDate.getFullYear();
+        const month = this.currentDate.getMonth();
+        const firstDayIndex = new Date(year, month, 1).getDay();
+        const lastDate = new Date(year, month + 1, 0).getDate();
+        const prevLastDate = new Date(year, month, 0).getDate();
+        
+        const days = [];
+        
+        // Prev month padding days
+        for (let i = firstDayIndex; i > 0; i--) {
+          const d = new Date(year, month - 1, prevLastDate - i + 1);
+          days.push({ date: d, isCurrentMonth: false, bookings: this.getBookingsForDate(d) });
+        }
+        
+        // Current month days
+        for (let i = 1; i <= lastDate; i++) {
+          const d = new Date(year, month, i);
+          days.push({ date: d, isCurrentMonth: true, bookings: this.getBookingsForDate(d) });
+        }
+        
+        // Next month padding days
+        const totalSlots = 42;
+        const remaining = totalSlots - days.length;
+        for (let i = 1; i <= remaining; i++) {
+          const d = new Date(year, month + 1, i);
+          days.push({ date: d, isCurrentMonth: false, bookings: this.getBookingsForDate(d) });
+        }
+        return days;
+      },
+      currentMonthYearString() {
+        return this.currentDate.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+      },
+      selectedDateBookings() {
+        return this.getBookingsForDate(this.selectedDate);
+      },
+      upcomingTutorBookings() {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const query = (this.plannerSearch || '').trim().toLowerCase();
+        return this.tutorBookings.filter(b => {
+          const matchesDate = b.date >= todayStr;
+          const matchesQuery = !query || b.student.name.toLowerCase().includes(query) || b.student.email.toLowerCase().includes(query);
+          return matchesDate && matchesQuery;
+        }).slice(0, 5);
+      },
+      tutorEarnings() {
+        return this.tutorBookings
+          .filter(b => b.paymentStatus === 'paid' && (b.status === 'confirmed' || b.status === 'completed'))
+          .reduce((sum, b) => sum + b.totalCost, 0);
+      },
+      tutorPaidSessionsCount() {
+        return this.tutorBookings.filter(b => b.paymentStatus === 'paid').length;
+      },
+      completedTasksCount() {
+        return this.plannerTasks.filter(t => t.status === 'Completed').length;
+      },
+      progressPercent() {
+        if (!this.plannerTasks.length) return 0;
+        return Math.round((this.completedTasksCount / this.plannerTasks.length) * 100);
       }
     },
     methods: {
+      // Tutor Calendar Methods
+      getBookingsForDate(d) {
+        if (!d) return [];
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const dateString = `${year}-${month}-${day}`;
+        return this.tutorBookings.filter(b => b.date === dateString);
+      },
+      selectDate(day) {
+        this.selectedDate = day.date;
+      },
+      prevMonth() {
+        const d = new Date(this.currentDate);
+        d.setMonth(d.getMonth() - 1);
+        this.currentDate = d;
+      },
+      nextMonth() {
+        const d = new Date(this.currentDate);
+        d.setMonth(d.getMonth() + 1);
+        this.currentDate = d;
+      },
+      isSameDate(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.getFullYear() === d2.getFullYear() &&
+               d1.getMonth() === d2.getMonth() &&
+               d1.getDate() === d2.getDate();
+      },
+      formatSelectedDate() {
+        return this.selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
+      },
+
+      // Load data dynamically
       async loadPlannerData() {
         this.plannerLoading = true;
         this.errorMsg = '';
         try {
-          // Parallel fetch of planner data
-          const [tasks, reminders, materials, schedule] = await Promise.all([
-            api.getPlannerTasks(),
-            api.getReminders(),
-            api.getMaterials(),
-            api.getAISchedule()
-          ]);
-          this.plannerTasks = tasks;
-          this.reminders = reminders;
-          this.materials = materials;
-          this.aiSchedule = schedule;
+          if (this.userRole === 'Tutor') {
+            const bookings = await api.getStudentBookings();
+            this.tutorBookings = bookings || [];
+          } else {
+            // Student load
+            const [tasks, reminders, materials, schedule] = await Promise.all([
+              api.getPlannerTasks(),
+              api.getReminders(),
+              api.getMaterials(),
+              api.getAISchedule()
+            ]);
+            this.plannerTasks = tasks || [];
+            this.reminders = reminders || [];
+            this.materials = materials || [];
+            this.aiSchedule = schedule ? (typeof schedule.schedule_data === 'string' ? JSON.parse(schedule.schedule_data) : schedule.schedule_data) : null;
+          }
         } catch (err) {
           console.error(err);
           this.errorMsg = 'Unable to sync study planner data with backend REST server.';
         } finally {
           this.plannerLoading = false;
         }
+      },
+      formatDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr);
+        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
       },
       async createPlan() {
         if (!this.newPlan.task || !this.newPlan.deadline) {
@@ -917,19 +1200,23 @@
         try {
           const created = await api.createPlannerTask(this.newPlan);
           this.plannerTasks.push(created);
-          // reset form
           this.newPlan = { task: '', deadline: '', status: 'Pending' };
           this.showAddPlanForm = false;
         } catch (err) {
           alert('Failed to save study plan: ' + err.message);
         }
       },
-      async updatePlanStatus(task) {
+      async updatePlanStatus(task, status) {
         try {
-          await api.updatePlannerTask(task.plan_id, { status: task.status });
+          await api.updatePlannerTask(task.plan_id, { status });
+          task.status = status;
         } catch (err) {
           alert('Failed to update task status: ' + err.message);
         }
+      },
+      async togglePlanCompletion(task) {
+        const nextStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
+        await this.updatePlanStatus(task, nextStatus);
       },
       async deletePlan(planId) {
         if (!confirm('Are you sure you want to delete this study plan task?')) return;
@@ -946,7 +1233,6 @@
           return;
         }
         try {
-          // format local datetime value
           const formattedTime = this.newReminder.time.replace('T', ' ');
           const created = await api.createReminder({
             title: this.newReminder.title,
@@ -992,11 +1278,6 @@
         } finally {
           this.generatingSchedule = false;
         }
-      },
-      formatDate(dateStr) {
-        if (!dateStr) return '';
-        const d = new Date(dateStr);
-        return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
       },
       goToTutors() {
         window.location.href = '../../views/tutors/tutors_index.html';
@@ -1052,7 +1333,7 @@
                   this.pomodoroSessionType = 'break';
                   this.timerSeconds = this.pomodoroBreakDuration * 60;
                   this.timerTotalDuration = this.pomodoroBreakDuration * 60;
-                  this.startTimer(); // Auto-start the break block timer
+                  this.startTimer();
                 } else {
                   alert(`Break session completed! Back to study.`);
                   this.pomodoroSessionType = 'work';
@@ -1096,7 +1377,7 @@
           this.timerTotalDuration = 0;
         }
       },
-      async saveTimerSession() {
+      async saveStudyTime() {
         const minutes = Math.max(1, Math.round(this.timerSecondsStudied / 60));
         const subjectName = this.activeSubjectDisplay;
         

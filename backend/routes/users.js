@@ -484,46 +484,77 @@ router.post('/bookings', async (req, res) => {
 // GET /api/users/bookings/mine - Get current user bookings
 router.get('/bookings/mine', async (req, res) => {
   try {
-    const studentId = req.userId;
-    const [rows] = await pool.query(`
-      SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
-             u_tutor.name AS tutor_name, tp.rate AS tutor_rate, tp.subjects AS tutor_subjects, tp.status AS tutor_status, u_tutor.bio AS tutor_bio, tp.rating AS tutor_rating
-      FROM bookings b
-      JOIN users u_tutor ON b.tutor_id = u_tutor.id
-      LEFT JOIN tutor_profiles tp ON b.tutor_id = tp.user_id
-      WHERE b.student_id = ?
-      ORDER BY b.booking_date DESC, b.booking_time DESC
-    `, [studentId]);
+    const userId = req.userId;
+    const userRole = req.userRole; // from JWT token ('student', 'tutor', 'admin')
 
-    const avatars = [
-      'assets/tutor-sarah.png',
-      'assets/tutor-james.png',
-      'assets/tutor-emily.png',
-      'assets/tutor-david.png'
-    ];
+    if (userRole === 'tutor') {
+      const [rows] = await pool.query(`
+        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
+               u_student.name AS student_name, u_student.email AS student_email, u_student.initials AS student_initials
+        FROM bookings b
+        JOIN users u_student ON b.student_id = u_student.id
+        WHERE b.tutor_id = ?
+        ORDER BY b.booking_date DESC, b.booking_time DESC
+      `, [userId]);
 
-    const bookings = rows.map(b => ({
-      id: b.id,
-      studentId: b.student_id,
-      date: b.booking_date.toISOString().split('T')[0],
-      time: b.booking_time.substring(0, 5),
-      duration: b.duration,
-      totalCost: Number(b.total_cost),
-      status: b.status,
-      paymentStatus: b.payment_status,
-      tutor: {
-        id: b.tutor_id,
-        name: b.tutor_name,
-        rate: Number(b.tutor_rate) || 30,
-        subjects: typeof b.tutor_subjects === 'string' ? JSON.parse(b.tutor_subjects) : (b.tutor_subjects || ['General']),
-        status: b.tutor_status || 'available',
-        bio: b.tutor_bio || 'Experienced academic tutor.',
-        rating: Number(b.tutor_rating) || 5.0,
-        avatar: avatars[(b.tutor_id - 1) % avatars.length]
-      }
-    }));
+      const bookings = rows.map(b => ({
+        id: b.id,
+        tutorId: b.tutor_id,
+        date: b.booking_date.toISOString().split('T')[0],
+        time: b.booking_time.substring(0, 5),
+        duration: b.duration,
+        totalCost: Number(b.total_cost),
+        status: b.status,
+        paymentStatus: b.payment_status,
+        student: {
+          id: b.student_id,
+          name: b.student_name,
+          email: b.student_email,
+          initials: b.student_initials
+        }
+      }));
+      return res.json(bookings);
+    } else {
+      // Default to student
+      const [rows] = await pool.query(`
+        SELECT b.id, b.student_id, b.tutor_id, b.booking_date, b.booking_time, b.duration, b.total_cost, b.status, b.payment_status,
+               u_tutor.name AS tutor_name, tp.rate AS tutor_rate, tp.subjects AS tutor_subjects, tp.status AS tutor_status, u_tutor.bio AS tutor_bio, tp.rating AS tutor_rating
+        FROM bookings b
+        JOIN users u_tutor ON b.tutor_id = u_tutor.id
+        LEFT JOIN tutor_profiles tp ON b.tutor_id = tp.user_id
+        WHERE b.student_id = ?
+        ORDER BY b.booking_date DESC, b.booking_time DESC
+      `, [userId]);
 
-    res.json(bookings);
+      const avatars = [
+        'assets/tutor-sarah.png',
+        'assets/tutor-james.png',
+        'assets/tutor-emily.png',
+        'assets/tutor-david.png'
+      ];
+
+      const bookings = rows.map(b => ({
+        id: b.id,
+        studentId: b.student_id,
+        date: b.booking_date.toISOString().split('T')[0],
+        time: b.booking_time.substring(0, 5),
+        duration: b.duration,
+        totalCost: Number(b.total_cost),
+        status: b.status,
+        paymentStatus: b.payment_status,
+        tutor: {
+          id: b.tutor_id,
+          name: b.tutor_name,
+          rate: Number(b.tutor_rate) || 30,
+          subjects: typeof b.tutor_subjects === 'string' ? JSON.parse(b.tutor_subjects) : (b.tutor_subjects || ['General']),
+          status: b.tutor_status || 'available',
+          bio: b.tutor_bio || 'Experienced academic tutor.',
+          rating: Number(b.tutor_rating) || 5.0,
+          avatar: avatars[(b.tutor_id - 1) % avatars.length]
+        }
+      }));
+      return res.json(bookings);
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch bookings list' });

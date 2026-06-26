@@ -52,3 +52,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`PrepPal API running on http://localhost:${PORT}`);
 });
+
+module.exports = app;
+

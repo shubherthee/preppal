@@ -545,10 +545,157 @@
     </div>
   `;
 
+  const user = PrepPalCore.getCurrentUser();
+  const userRole = user.role;
+
+  const tutorTemplate = `
+    <!-- Topbar Navigation Header -->
+    <div class="topbar" style="margin-bottom: 28px;">
+      <div class="search-wrap" style="background:#ffffff; border: 1px solid rgba(225, 220, 245, 0.6); border-radius:24px; box-shadow:0 4px 16px rgba(124,58,237,0.02);">
+        <span class="search-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="#7c3aed" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+        <input
+          type="text"
+          v-model="analyticsSearch"
+          placeholder="Search bookings or student names..."
+          style="border:none !important; background:transparent !important; box-shadow:none !important; padding:4px 8px !important;"
+        />
+      </div>
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div class="topbar-avatar" style="background: linear-gradient(135deg, #7c3aed, #c084fc); border: 2px solid #ffffff; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);">{{ initials }}</div>
+      </div>
+    </div>
+
+    <!-- Header Progress Card for Tutor -->
+    <div class="card user-progress-card" style="margin-bottom: 28px; padding: 28px; border-radius: 28px; background: #ffffff !important; display: flex; align-items: center; gap: 20px; border: 1px solid rgba(225, 220, 245, 0.6) !important;">
+      <div class="user-avatar-large" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #c084fc); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; flex-shrink: 0; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.15);">
+        {{ initials }}
+      </div>
+      <div style="flex-grow: 1; min-width: 0; text-align: left;">
+        <div style="font-family: 'Sora', sans-serif; font-size: 1.4rem; font-weight: 700; color: #2e265c;">Hello {{ userName.split(' ')[0] }}!</div>
+        <p style="margin: 4px 0 12px 0; font-size: 0.9rem; color: #7b7597;">Here is your performance analytics and student booking overview.</p>
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <div style="flex-grow: 1; min-width: 150px; height: 6px; background: #f0ecfa; border-radius: 3px; overflow: hidden;">
+            <div :style="{ width: paidBookingsPercent + '%' }" style="height: 100%; background: linear-gradient(90deg, #a78bfa 0%, #7c3aed 100%); border-radius: 3px; transition: width 0.8s ease;"></div>
+          </div>
+          <span style="font-size: 0.82rem; font-weight: 700; color: #7c3aed; white-space: nowrap;">{{ paidBookingsCount }}/{{ tutorBookings.length }} bookings paid ({{ paidBookingsPercent }}%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutor Stats Row -->
+    <div class="stats-row" style="margin-bottom: 28px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+      <!-- Total Bookings -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #f4f0ff; border: 1px solid rgba(216, 200, 255, 0.4); box-shadow: 0 8px 30px rgba(79, 59, 140, 0.02); text-align: left;">
+        <div style="background:#ffffff; color:#4f3b8c; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(79, 59, 140, 0.05);">
+          📅
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #4f3b8c; line-height: 1.1; font-family:'Sora',sans-serif;">{{ tutorBookings.length }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #4f3b8c; opacity: 0.8; margin-top: 2px; font-weight: 600;">Total Bookings</div>
+        </div>
+      </div>
+
+      <!-- Active Students -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #e8f7f4; border: 1px solid rgba(170, 227, 215, 0.4); box-shadow: 0 8px 30px rgba(31, 94, 82, 0.02); text-align: left;">
+        <div style="background:#ffffff; color:#1f5e52; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(31, 94, 82, 0.05);">
+          🧑‍🎓
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #1f5e52; line-height: 1.1; font-family:'Sora',sans-serif;">{{ uniqueStudentsCount }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #1f5e52; opacity: 0.8; margin-top: 2px; font-weight: 600;">Active Students</div>
+        </div>
+      </div>
+
+      <!-- Hours Taught -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #eff6ff; border: 1px solid rgba(191, 219, 254, 0.4); box-shadow: 0 8px 30px rgba(37, 99, 235, 0.02); text-align: left;">
+        <div style="background:#ffffff; color:#2563eb; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.05);">
+          ⏱️
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #2563eb; line-height: 1.1; font-family:'Sora',sans-serif;">{{ totalHoursTaught }}h</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #2563eb; opacity: 0.8; margin-top: 2px; font-weight: 600;">Hours Taught</div>
+        </div>
+      </div>
+
+      <!-- Earnings -->
+      <div class="stat-card" style="padding: 24px; border-radius: 24px; display: flex; align-items: center; gap: 16px; background: #fff4e6; border: 1px solid rgba(253, 230, 138, 0.4); box-shadow: 0 8px 30px rgba(245, 158, 11, 0.02); text-align: left;">
+        <div style="background:#ffffff; color:#d97706; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.05);">
+          RM
+        </div>
+        <div>
+          <div class="stat-val" style="font-size: 1.8rem; font-weight: 700; color: #d97706; line-height: 1.1; font-family:'Sora',sans-serif;">{{ tutorEarnings }}</div>
+          <div class="stat-label" style="font-size: 0.8rem; color: #d97706; opacity: 0.8; margin-top: 2px; font-weight: 600;">Total Earnings</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Booking Ledger -->
+    <div class="card" style="padding: 28px; border-radius: 28px;">
+      <h2 style="margin-bottom: 20px; font-size:1.3rem; text-align: left;">Booking Registry & Revenue Breakdown</h2>
+      
+      <div v-if="analyticsLoading" style="text-align:center; padding:20px; color:#6c6684;">
+        Loading booking ledger...
+      </div>
+      <div v-if="errorMsg" class="error-msg" style="margin-bottom:12px;">
+        {{ errorMsg }}
+      </div>
+
+      <div v-if="!analyticsLoading && filteredTutorBookings.length" style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left; font-size:0.88rem;">
+          <thead>
+            <tr style="border-bottom:2px solid #efeefc; color:#574e7d; font-weight:700;">
+              <th style="padding:12px;">Student</th>
+              <th style="padding:12px;">Date & Time</th>
+              <th style="padding:12px;">Duration</th>
+              <th style="padding:12px;">Hourly Rate</th>
+              <th style="padding:12px;">Total Bill</th>
+              <th style="padding:12px;">Session Status</th>
+              <th style="padding:12px;">Payment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="b in filteredTutorBookings" :key="b.id" style="border-bottom:1px solid #f8f6fd; color:#2e265c; font-weight:500;">
+              <td style="padding:16px 12px; display:flex; align-items:center; gap:10px; text-align: left;">
+                <div style="width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, #a78bfa, #7c3aed); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.75rem; flex-shrink: 0;">
+                  {{ b.student.initials }}
+                </div>
+                <div>
+                  <div style="font-weight:700;">{{ b.student.name }}</div>
+                  <div style="font-size:0.7rem; color:#7b7597;">{{ b.student.email }}</div>
+                </div>
+              </td>
+              <td style="padding:12px;">{{ formatDate(b.date) }} @ {{ b.time }}</td>
+              <td style="padding:12px;">{{ b.duration }} hr(s)</td>
+              <td style="padding:12px;">RM{{ (b.totalCost / b.duration).toFixed(2) }}</td>
+              <td style="padding:12px; font-weight:700; color:#7c3aed;">RM{{ b.totalCost.toFixed(2) }}</td>
+              <td style="padding:12px;">
+                <span class="badge-status" :class="b.status === 'confirmed' || b.status === 'completed' ? 'status-completed' : (b.status === 'pending' ? 'status-pending' : 'status-inprogress')" style="text-transform: capitalize; border-radius: 12px; padding: 4px 10px !important; font-weight: 700;">
+                  {{ b.status }}
+                </span>
+              </td>
+              <td style="padding:12px;">
+                <span :style="b.paymentStatus === 'paid' ? {color:'#10b981', fontWeight:'700'} : {color:'#ef4444', fontWeight:'700'}">
+                  {{ b.paymentStatus === 'paid' ? 'Paid' : 'Unpaid' }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-else-if="!analyticsLoading" style="text-align:center; padding:32px; color:#7b7597; background:#faf9fe; border-radius:20px; border:1px dashed #efeefc; font-size:0.85rem;">
+        No student bookings matching search criteria found.
+      </div>
+    </div>
+  `;
+
   PrepPalCore.mountApp({
-    template,
+    template: userRole === 'Tutor' ? tutorTemplate : template,
     data() {
       return {
+        userRole,
+        tutorBookings: [],
         analyticsSearch: '',
         analyticsRecords: [],
         skillGaps: [],
@@ -601,6 +748,41 @@
             studyMinutes.includes(query) ||
             modules.includes(query);
         });
+      },
+
+      // Tutor Analytics Computed Properties
+      filteredTutorBookings() {
+        const query = (this.analyticsSearch || '').trim().toLowerCase();
+        return (this.tutorBookings || []).filter(b => {
+          const studentName = (b.student.name || '').toLowerCase();
+          const studentEmail = (b.student.email || '').toLowerCase();
+          const dateStr = (b.date || '').toLowerCase();
+          return !query ||
+            studentName.includes(query) ||
+            studentEmail.includes(query) ||
+            dateStr.includes(query);
+        });
+      },
+      paidBookingsCount() {
+        return (this.tutorBookings || []).filter(b => b.paymentStatus === 'paid').length;
+      },
+      paidBookingsPercent() {
+        if (!this.tutorBookings.length) return 0;
+        return Math.round((this.paidBookingsCount / this.tutorBookings.length) * 100);
+      },
+      uniqueStudentsCount() {
+        const ids = (this.tutorBookings || []).map(b => b.student.id || b.studentId);
+        return new Set(ids).size;
+      },
+      totalHoursTaught() {
+        return (this.tutorBookings || [])
+          .filter(b => b.status === 'confirmed' || b.status === 'completed')
+          .reduce((total, b) => total + Number(b.duration || 0), 0);
+      },
+      tutorEarnings() {
+        return (this.tutorBookings || [])
+          .filter(b => b.paymentStatus === 'paid' && (b.status === 'confirmed' || b.status === 'completed'))
+          .reduce((total, b) => total + Number(b.totalCost || 0), 0);
       }
     },
     methods: {
@@ -613,22 +795,25 @@
         this.analyticsLoading = true;
         this.errorMsg = '';
         try {
-          const records = await api.getAnalyticsRecords();
-          this.analyticsRecords = records;
-          
-          // Check local storage or generate initial gaps
-          const storedGaps = localStorage.getItem('preppal_skillgaps');
-          if (storedGaps) {
-            this.skillGaps = JSON.parse(storedGaps);
+          if (this.userRole === 'Tutor') {
+            const bookings = await api.getStudentBookings();
+            this.tutorBookings = bookings || [];
           } else {
-            // Filter records that have skill gaps to show initially
-            this.skillGaps = records
-              .filter(r => r.skill_gap === true || r.mastery < 70 || (r.quiz_score !== null && r.quiz_score < 70))
-              .map(r => ({
-                subject: r.subject.replace('Quiz: ', '').replace('Deck: ', ''),
-                reason: `Performance score of ${r.quiz_score || r.mastery}% is below targeted 70%. Needs practice.`,
-                status: (r.quiz_score || r.mastery) < 60 ? 'Critical' : 'Weak'
-              }));
+            const records = await api.getAnalyticsRecords();
+            this.analyticsRecords = records;
+            
+            const storedGaps = localStorage.getItem('preppal_skillgaps');
+            if (storedGaps) {
+              this.skillGaps = JSON.parse(storedGaps);
+            } else {
+              this.skillGaps = records
+                .filter(r => r.skill_gap === true || r.mastery < 70 || (r.quiz_score !== null && r.quiz_score < 70))
+                .map(r => ({
+                  subject: r.subject.replace('Quiz: ', '').replace('Deck: ', ''),
+                  reason: `Performance score of ${r.quiz_score || r.mastery}% is below targeted 70%. Needs practice.`,
+                  status: (r.quiz_score || r.mastery) < 60 ? 'Critical' : 'Weak'
+                }));
+            }
           }
         } catch (err) {
           console.error(err);
@@ -653,7 +838,6 @@
           });
           this.analyticsRecords.unshift(created);
           
-          // reset form
           this.newLog = {
             subject: '',
             date: new Date().toISOString().substring(0, 10),
