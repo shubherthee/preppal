@@ -7,8 +7,15 @@ const fs       = require('fs');
 const { summarizeFileContent } = require('../services/openrouter');
 
 // ── Multer storage config ─────────────────────────────────────────────
-const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
-if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+// In serverless environments (like Vercel), the filesystem is read-only except for '/tmp'.
+const isServerless = process.env.VERCEL || process.env.NOW_BUILDER;
+const UPLOADS_DIR = isServerless 
+  ? '/tmp/uploads' 
+  : path.join(__dirname, '..', 'uploads');
+
+if (!fs.existsSync(UPLOADS_DIR)) {
+  fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_DIR),
