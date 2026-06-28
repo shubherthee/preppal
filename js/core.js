@@ -69,6 +69,13 @@ window.PrepPalCore = (function () {
       route: rootRel + 'views/tutors/tutors_index.html',
       role: 'Student'
     },
+    {
+      id: 'tracker',
+      icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
+      label: 'Deadline Tracker',
+      route: rootRel + 'views/tracker/tracker_index.html',
+      role: ['Student', 'Tutor']
+    },
   ];
 
   const SidebarComponent = {

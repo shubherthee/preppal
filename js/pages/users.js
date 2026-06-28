@@ -251,10 +251,10 @@ PrepPalCore.mountApp({
             <td style="padding: 14px 20px; text-align: right;">
               <div style="display: inline-flex; gap: 8px;">
                 <button class="btn-secondary" @click="openEditModal(user)" style="padding: 6px 12px; font-size: 0.8rem; width: auto; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; height: 32px;">
-                  ✏️ Edit
+                  Edit
                 </button>
                 <button class="btn-primary" @click="deleteUser(user.id)" style="padding: 6px 12px; font-size: 0.8rem; width: auto; font-weight: 600; background: var(--rose); border-color: var(--rose); color: white; display: inline-flex; align-items: center; gap: 4px; height: 32px;" :disabled="user.id === currentUserId">
-                  🗑️ Delete
+                  Delete
                 </button>
               </div>
             </td>

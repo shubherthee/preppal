@@ -68,7 +68,7 @@ const navItems = [
     icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
     label: 'Content Hub',
     route: rootRel + 'views/content/content_index.html',
-    role: 'Student'
+    role: ['Student', 'Tutor']
   },
   {
     id: 'flashcards',
@@ -108,7 +108,7 @@ const navItems = [
   {
     id: 'tracker',
     icon: `<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`,
-    label: 'Exam Tracker',
+    label: 'Deadline Tracker',
     route: rootRel + 'views/tracker/tracker_index.html',
     role: 'Student'
   },
@@ -1362,7 +1362,7 @@ const pageTemplates = {
 
     <div class="greeting content-actions-row" style="margin-bottom: 24px;">
       <div>
-        <h1>Exam & Assignment Tracker ⏰</h1>
+        <h1>Deadline Tracker</h1>
         <p>Never miss a deadline</p>
       </div>
       <button class="btn-primary" @click="openAddTaskModal" style="width: auto; padding: 10px 24px; border-radius: 24px;">+ Add Exam</button>

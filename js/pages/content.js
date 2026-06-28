@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
         error:        '',
         searchQuery:  '',
         filterType:   'all',   // all | file | folder
+        materialView: 'mine',   // mine | shared
         currentFolderId: null,
 
         // Upload modal
@@ -20,6 +21,7 @@ window.addEventListener('DOMContentLoaded', () => {
         dragOver:         false,
         selectedFiles:    [],       // File objects from input/drop
         uploadForm:       { description: '', subject: '', topic: '' },
+        uploadShareEmail: '',
         uploading:        false,
         uploadProgress:   0,
         uploadError:      '',
@@ -31,6 +33,16 @@ window.addEventListener('DOMContentLoaded', () => {
         editError:     '',
         editSaving:    false,
 
+        // Share modal
+        showShareModal: false,
+        sharingItem: null,
+        shareEmail: '',
+        tutorStudents: [],
+        studentsLoading: false,
+        shareError: '',
+        shareSuccess: '',
+        shareSaving: false,
+
         draggedItemId:    null,
         activeMenuId:     null,
       };
@@ -41,10 +53,19 @@ window.addEventListener('DOMContentLoaded', () => {
         const q = this.searchQuery.toLowerCase().trim();
         return this.materials.filter(m => {
           if (m.type === 'summary') return false;
+          const shared = this.isSharedVisible(m);
+          const owned = this.isOwned(m);
+          if (this.materialView === 'shared' && !shared) return false;
+          if (this.materialView === 'mine' && !owned) return false;
           const name    = (m.original_name || m.filename || '').toLowerCase();
           const desc    = (m.description   || '').toLowerCase();
           const subject = (m.subject       || '').toLowerCase();
-          const matchFolder = (m.parent_id || null) === (this.currentFolderId || null);
+          const parentId = m.parent_id || null;
+          const matchFolder = this.currentFolderId
+            ? parentId === this.currentFolderId
+            : this.materialView === 'shared'
+              ? !parentId || !this.sharedParentIds.includes(parentId)
+              : parentId === null;
           const matchSearch = !q || name.includes(q) || desc.includes(q) || subject.includes(q);
           const matchType   = this.filterType === 'all' || (m.type || 'file') === this.filterType;
           return matchFolder && matchSearch && matchType;
@@ -53,9 +74,14 @@ window.addEventListener('DOMContentLoaded', () => {
       currentFolder() {
         return this.materials.find(m => m.id === this.currentFolderId) || null;
       },
-      fileCount()    { return this.materials.filter(m => (m.type || 'file') === 'file').length; },
-      folderCount()  { return this.materials.filter(m => m.type === 'folder').length; },
-      folders()      { return this.materials.filter(m => m.type === 'folder'); },
+      ownedMaterials() { return this.materials.filter(m => this.isOwned(m) && m.type !== 'summary'); },
+      sharedMaterials() { return this.materials.filter(m => this.isSharedVisible(m) && m.type !== 'summary'); },
+      sharedParentIds() { return this.sharedMaterials.map(m => m.id); },
+      fileCount()    { return this.ownedMaterials.filter(m => (m.type || 'file') === 'file').length; },
+      folderCount()  { return this.ownedMaterials.filter(m => m.type === 'folder').length; },
+      sharedCount()  { return this.sharedMaterials.length; },
+      folders()      { return this.ownedMaterials.filter(m => m.type === 'folder'); },
+      isTutor()      { return String(this.userRole).toLowerCase() === 'tutor'; },
 
       selectedFileNames() {
         return Array.from(this.selectedFiles).map(f => f.relativePath || f.webkitRelativePath || f.name).join(', ') || 'No files selected';
@@ -84,9 +110,11 @@ window.addEventListener('DOMContentLoaded', () => {
         this.uploadMode    = mode;
         this.selectedFiles = [];
         this.uploadForm    = { description: '', subject: '', topic: '' };
+        this.uploadShareEmail = '';
         this.uploadError   = '';
         this.uploadProgress = 0;
         this.showUploadModal = true;
+        if (this.isTutor) this.fetchTutorStudents();
       },
 
       onFileInput(e) {
@@ -163,6 +191,7 @@ window.addEventListener('DOMContentLoaded', () => {
           if (this.uploadForm.subject)     formData.append('subject',     this.uploadForm.subject);
           if (this.uploadForm.topic)       formData.append('topic',       this.uploadForm.topic);
           if (this.currentFolderId)         formData.append('parent_id',   this.currentFolderId);
+          if (this.uploadShareEmail)        formData.append('student_email', this.uploadShareEmail.trim().toLowerCase());
 
           const token = localStorage.getItem('preppal_token');
           const res   = await fetch('http://localhost:4000/api/content/upload', {
@@ -204,6 +233,7 @@ window.addEventListener('DOMContentLoaded', () => {
               subject:     this.uploadForm.subject,
               topic:       this.uploadForm.topic,
               parent_id:    this.currentFolderId,
+              student_email: this.uploadShareEmail.trim().toLowerCase() || undefined,
             }),
           });
           this.materials.unshift(created);
@@ -267,8 +297,30 @@ window.addEventListener('DOMContentLoaded', () => {
       },
 
       // ── Download ─────────────────────────────────────────────────────
+      isOwned(item) {
+        return Number(item?.user_id) === Number(this.currentUserId);
+      },
+
+      isShared(item) {
+        return Number(item?.student_id) === Number(this.currentUserId) && !this.isOwned(item);
+      },
+
+      isSharedByMe(item) {
+        return this.isTutor && this.isOwned(item) && !!item?.student_id;
+      },
+
+      isSharedVisible(item) {
+        return this.isTutor ? this.isSharedByMe(item) : this.isShared(item);
+      },
+
+      switchMaterialView(view) {
+        this.materialView = view;
+        this.currentFolderId = null;
+        this.activeMenuId = null;
+      },
+
       async moveMaterial(item, parentId) {
-        if (!item || item.id === parentId) return;
+        if (!item || item.id === parentId || !this.isOwned(item)) return;
         try {
           await PrepPalAPI.request(`/content/${item.id}/move`, {
             method: 'POST',
@@ -318,6 +370,55 @@ window.addEventListener('DOMContentLoaded', () => {
 
       toggleActionMenu(itemId) {
         this.activeMenuId = this.activeMenuId === itemId ? null : itemId;
+      },
+
+      openShare(item) {
+        if (!item || !this.isOwned(item) || !this.isTutor) return;
+        this.activeMenuId = null;
+        this.sharingItem = item;
+        this.shareEmail = '';
+        this.shareError = '';
+        this.shareSuccess = '';
+        this.showShareModal = true;
+        this.fetchTutorStudents();
+      },
+
+      async fetchTutorStudents() {
+        if (!this.isTutor || this.studentsLoading || this.tutorStudents.length) return;
+        this.studentsLoading = true;
+        try {
+          this.tutorStudents = await PrepPalAPI.getTutorStudents();
+        } catch (e) {
+          console.warn('Failed to load tutor students', e);
+        } finally {
+          this.studentsLoading = false;
+        }
+      },
+
+      async shareMaterial() {
+        if (!this.shareEmail.trim()) {
+          this.shareError = 'Student email is required.';
+          return;
+        }
+
+        this.shareSaving = true;
+        this.shareError = '';
+        this.shareSuccess = '';
+        try {
+          const res = await PrepPalAPI.request(`/content/${this.sharingItem.id}/share`, {
+            method: 'POST',
+            body: JSON.stringify({ student_email: this.shareEmail.trim().toLowerCase() }),
+          });
+          const sharedIds = res.shared_ids || [this.sharingItem.id];
+          this.materials.forEach(m => {
+            if (sharedIds.includes(m.id)) m.student_id = res.student_id;
+          });
+          this.shareSuccess = `Shared with ${res.student_email}.`;
+        } catch (e) {
+          this.shareError = e.message || 'Share failed.';
+        } finally {
+          this.shareSaving = false;
+        }
       },
 
       downloadFile(m) {
@@ -427,7 +528,7 @@ window.addEventListener('DOMContentLoaded', () => {
           <h1>{{ pageTitle }}</h1>
           <p>{{ pageSubtitle }}</p>
         </div>
-        <div style="display:flex;gap:10px;">
+        <div v-if="materialView === 'mine'" style="display:flex;gap:10px;">
           <button class="btn-primary" style="width:auto;padding:10px 18px;white-space:nowrap;" @click="openUpload('file')">
             ⬆ Upload Files
           </button>
@@ -457,6 +558,14 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="stat-card">
           <div class="stat-top">
+            <div class="stat-icon" style="background:#edf7f0;color:#1f7a4c;">↗</div>
+            <span class="stat-badge" style="background:#edf7f0;color:#1f7a4c;">Shared</span>
+          </div>
+          <div class="stat-val">{{ sharedCount }}</div>
+          <div class="stat-label">{{ isTutor ? 'Shared By Me' : 'Shared With Me' }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
             <div class="stat-icon" style="background:#f4f0ff;color:#7c3aed;">📦</div>
             <span class="stat-badge" style="background:#f4f0ff;color:#7c3aed;">Total</span>
           </div>
@@ -466,7 +575,7 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <!-- Drag-and-drop upload zone -->
-      <div class="upload-zone" style="margin-bottom:28px;cursor:pointer;"
+      <div v-if="materialView === 'mine'" class="upload-zone" style="margin-bottom:28px;cursor:pointer;"
            :style="dragOver ? 'border-color:var(--indigo);background:var(--indigo-lt);' : ''"
            @click="openUpload('file')"
            @dragover.prevent="dragOver=true"
@@ -487,6 +596,14 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="section-title" style="margin:0;flex-shrink:0;">
           {{ currentFolder ? (currentFolder.original_name || currentFolder.filename) : 'Materials' }}
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="filter-tab" :class="{ active: materialView === 'mine' }" @click="switchMaterialView('mine')">
+            My Materials
+          </button>
+          <button class="filter-tab" :class="{ active: materialView === 'shared' }" @click="switchMaterialView('shared')">
+            {{ isTutor ? 'Shared By Me' : 'Shared Materials' }}
+          </button>
+        </div>
         <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
           <button v-for="ft in ['all','file','folder']" :key="ft"
             class="filter-tab" :class="{ active: filterType === ft }"
@@ -506,9 +623,9 @@ window.addEventListener('DOMContentLoaded', () => {
       <!-- Content Grid -->
       <div v-if="!loading" class="content-grid">
         <div class="content-card" v-for="item in filtered" :key="item.id"
-             draggable="true"
+             :draggable="isOwned(item)"
              :style="item.type === 'folder' && draggedItemId && draggedItemId !== item.id ? 'outline:2px dashed var(--indigo);outline-offset:3px;' : ''"
-             @dragstart="draggedItemId = item.id"
+             @dragstart="isOwned(item) ? draggedItemId = item.id : null"
              @dragend="draggedItemId = null"
              @dragover.prevent="item.type === 'folder' && draggedItemId !== item.id"
              @drop.prevent="onCardDrop(item)"
@@ -524,7 +641,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 <button v-if="item.type === 'folder'" @click="openFolder(item)">Open</button>
                 <button v-if="item.type === 'file'" @click="openFileInNewTab(item)">Open</button>
                 <button v-if="item.type === 'file'" @click="downloadFile(item)">Download</button>
-                <label v-if="folders.filter(folder => folder.id !== item.id).length">
+                <button v-if="isOwned(item) && isTutor" @click="openShare(item)">Share</button>
+                <label v-if="isOwned(item) && folders.filter(folder => folder.id !== item.id).length">
                   Move to
                   <select :value="item.parent_id || ''"
                           @change="moveMaterial(item, $event.target.value ? Number($event.target.value) : null)">
@@ -534,9 +652,9 @@ window.addEventListener('DOMContentLoaded', () => {
                     </option>
                   </select>
                 </label>
-                <button v-if="item.parent_id" @click="moveMaterial(item, null)">Exit Folder</button>
-                <button @click="openEdit(item)">Edit</button>
-                <button class="danger" @click="deleteMaterial(item.id)">Delete</button>
+                <button v-if="isOwned(item) && item.parent_id" @click="moveMaterial(item, null)">Exit Folder</button>
+                <button v-if="isOwned(item)" @click="openEdit(item)">Edit</button>
+                <button v-if="isOwned(item)" class="danger" @click="deleteMaterial(item.id)">Delete</button>
               </div>
             </div>
           </div>
@@ -544,6 +662,12 @@ window.addEventListener('DOMContentLoaded', () => {
             {{ item.original_name || item.filename }}
           </div>
           <div class="content-meta">{{ item.description || 'No description' }}</div>
+          <div v-if="isShared(item)" class="content-meta" style="margin-top:4px;font-size:.72rem;color:var(--indigo);">
+            Shared by {{ item.owner_name || 'Tutor' }}
+          </div>
+          <div v-if="isSharedByMe(item)" class="content-meta" style="margin-top:4px;font-size:.72rem;color:var(--indigo);">
+            Shared to {{ item.shared_student_email || item.shared_student_name || 'student' }}
+          </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
             <span v-if="item.subject" style="font-size:.7rem;background:#f4f0ff;color:#7c3aed;padding:2px 8px;border-radius:8px;font-weight:600;">{{ item.subject }}</span>
             <span v-if="item.topic"   style="font-size:.7rem;background:#edf7f0;color:#1f7a4c;padding:2px 8px;border-radius:8px;font-weight:600;">{{ item.topic }}</span>
@@ -563,9 +687,9 @@ window.addEventListener('DOMContentLoaded', () => {
             <div style="font-size:3rem;margin-bottom:12px;">📂</div>
             <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px;">No materials found</div>
             <div style="color:var(--muted);font-size:.9rem;margin-bottom:20px;">
-              {{ searchQuery ? 'Try a different search.' : 'Upload your first file or create a folder.' }}
+              {{ searchQuery ? 'Try a different search.' : materialView === 'shared' ? (isTutor ? 'Materials you share with students will appear here.' : 'Shared materials from tutors will appear here.') : 'Upload your first file or create a folder.' }}
             </div>
-            <button class="btn-primary" style="width:auto;padding:10px 24px;" @click="openUpload('file')">⬆ Upload Files</button>
+            <button v-if="materialView === 'mine'" class="btn-primary" style="width:auto;padding:10px 24px;" @click="openUpload('file')">⬆ Upload Files</button>
           </div>
         </div>
       </div>
@@ -620,6 +744,23 @@ window.addEventListener('DOMContentLoaded', () => {
                 <input v-model="uploadForm.topic" placeholder="e.g. Cell Structure" />
               </div>
             </div>
+            <div v-if="isTutor" class="form-field">
+              <label>Share With Student <span style="color:var(--muted);font-weight:400;">(optional)</span></label>
+              <input
+                v-model="uploadShareEmail"
+                list="upload-student-email-options"
+                type="email"
+                placeholder="Select or type student email"
+              />
+              <datalist id="upload-student-email-options">
+                <option v-for="student in tutorStudents" :key="student.id" :value="student.email">
+                  {{ student.name }} - {{ student.email }}
+                </option>
+              </datalist>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:6px;">
+                {{ studentsLoading ? 'Loading students...' : 'Shared uploads appear in the student Materials (Shared) tab.' }}
+              </div>
+            </div>
             <div class="modal-footer">
               <button class="btn-sm" @click="showUploadModal=false">Cancel</button>
               <button class="btn-sm primary" @click="doUpload" :disabled="uploading">
@@ -630,11 +771,54 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
       </div>
 
+      <!-- Share Modal -->
+      <div v-if="showShareModal" class="modal-overlay" @click.self="showShareModal=false">
+        <div class="modal" style="max-width:520px;">
+          <div class="modal-header">
+            <h3>Share Material</h3>
+            <button class="btn-sm" @click="showShareModal=false">✕</button>
+          </div>
+          <div class="modal-body">
+            <div v-if="shareError" class="error-msg" style="margin-bottom:12px;">{{ shareError }}</div>
+            <div v-if="shareSuccess" class="success-banner" style="margin-bottom:12px;padding:10px 12px;background:#edfcf7;color:#0f5c42;border-radius:8px;font-size:.85rem;">
+              {{ shareSuccess }}
+            </div>
+            <div style="font-size:.85rem;font-weight:600;color:var(--muted);margin-bottom:12px;">
+              {{ sharingItem?.original_name || sharingItem?.filename }}
+            </div>
+            <div class="form-field">
+              <label>Student Email</label>
+              <input
+                v-model="shareEmail"
+                list="share-student-email-options"
+                type="email"
+                placeholder="Select or type student email"
+                @keyup.enter="shareMaterial"
+              />
+              <datalist id="share-student-email-options">
+                <option v-for="student in tutorStudents" :key="student.id" :value="student.email">
+                  {{ student.name }} - {{ student.email }}
+                </option>
+              </datalist>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:6px;">
+                {{ studentsLoading ? 'Loading students...' : 'Folders share all files inside them.' }}
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-sm" @click="showShareModal=false">Cancel</button>
+              <button class="btn-sm primary" @click="shareMaterial" :disabled="shareSaving">
+                {{ shareSaving ? 'Sharing…' : 'Share' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ── Edit Modal ─────────────────────────────────────────────── -->
       <div v-if="showEditModal" class="modal-overlay" @click.self="showEditModal=false">
         <div class="modal">
           <div class="modal-header">
-            <h3>✏️ Edit Material</h3>
+            <h3>Edit Material</h3>
             <button class="btn-sm" @click="showEditModal=false">✕</button>
           </div>
           <div class="modal-body">
