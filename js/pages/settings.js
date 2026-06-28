@@ -61,7 +61,7 @@ PrepPalCore.mountApp({
     <!-- Alert success banner -->
     <div v-if="successMsg" class="success-banner" style="margin-bottom: 20px; padding: 12px 16px; background-color: #edfcf7; border-left: 4px solid #1d9e75; color: #0f5c42; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease;">
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span>✨</span>
+        <span></span>
         <span>{{ successMsg }}</span>
       </div>
       <button @click="successMsg = ''" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #0f5c42; line-height: 1; padding: 0 4px;">&times;</button>
@@ -123,7 +123,7 @@ PrepPalCore.mountApp({
       <!-- Audit Logs Column -->
       <div class="card" style="padding: 24px; height: fit-content;">
         <div class="section-title" style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
-          <span>📋</span> System Audit Log
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span> System Audit Log
         </div>
         <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px; line-height: 1.4;">
           Security log details showing administrative actions executed in the PrepPal platform.
@@ -133,8 +133,8 @@ PrepPalCore.mountApp({
           <div v-for="log in auditLogs" :key="log.id" style="border-bottom: 1px dashed var(--border); padding-bottom: 10px;">
             <div style="font-weight: 600; color: var(--text); font-size: 0.9rem; margin-bottom: 4px;">{{ log.action }}</div>
             <div style="display: flex; justify-content: space-between; font-size: 0.76rem; color: var(--muted);">
-              <span>📅 {{ log.timestamp }}</span>
-              <span>👤 User: {{ log.user }}</span>
+              <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ log.timestamp }}</span>
+              <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> User: {{ log.user }}</span>
             </div>
           </div>
         </div>

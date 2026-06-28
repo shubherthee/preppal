@@ -80,10 +80,10 @@ PrepPalCore.mountApp({
     <!-- Content Table card -->
     <div class="card" style="padding: 0; overflow-x: auto;">
       <div v-if="loading" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
-        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;">⏳</span> Loading reports...
+        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;"></span> Loading reports...
       </div>
       <div v-else-if="error" style="padding: 40px; text-align: center; color: var(--rose); font-weight: 500;">
-        ⚠️ {{ error }}
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️ {{ error }}
       </div>
       <div v-else-if="filteredReports.length === 0" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
         No reports found in this section.
@@ -121,7 +121,7 @@ PrepPalCore.mountApp({
                   ✓ Dismiss
                 </button>
                 <button class="btn-primary" @click="deleteContent(report.id)" :disabled="actionLoadingId === report.id" style="padding: 6px 12px; font-size: 0.8rem; width: auto; font-weight: 600; background: var(--rose); border-color: var(--rose); color: white; display: inline-flex; align-items: center; gap: 4px; height: 32px; border-radius: 4px;">
-                  🗑️ Delete Content
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>️ Delete Content
                 </button>
               </div>
               <div v-else style="color: var(--muted); font-size: 0.85rem; font-style: italic;">

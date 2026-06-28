@@ -206,17 +206,17 @@ PrepPalCore.mountApp({
     <!-- Top search + Profile bar -->
     <div class="topbar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input type="text" placeholder="Search lessons, students, schedules..." />
       </div>
-      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="notif-btn"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notif-dot"></span></div>
       <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
 
     <!-- Greetings & Status Toggle -->
     <div class="greeting" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
       <div>
-        <h1 style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; letter-spacing: -0.7px; font-size: 2.2rem; margin: 0;">Welcome, {{ userName }}! 👋</h1>
+        <h1 style="font-family: 'Sora', sans-serif !important; font-weight: 700 !important; color: #2e265c !important; letter-spacing: -0.7px; font-size: 2.2rem; margin: 0;">Welcome, {{ userName }}! </h1>
         <p style="font-family: 'DM Sans', sans-serif !important; color: #7b7597 !important; font-size: 0.9rem; margin-top: 4px;">{{ pageSubtitle }}</p>
       </div>
 

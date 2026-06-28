@@ -69,7 +69,7 @@ PrepPalCore.mountApp({
     <div class="stats-row" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 24px;">
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">💰</div>
+          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">RM</div>
           <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">Total Billing</span>
         </div>
         <div class="stat-val" style="margin-top: 10px;">RM{{ totalBilling.toFixed(2) }}</div>
@@ -77,7 +77,7 @@ PrepPalCore.mountApp({
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;">💼</div>
+          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
           <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">Commission (10%)</span>
         </div>
         <div class="stat-val" style="margin-top: 10px;">RM{{ platformShare.toFixed(2) }}</div>
@@ -85,7 +85,7 @@ PrepPalCore.mountApp({
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;">🧑‍🏫</div>
+          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;"></div>
           <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Tutor Net Payouts</span>
         </div>
         <div class="stat-val" style="margin-top: 10px;">RM{{ tutorPayouts.toFixed(2) }}</div>
@@ -96,7 +96,7 @@ PrepPalCore.mountApp({
     <!-- Search bar card -->
     <div class="card" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
       <div class="search-wrap" style="flex: 1; max-width: 400px; margin-bottom: 0;">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input type="text" v-model="searchQuery" placeholder="Search by student, tutor, or date..." style="width: 100%; border: none; outline: none; background: transparent; padding-left: 8px; font-family: inherit;" />
       </div>
       <div style="color: var(--muted); font-size: 0.88rem; font-weight: 500;">
@@ -107,10 +107,10 @@ PrepPalCore.mountApp({
     <!-- Bookings Table card -->
     <div class="card" style="padding: 0; overflow-x: auto;">
       <div v-if="loading" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
-        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;">⏳</span> Loading bookings...
+        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;"></span> Loading bookings...
       </div>
       <div v-else-if="error" style="padding: 40px; text-align: center; color: var(--rose); font-weight: 500;">
-        ⚠️ {{ error }}
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️ {{ error }}
       </div>
       <div v-else-if="filteredBookings.length === 0" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
         No bookings found.
@@ -144,8 +144,8 @@ PrepPalCore.mountApp({
               </div>
             </td>
             <td style="padding: 14px 20px;">
-              <div style="font-weight: 500; color: var(--text);">📅 {{ b.date }}</div>
-              <div style="font-size: 0.78rem; color: var(--muted);">⏰ {{ b.time }}</div>
+              <div style="font-weight: 500; color: var(--text);"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ b.date }}</div>
+              <div style="font-size: 0.78rem; color: var(--muted);"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ b.time }}</div>
             </td>
             <td style="padding: 14px 20px; color: var(--text);">{{ b.duration }} hr(s)</td>
             <td style="padding: 14px 20px; font-weight: 600; color: var(--text);">RM{{ b.totalCost.toFixed(2) }}</td>

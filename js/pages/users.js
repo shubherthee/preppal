@@ -198,7 +198,7 @@ PrepPalCore.mountApp({
     <!-- Search & Add user bar card -->
     <div class="card" style="padding: 16px; margin-bottom: 20px; display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
       <div class="search-wrap" style="flex: 1; max-width: 400px; margin-bottom: 0;">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input type="text" v-model="searchQuery" placeholder="Search by name, email or role..." style="width: 100%;" />
       </div>
       <div style="display: flex; align-items: center; gap: 16px;">
@@ -206,7 +206,7 @@ PrepPalCore.mountApp({
           Total: {{ filteredUsers.length }} users
         </div>
         <button class="btn-primary" @click="openAddModal" style="width: auto; padding: 10px 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; height: 40px; margin: 0; color: white;">
-          ➕ Add User
+          + Add User
         </button>
       </div>
     </div>
@@ -214,10 +214,10 @@ PrepPalCore.mountApp({
     <!-- Users Table card -->
     <div class="card" style="padding: 0; overflow-x: auto;">
       <div v-if="loading" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
-        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px;">⏳</span> Loading users list...
+        <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px;"></span> Loading users list...
       </div>
       <div v-else-if="error" style="padding: 40px; text-align: center; color: var(--rose); font-weight: 500;">
-        ⚠️ {{ error }}
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️ {{ error }}
       </div>
       <div v-else-if="filteredUsers.length === 0" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
         No users found matching query.

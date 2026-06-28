@@ -174,14 +174,14 @@ const appData = {
     { name: 'Deep Space', gradient: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)' },
   ],
   stats: [
-    { icon: '📈', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
-    { icon: '🧠', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
-    { icon: '⏱️', value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>', value: '82%', label: 'Focus Score', change: '+8%', bg: '#d9f7e4', color: '#1f7a4c' },
+    { icon: '', value: '14', label: 'Completed Lessons', change: '+2', bg: '#eef7ff', color: '#1c5db6' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>️', value: '6h 24m', label: 'Study Time', change: '+1h', bg: '#fff4e6', color: '#b25f11' },
   ],
   quickActions: [
-    { icon: '📝', name: 'Write Notes', desc: 'Capture quick ideas from class.' },
-    { icon: '⚡', name: 'Skill Drills', desc: 'Practice short review sessions.' },
-    { icon: '📅', name: 'Plan Study', desc: 'Schedule tasks for the week.' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>', name: 'Write Notes', desc: 'Capture quick ideas from class.' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>', name: 'Skill Drills', desc: 'Practice short review sessions.' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>', name: 'Plan Study', desc: 'Schedule tasks for the week.' },
   ],
   quizzes: [
     { id: 'bio-5', title: 'Biology — Chapter 5', desc: 'Cell structure and function', questions: 10, time: '10m', difficulty: 'Medium' },
@@ -189,9 +189,9 @@ const appData = {
     { id: 'math-quiz', title: 'Algebra Practice', desc: 'Linear equations', questions: 8, time: '8m', difficulty: 'Hard' },
   ],
   activity: [
-    { icon: '✅', title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
-    { icon: '🔔', title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
-    { icon: '📌', title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>', title: 'Finished Chapter 3 Quiz', sub: '10 min ago', time: '10m', bg: '#edf7f0' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg>', title: 'New tutor message', sub: '30 min ago', time: '30m', bg: '#f3f5ff' },
+    { icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>', title: 'Study plan updated', sub: '1 hour ago', time: '1h', bg: '#fff3f0' },
   ],
   upcoming: [
     { name: 'Biology Quiz', date: 'Today · 5:00 PM', tag: 'Due', dotColor: '#d92d20', badgeBg: '#ffe5e1' },
@@ -200,9 +200,9 @@ const appData = {
   ],
 
   contentItems: [
-    { id: 'c1', title: 'Machine Learning XAI', desc: '4 files • Updated 2 days ago', type: 'folder', icon: '📁', shared: true },
-    { id: 'c2', title: 'Theory of Computer Science', desc: 'PDF • 2.4 MB', type: 'file', icon: '📄', shared: false },
-    { id: 'c3', title: 'LIME Paper Summary', desc: 'AI Generated • Read time: 5m', type: 'summary', icon: '🤖', shared: true }
+    { id: 'c1', title: 'Machine Learning XAI', desc: '4 files • Updated 2 days ago', type: 'folder', icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>', shared: true },
+    { id: 'c2', title: 'Theory of Computer Science', desc: 'PDF • 2.4 MB', type: 'file', icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>', shared: false },
+    { id: 'c3', title: 'LIME Paper Summary', desc: 'AI Generated • Read time: 5m', type: 'summary', icon: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>', shared: true }
   ],
   trackerTasks: [
     { id: 't1', title: 'Biology Quiz', date: 'May 3, 2026', time: '02:00 PM', colorClass: 'border-orange', badgeText: 'Tomorrow', badgeClass: 'badge-red' },
@@ -362,7 +362,7 @@ const SidebarComponent = {
   template: `
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="sidebar-brand-icon">📚</div>
+        <div class="sidebar-brand-icon"><svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:8px"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></div>
         <div>
           <div class="sidebar-brand-name">PrepPal</div>
           <div class="sidebar-brand-sub">AI Study Assistant</div>
@@ -379,7 +379,7 @@ const SidebarComponent = {
         </a>
       </nav>
       <div class="tip-box">
-        <div class="tip-title">💡 Study Tip</div>
+        <div class="tip-title"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px"><path d="M9 18h6M10 22h4M15.09 14c.18-.33.3-.68.37-1.04.18-.9.07-1.84-.31-2.66-.45-.96-1.3-1.68-2.31-1.93a3.504 3.504 0 0 0-4.22 3.19c-.04.45.02.9.18 1.32.18.47.46.88.82 1.21L9.5 16h5l.59-2z"></path></svg> Study Tip</div>
         <div class="tip-text">Take breaks every 25 minutes for better retention.</div>
       </div>
       <div class="sidebar-user" style="display: flex; align-items: center;">
@@ -411,10 +411,10 @@ const pageTemplates = {
   dashboard: `
     <div class="topbar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input type="text" placeholder="Search notes, quizzes, flashcards…" />
       </div>
-      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="notif-btn"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notif-dot"></span></div>
       <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
     <div class="greeting">
@@ -523,7 +523,7 @@ const pageTemplates = {
         </div>
       </div>
       <div class="empty-state" v-if="(quizTab==='my'?myFilteredQuizzes:allFilteredQuizzes).length===0">
-        <div style="font-size:3rem;margin-bottom:12px">✏️</div>
+        <div style="font-size:3rem;margin-bottom:12px"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>️</div>
         <div>No quizzes found. Adjust your filters or create a new quiz.</div>
       </div>
     </template>
@@ -570,7 +570,7 @@ const pageTemplates = {
             <div class="review-ans" style="color:#1D9E75;margin-top:2px">Correct: {{q.choices[q.correct]}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 All answers correct!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> All answers correct!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startQuizGame(takingQuiz)">Retake</button>
           <button class="btn-sm primary" @click="quizTab='browse';takingQuiz=null;quizResults=false">Back to Browse</button>
@@ -666,7 +666,7 @@ const pageTemplates = {
         </div>
       </div>
       <div class="empty-state" v-if="(deckTab==='my'?myFilteredDecks:allFilteredDecks).length===0">
-        <div style="font-size:3rem;margin-bottom:12px">🧠</div>
+        <div style="font-size:3rem;margin-bottom:12px"></div>
         <div>No decks found. Create one to get started!</div>
       </div>
     </template>
@@ -719,7 +719,7 @@ const pageTemplates = {
             <div class="review-ans" style="color:#1D9E75;margin-top:4px">{{c.a}}</div>
           </div>
         </template>
-        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px">🎉 You knew all the cards!</div>
+        <div v-else class="card" style="text-align:center;color:#1D9E75;font-weight:600;padding:20px"> You knew all the cards!</div>
         <div style="display:flex;gap:10px;margin-top:20px;justify-content:center">
           <button class="btn-sm" @click="startDeck(playingDeck)">Study Again</button>
           <button class="btn-sm primary" @click="deckTab='browse';playingDeck=null;deckResults=false">Back to Browse</button>
@@ -829,7 +829,7 @@ const pageTemplates = {
     <div class="section-title">Available Tutors ({{ filteredTutors.length }})</div>
     
     <div v-if="filteredTutors.length === 0" class="no-tutors-state card">
-      <div class="no-tutors-icon">🧑‍🏫</div>
+      <div class="no-tutors-icon"></div>
       <h3>No Tutors Found</h3>
       <p>Try adjusting your search filters or check back later.</p>
     </div>
@@ -885,9 +885,9 @@ const pageTemplates = {
           <div class="session-details">
             <div class="session-tutor-name">{{ session.tutor.name }}</div>
             <div class="session-meta">
-              <span>📅 {{ session.date }}</span>
-              <span>⏰ {{ session.time }} ({{ session.duration }}h)</span>
-              <span>💰 RM{{ session.totalCost }}</span>
+              <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ session.date }}</span>
+              <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ session.time }} ({{ session.duration }}h)</span>
+              <span>RM RM{{ session.totalCost }}</span>
             </div>
             <div class="session-subjects">
               <span v-for="sub in session.tutor.subjects" class="subject-tag-xs">{{ sub }}</span>
@@ -1309,10 +1309,10 @@ const pageTemplates = {
   content: `
       <div class="topbar">
         <div class="search-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
           <input type="text" placeholder="Search notes, folders, or AI summaries…" />
         </div>
-        <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+        <div class="notif-btn"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notif-dot"></span></div>
         <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
       </div>
       
@@ -1324,7 +1324,7 @@ const pageTemplates = {
       </div>
 
       <div class="upload-zone">
-        <div class="upload-icon">☁️</div>
+        <div class="upload-icon"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>️</div>
         <div class="upload-text">Drop files here to upload or click to browse</div>
         <div class="upload-sub">Supports: PDF, DOCX, TXT, Links</div>
       </div>
@@ -1353,10 +1353,10 @@ const pageTemplates = {
   tracker: `
     <div class="topbar">
       <div class="search-wrap">
-        <span class="search-icon">🔍</span>
+        <span class="search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
         <input type="text" placeholder="Search exams, assignments…" />
       </div>
-      <div class="notif-btn">🔔<span class="notif-dot"></span></div>
+      <div class="notif-btn"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg><span class="notif-dot"></span></div>
       <div class="topbar-avatar" :style="{ background: userAvatarBg }">{{ initials }}</div>
     </div>
 
@@ -1370,19 +1370,19 @@ const pageTemplates = {
 
     <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 0;">
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>❕</span> Upcoming</div>
+        <div class="tracker-stat-header"><span><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span> Upcoming</div>
         <div class="tracker-stat-val">3</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>📅</span> This Week</div>
+        <div class="tracker-stat-header"><span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span> This Week</div>
         <div class="tracker-stat-val">2</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>✅</span> Completed</div>
+        <div class="tracker-stat-header"><span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Completed</div>
         <div class="tracker-stat-val">8</div>
       </div>
       <div class="tracker-stat-card">
-        <div class="tracker-stat-header"><span>🕒</span> Overdue</div>
+        <div class="tracker-stat-header"><span><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span> Overdue</div>
         <div class="tracker-stat-val">0</div>
       </div>
     </div>
@@ -1405,8 +1405,8 @@ const pageTemplates = {
               <div class="tracker-item-title" :style="task.completed ? 'text-decoration: line-through; color: var(--muted);' : ''">{{ task.title }}</div>
             </div>
             <div class="tracker-item-meta" style="padding-left: 30px;">
-              <span>📅 {{ task.date }}</span>
-              <span>🕒 {{ task.time }}</span>
+              <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ task.date }}</span>
+              <span><svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:4px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ task.time }}</span>
             </div>
             <div class="tracker-item-actions" style="padding-left: 30px;">
               <button class="btn-pill-primary">Study Now</button>
@@ -1419,7 +1419,7 @@ const pageTemplates = {
       </div>
 
       <div v-if="trackerCurrentView === 'Calendar View'" style="padding: 40px; text-align: center; color: var(--muted);">
-        <div style="font-size: 3rem; margin-bottom: 16px;">🗓️</div>
+        <div style="font-size: 3rem; margin-bottom: 16px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>️</div>
         <h3>Calendar View Active</h3>
         <p>This is where the monthly calendar grid will be rendered.</p>
       </div>
@@ -1473,7 +1473,7 @@ const pageTemplates = {
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;">🧑‍🎓</div>
+          <div class="stat-icon" style="background: #eef7ff; color: #1c5db6;"></div>
           <span class="stat-badge" style="background: #eef7ff; color: #1c5db6;">Total</span>
         </div>
         <div class="stat-val">{{ adminStudentCount }}</div>
@@ -1481,7 +1481,7 @@ const pageTemplates = {
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;">🧑‍🏫</div>
+          <div class="stat-icon" style="background: #edf7f0; color: #1f7a4c;"></div>
           <span class="stat-badge" style="background: #edf7f0; color: #1f7a4c;">Active</span>
         </div>
         <div class="stat-val">{{ adminTutorCount }}</div>
@@ -1489,7 +1489,7 @@ const pageTemplates = {
       </div>
       <div class="stat-card">
         <div class="stat-top">
-          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;">📅</div>
+          <div class="stat-icon" style="background: #fff4e6; color: #b25f11;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <span class="stat-badge" style="background: #fff4e6; color: #b25f11;">Confirmed</span>
         </div>
         <div class="stat-val">{{ adminBookingCount }}</div>
@@ -1506,20 +1506,20 @@ const pageTemplates = {
             :class="{ active: adminActiveTab === 'tutors' }" 
             @click="adminActiveTab = 'tutors'"
           >
-             🧑‍🏫 Tutor Directory
+              Tutor Directory
           </button>
           <button 
             class="admin-tab-btn" 
             :class="{ active: adminActiveTab === 'bookings' }" 
             @click="adminActiveTab = 'bookings'"
           >
-             🗓️ Session Bookings
+             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>️ Session Bookings
           </button>
         </div>
         
         <!-- Search Input inside controls card -->
         <div class="admin-search-wrap">
-          <span class="admin-search-icon">🔍</span>
+          <span class="admin-search-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
           <input 
             type="text" 
             v-model="adminSearchQuery" 
@@ -1532,14 +1532,14 @@ const pageTemplates = {
           class="btn-primary admin-add-btn" 
           @click="openAddTutorModal"
         >
-          ➕ Add New Tutor
+          + Add New Tutor
         </button>
       </div>
 
       <!-- Tab Content: Tutors Directory -->
       <div v-if="adminActiveTab === 'tutors'" class="admin-tab-content">
         <div v-if="adminFilteredTutors.length === 0" class="admin-empty-state">
-          <div class="empty-state-icon">🔍</div>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
           <h3>No tutors match your search</h3>
           <p>Try entering a different name or subject.</p>
         </div>
@@ -1584,8 +1584,8 @@ const pageTemplates = {
               </td>
               <td style="text-align: right;">
                 <div class="admin-action-btns">
-                  <button class="btn-edit" @click="openEditTutorModal(t)" title="Edit Tutor">✏️ Edit</button>
-                  <button class="btn-delete" @click="deleteTutor(t.id)" title="Delete Tutor">🗑️ Delete</button>
+                  <button class="btn-edit" @click="openEditTutorModal(t)" title="Edit Tutor"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>️ Edit</button>
+                  <button class="btn-delete" @click="deleteTutor(t.id)" title="Delete Tutor"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>️ Delete</button>
                 </div>
               </td>
             </tr>
@@ -1596,7 +1596,7 @@ const pageTemplates = {
       <!-- Tab Content: Session Bookings -->
       <div v-if="adminActiveTab === 'bookings'" class="admin-tab-content">
         <div v-if="adminFilteredBookings.length === 0" class="admin-empty-state">
-          <div class="empty-state-icon">📅</div>
+          <div class="empty-state-icon"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
           <h3>No bookings logs found</h3>
           <p>Booked sessions will show up here.</p>
         </div>
@@ -1631,8 +1631,8 @@ const pageTemplates = {
               </td>
               <td>
                 <div class="admin-datetime-cell">
-                  <div class="admin-date-txt">📅 {{ b.date }}</div>
-                  <div class="admin-time-txt">⏰ {{ b.time }}</div>
+                  <div class="admin-date-txt"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ b.date }}</div>
+                  <div class="admin-time-txt"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ b.time }}</div>
                 </div>
               </td>
               <td>{{ b.duration }} hr(s)</td>
@@ -1643,7 +1643,7 @@ const pageTemplates = {
                 <span class="session-status-badge">Confirmed</span>
               </td>
               <td style="text-align: right;">
-                <button class="btn-cancel" @click="deleteBooking(b.id)" title="Cancel Booking">❌ Cancel</button>
+                <button class="btn-cancel" @click="deleteBooking(b.id)" title="Cancel Booking">✕ Cancel</button>
               </td>
             </tr>
           </tbody>
@@ -1750,7 +1750,7 @@ const pageTemplates = {
           {{ tempRole }}
         </div>
         <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-          <span>📧</span> {{ tempEmail || 'email@school.edu' }}
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span> {{ tempEmail || 'email@school.edu' }}
         </div>
         <hr style="border: none; border-top: 1px solid var(--border); width: 100%; margin-bottom: 20px;" />
         <div style="text-align: left; width: 100%;">
@@ -1766,7 +1766,7 @@ const pageTemplates = {
         <!-- Success Alert Banner -->
         <div v-if="profileSuccessMsg" class="success-banner" style="margin-bottom: 20px; padding: 12px 16px; background-color: #edfcf7; border-left: 4px solid #1d9e75; color: #0f5c42; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease;">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span>✨</span>
+            <span></span>
             <span>{{ profileSuccessMsg }}</span>
           </div>
           <button @click="profileSuccessMsg = ''" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #0f5c42; line-height: 1; padding: 0 4px;">&times;</button>
@@ -1775,14 +1775,14 @@ const pageTemplates = {
         <!-- Error Alert Banner -->
         <div v-if="profileErrorMsg" class="error-banner" style="margin-bottom: 20px; padding: 12px 16px; background-color: #fdf2f2; border-left: 4px solid #d92d20; color: #9b1c1c; border-radius: 4px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.3s ease;">
           <div style="display: flex; align-items: center; gap: 8px;">
-            <span>⚠️</span>
+            <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️</span>
             <span>{{ profileErrorMsg }}</span>
           </div>
           <button @click="profileErrorMsg = ''" style="background: none; border: none; font-size: 1.1rem; cursor: pointer; color: #9b1c1c; line-height: 1; padding: 0 4px;">&times;</button>
         </div>
 
         <div class="section-title" style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
-          <span>👤</span> Profile Settings
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Profile Settings
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px;">

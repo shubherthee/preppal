@@ -108,16 +108,16 @@ PrepPalCore.mountApp({
         Total Active Broadcasts: {{ announcements.length }}
       </div>
       <button class="btn-primary" @click="openAddModal" style="width: auto; padding: 10px 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; height: 40px; margin: 0; color: white;">
-        📢 Create Announcement
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"></path></svg> Create Announcement
       </button>
     </div>
 
     <!-- Active announcements list -->
     <div v-if="loading" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
-      <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;">⏳</span> Loading announcements...
+      <span style="display: inline-block; animation: spin 1s linear infinite; margin-bottom: 8px; font-size: 1.5rem;"></span> Loading announcements...
     </div>
     <div v-else-if="error" style="padding: 40px; text-align: center; color: var(--rose); font-weight: 500;">
-      ⚠️ {{ error }}
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️ {{ error }}
     </div>
     <div v-else-if="announcements.length === 0" style="padding: 40px; text-align: center; color: var(--muted); font-weight: 500;">
       No current announcements. Create one to display alerts.
@@ -134,14 +134,14 @@ PrepPalCore.mountApp({
             </span>
           </div>
           <button class="btn-primary" @click="removeAnnouncement(ann.id)" style="padding: 6px 12px; font-size: 0.8rem; width: auto; font-weight: 600; background: var(--rose); border-color: var(--rose); color: white; display: inline-flex; align-items: center; gap: 4px; height: 32px; border-radius: 4px;">
-            🗑️ Delete
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>️ Delete
           </button>
         </div>
         <p style="color: var(--muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 12px;">{{ ann.message }}</p>
         <div style="display: flex; gap: 20px; font-size: 0.78rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 8px;">
-          <span>✍️ Author: {{ ann.author_name }}</span>
-          <span>📅 Starts: {{ formatDate(ann.starts_at) }}</span>
-          <span>⏰ Expires: {{ formatDate(ann.expires_at) }}</span>
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>️ Author: {{ ann.author_name }}</span>
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Starts: {{ formatDate(ann.starts_at) }}</span>
+          <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Expires: {{ formatDate(ann.expires_at) }}</span>
         </div>
       </div>
     </div>

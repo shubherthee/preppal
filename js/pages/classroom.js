@@ -149,7 +149,7 @@ PrepPalCore.mountApp({
 
       <!-- Error State -->
       <div v-else-if="error" class="card" style="padding: 32px; border-radius: 24px; border: 1.5px solid rgba(225, 79, 79, 0.2); background: rgba(225, 79, 79, 0.02); text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 12px;">⚠️</div>
+        <div style="font-size: 2.5rem; margin-bottom: 12px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"></path></svg>️</div>
         <h3 style="color: #e14f4f; font-weight: 700; margin-bottom: 12px;">Classroom Connection Error</h3>
         <p style="color: var(--text); margin-bottom: 24px; max-width: 500px; margin-left: auto; margin-right: auto; line-height: 1.5;">{{ error }}</p>
         <button class="btn-primary" style="width: auto; padding: 10px 20px;" @click="fetchBookingDetails">Try Again</button>
@@ -171,7 +171,7 @@ PrepPalCore.mountApp({
           <div style="text-align: right;">
             <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Schedule</span>
             <div style="font-weight: 600; color: var(--text); margin-top: 4px; font-size: 0.95rem;">
-              📅 {{ booking.date }} &nbsp; ⏰ {{ booking.time }} ({{ booking.duration }}h)
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> {{ booking.date }} &nbsp; <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> {{ booking.time }} ({{ booking.duration }}h)
             </div>
           </div>
         </div>
@@ -252,12 +252,12 @@ PrepPalCore.mountApp({
             </div>
             <!-- Link is ready! -->
             <div v-else style="text-align: center; padding: 24px;">
-              <div style="font-size: 3rem; margin-bottom: 12px;">🚀</div>
+              <div style="font-size: 3rem; margin-bottom: 12px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"></path></svg></div>
               <h4 style="font-weight: 700; font-size: 1.2rem; color: var(--text); margin-bottom: 8px;">Your Class Session is Ready!</h4>
               <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 24px;">Click the button below to join the online class meet or chat channel with your tutor.</p>
               
               <a :href="booking.meetingLink" target="_blank" class="btn-primary" style="width: auto; max-width: 320px; margin: 0 auto; height: 46px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; text-decoration: none; color: white; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(124, 58, 237, 0.2);">
-                <span>💻 Connect to Classroom</span>
+                <span><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Connect to Classroom</span>
               </a>
               <div style="margin-top: 16px; font-size: 0.8rem; color: var(--text-muted);">
                 Link shared: <code style="background: var(--bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 0.76rem;">{{ booking.meetingLink }}</code>

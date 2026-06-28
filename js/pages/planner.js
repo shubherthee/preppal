@@ -1298,16 +1298,19 @@
         if (this.timerState === 'idle') {
           this.timerSecondsStudied = 0;
           if (this.timerMode === 'pomodoro') {
+            const workMin = parseFloat(this.pomodoroWorkDuration) || 25;
+            const breakMin = parseFloat(this.pomodoroBreakDuration) || 5;
             if (this.pomodoroSessionType === 'work') {
-              this.timerSeconds = this.pomodoroWorkDuration * 60;
-              this.timerTotalDuration = this.pomodoroWorkDuration * 60;
+              this.timerSeconds = workMin * 60;
+              this.timerTotalDuration = workMin * 60;
             } else {
-              this.timerSeconds = this.pomodoroBreakDuration * 60;
-              this.timerTotalDuration = this.pomodoroBreakDuration * 60;
+              this.timerSeconds = breakMin * 60;
+              this.timerTotalDuration = breakMin * 60;
             }
           } else if (this.timerMode === 'tracking') {
-            this.timerSeconds = (this.timerCustomDuration || 25) * 60;
-            this.timerTotalDuration = (this.timerCustomDuration || 25) * 60;
+            const customMin = parseFloat(this.timerCustomDuration) || 25;
+            this.timerSeconds = customMin * 60;
+            this.timerTotalDuration = customMin * 60;
           } else if (this.timerMode === 'stopwatch') {
             this.timerSeconds = 0;
             this.timerTotalDuration = 0;
@@ -1319,26 +1322,30 @@
           if (this.timerMode === 'stopwatch') {
             this.timerSeconds++;
             this.timerSecondsStudied++;
+            console.log(`Timer tick: ${this.timerSeconds}s (stopwatch)`);
           } else {
             this.timerSeconds--;
             this.timerSecondsStudied++;
+            console.log(`Timer tick: ${this.timerSeconds}s (countdown)`);
             if (this.timerSeconds <= 0) {
               this.timerSeconds = 0;
               this.pauseTimer();
               this.timerState = 'idle';
               
               if (this.timerMode === 'pomodoro') {
+                const workMin = parseFloat(this.pomodoroWorkDuration) || 25;
+                const breakMin = parseFloat(this.pomodoroBreakDuration) || 5;
                 if (this.pomodoroSessionType === 'work') {
                   alert(`Focus session for ${this.activeSubjectDisplay} completed! Starting break.`);
                   this.pomodoroSessionType = 'break';
-                  this.timerSeconds = this.pomodoroBreakDuration * 60;
-                  this.timerTotalDuration = this.pomodoroBreakDuration * 60;
+                  this.timerSeconds = breakMin * 60;
+                  this.timerTotalDuration = breakMin * 60;
                   this.startTimer();
                 } else {
                   alert(`Break session completed! Back to study.`);
                   this.pomodoroSessionType = 'work';
-                  this.timerSeconds = this.pomodoroWorkDuration * 60;
-                  this.timerTotalDuration = this.pomodoroWorkDuration * 60;
+                  this.timerSeconds = workMin * 60;
+                  this.timerTotalDuration = workMin * 60;
                 }
               } else {
                 alert(`Focus session for ${this.activeSubjectDisplay} completed!`);
@@ -1377,7 +1384,7 @@
           this.timerTotalDuration = 0;
         }
       },
-      async saveStudyTime() {
+      async saveTimerSession() {
         const minutes = Math.max(1, Math.round(this.timerSecondsStudied / 60));
         const subjectName = this.activeSubjectDisplay;
         

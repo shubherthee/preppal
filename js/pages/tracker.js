@@ -200,7 +200,7 @@ window.addEventListener('DOMContentLoaded', () => {
       },
 
       typeIcon(type) {
-        return { Exam: '📝', Assignment: '📋', Quiz: '❓', Task: '✅' }[type] || '📌';
+        return { Exam: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>', Assignment: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>', Quiz: '', Task: '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' }[type] || '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>';
       },
     },
 
@@ -294,7 +294,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       <!-- Loading / Error -->
       <div v-if="loading" class="card" style="text-align:center;color:var(--muted);padding:40px;">
-        <div style="font-size:2rem;margin-bottom:8px;">⏳</div>
+        <div style="font-size:2rem;margin-bottom:8px;"></div>
         Loading deadlines…
       </div>
       <div v-if="error && !loading" class="error-msg" style="margin-bottom:16px;">{{ error }}</div>
@@ -304,7 +304,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <div class="tracker-list-title">Upcoming Deadlines ({{ upcomingDeadlines.length }})</div>
 
         <div v-if="filtered.length === 0" style="text-align:center;padding:48px;color:var(--muted);">
-          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <div style="font-size:3rem;margin-bottom:12px;"></div>
           <div style="font-weight:700;font-family:'Sora',sans-serif;margin-bottom:6px;">
             {{ searchQuery ? 'No matching deadlines' : 'No deadlines yet!' }}
           </div>
@@ -429,7 +429,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <!-- Legend -->
         <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
           <span style="font-size:.78rem;color:var(--muted);">Click any item to edit  ·  </span>
-          <span v-for="[type, icon] in [['Exam','📝'],['Assignment','📋'],['Quiz','❓'],['Task','✅']]" :key="type"
+          <span v-for="[type, icon] in [['Exam','<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>'],['Assignment','<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>'],['Quiz',''],['Task','<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>']]" :key="type"
                 style="font-size:.78rem;color:var(--muted);">{{ icon }} {{ type }}</span>
         </div>
       </div>

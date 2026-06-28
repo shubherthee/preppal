@@ -477,16 +477,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
       // ── Helpers ──────────────────────────────────────────────────────
       iconFor(m) {
-        if (m.type === 'folder')  return '📁';
+        if (m.type === 'folder')  return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>';
         const name = (m.original_name || m.filename || '').toLowerCase();
-        if (name.endsWith('.pdf'))               return '📄';
-        if (name.match(/\.docx?$/))              return '📝';
-        if (name.match(/\.pptx?$/))              return '📊';
-        if (name.match(/\.xlsx?$|\.csv$/))       return '📈';
-        if (name.match(/\.mp4$|\.mov$|\.avi$/))  return '🎬';
-        if (name.match(/\.png$|\.jpe?g$|\.gif$|\.webp$/)) return '🖼️';
-        if (name.match(/\.zip$|\.rar$/))         return '🗜️';
-        return '📎';
+        if (name.endsWith('.pdf'))               return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+        if (name.match(/\.docx?$/))              return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>';
+        if (name.match(/\.pptx?$/))              return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>';
+        if (name.match(/\.xlsx?$|\.csv$/))       return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>';
+        if (name.match(/\.mp4$|\.mov$|\.avi$/))  return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>';
+        if (name.match(/\.png$|\.jpe?g$|\.gif$|\.webp$/)) return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>️';
+        if (name.match(/\.zip$|\.rar$/))         return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>️';
+        return '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>';
       },
 
       badgeFor(m) {
@@ -533,7 +533,7 @@ window.addEventListener('DOMContentLoaded', () => {
             ⬆ Upload Files
           </button>
           <button class="btn-secondary" style="width:auto;padding:10px 18px;white-space:nowrap;" @click="openUpload('folder')">
-            📁 New Folder
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> New Folder
           </button>
         </div>
       </div>
@@ -542,7 +542,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <div class="stats-row" style="margin-bottom:28px;">
         <div class="stat-card">
           <div class="stat-top">
-            <div class="stat-icon" style="background:#eef7ff;color:#1c5db6;">📄</div>
+            <div class="stat-icon" style="background:#eef7ff;color:#1c5db6;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div>
             <span class="stat-badge" style="background:#eef7ff;color:#1c5db6;">Files</span>
           </div>
           <div class="stat-val">{{ fileCount }}</div>
@@ -550,7 +550,7 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="stat-card">
           <div class="stat-top">
-            <div class="stat-icon" style="background:#fff4e6;color:#b25f11;">📁</div>
+            <div class="stat-icon" style="background:#fff4e6;color:#b25f11;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
             <span class="stat-badge" style="background:#fff4e6;color:#b25f11;">Folders</span>
           </div>
           <div class="stat-val">{{ folderCount }}</div>
@@ -566,7 +566,7 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="stat-card">
           <div class="stat-top">
-            <div class="stat-icon" style="background:#f4f0ff;color:#7c3aed;">📦</div>
+            <div class="stat-icon" style="background:#f4f0ff;color:#7c3aed;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
             <span class="stat-badge" style="background:#f4f0ff;color:#7c3aed;">Total</span>
           </div>
           <div class="stat-val">{{ materials.length }}</div>
@@ -617,7 +617,7 @@ window.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <!-- Loading / Error -->
-      <div v-if="loading" class="card" style="text-align:center;color:var(--muted);padding:40px;">⏳ Loading…</div>
+      <div v-if="loading" class="card" style="text-align:center;color:var(--muted);padding:40px;"> Loading…</div>
       <div v-if="error && !loading" class="error-msg" style="margin-bottom:16px;">{{ error }}</div>
 
       <!-- Content Grid -->
@@ -684,7 +684,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <!-- Empty state -->
         <div v-if="filtered.length === 0" style="grid-column:1/-1;">
           <div class="card" style="text-align:center;padding:56px 24px;">
-            <div style="font-size:3rem;margin-bottom:12px;">📂</div>
+            <div style="font-size:3rem;margin-bottom:12px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
             <div style="font-family:'Sora',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px;">No materials found</div>
             <div style="color:var(--muted);font-size:.9rem;margin-bottom:20px;">
               {{ searchQuery ? 'Try a different search.' : materialView === 'shared' ? (isTutor ? 'Materials you share with students will appear here.' : 'Shared materials from tutors will appear here.') : 'Upload your first file or create a folder.' }}
@@ -698,7 +698,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <div v-if="showUploadModal" class="modal-overlay" @click.self="showUploadModal=false">
         <div class="modal" style="max-width:520px;">
           <div class="modal-header">
-            <h3>{{ uploadMode === 'folder' ? '📁 New Folder' : '⬆ Upload Files' }}</h3>
+            <h3>{{ uploadMode === 'folder' ? '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> New Folder' : '⬆ Upload Files' }}</h3>
             <button class="btn-sm" @click="showUploadModal=false">✕</button>
           </div>
           <div class="modal-body">
@@ -713,7 +713,7 @@ window.addEventListener('DOMContentLoaded', () => {
                    @dragover.prevent="dragOver=true"
                    @dragleave="dragOver=false"
                    @drop.prevent="e => { dragOver=false; onDrop(e); }">
-                <div style="font-size:2rem;margin-bottom:6px;">📂</div>
+                <div style="font-size:2rem;margin-bottom:6px;"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
                 <div style="font-size:.88rem;color:var(--muted);">
                   {{ selectedFiles.length ? selectedFiles.length + ' file(s) selected' : 'Click or drag & drop files / folders here' }}
                 </div>
