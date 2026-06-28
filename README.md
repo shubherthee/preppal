@@ -1,6 +1,25 @@
-# PrepPal Backend (Quizzes & Flashcards API)
+# PrepPal — AI-Powered Study Assistant
 
-A small Express + MySQL REST API that powers the Quizzes and Flashcards pages.
+PrepPal is an AI-powered study platform designed to optimize student revision and streamline academic booking. 
+
+**Live Deployment URL**: [https://preppal-rho.vercel.app/](https://preppal-rho.vercel.app/)
+
+## About PrepPal
+
+PrepPal serves as an interactive command center for students and tutors. By combining AI assistance with structured tracking and booking features, PrepPal helps students study smarter and organize their schedules seamlessly.
+
+## Key Features
+
+- **Personal Dashboard**: A custom student/tutor command center displaying real-time announcements, alerts, and calendar notifications.
+- **Interactive Quizzes**: Take timed, multiple-choice quizzes by subject and difficulty with automated scoring and detailed review options.
+- **Spaced Flashcards**: Vocabulary and concept study decks powered by interactive card flipping and session trackers.
+- **Study Planner**: Maintain color-coded revision goals and task states (Pending, In Progress, Completed).
+- **Deadline Tracker**: Unified tracking for upcoming exams, quizzes, and assignment deadlines.
+- **Tutor Booking**: Filter and book slots with verified academic tutors.
+- **Live Classroom**: Virtual classroom links connecting students and tutors in real-time.
+- **Admin Hub**: Global panel for content moderation, tutor verification, and announcement publishing.
+
+---
 
 ## 1. Setup
 
